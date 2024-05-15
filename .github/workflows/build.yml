@@ -23,4 +23,4 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Check application build
-        uses: pnpm build
+        run: pnpm build
