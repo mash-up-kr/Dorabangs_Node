@@ -18,9 +18,13 @@ jobs:
       - name: Node.js runtime setting
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: yarn
+          node-version: 20
+      - name: pnpm settings
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          run_install: false
       - name: Install dependencies
-        run: yarn install
-      - name: Check application build
-        run: yarn build
+        run: pnpm install --frozen-lockfile
+      - name: Check Application Build
+        run: pnpm build
