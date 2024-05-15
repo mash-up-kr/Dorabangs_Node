@@ -1,0 +1,26 @@
+name: Application Build Test
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+    paths:
+      - 'src/**'
+      - '.github/workflows/**'
+run-name: Application Build Test
+jobs:
+  build:
+    name: Build Test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Repository Checkout
+        uses: actions/checkout@v4
+      - name: Node.js runtime setting
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Check application build
+        uses: pnpm build
