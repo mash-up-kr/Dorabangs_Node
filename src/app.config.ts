@@ -24,7 +24,24 @@ export async function nestAppConfig<
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 }
 
-export async function nestSentryConfig<
+export function nestFilterConfig<T extends INestApplication = INestApplication>(
+  app: T,
+  connectSentry = false,
+) {
+  connectSentry
+    ? configExceptionFilterWithSentry(app)
+    : configFilterStandAlone(app);
+}
+
+// Enable Exception Filter stand-alone
+function configFilterStandAlone<T extends INestApplication = INestApplication>(
+  app: T,
+) {
+  app.useGlobalFilters(new RootExceptionFilter());
+}
+
+// Enalbe Exception Filter with Sentry Connection
+function configExceptionFilterWithSentry<
   T extends INestApplication = INestApplication,
 >(app: T) {
   const config = app.get<ConfigService>(ConfigService);
