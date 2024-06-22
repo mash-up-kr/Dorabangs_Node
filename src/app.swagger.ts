@@ -6,8 +6,8 @@ export function nestSwaggerConfig<
 >(app: T) {
   const config = new DocumentBuilder();
   config
-    .setTitle('Dorabangs API')
-    .setDescription('Dorabangs API 입니다')
+    .setTitle('Linkit API')
+    .setDescription('Linkit Open API Specification')
     .setVersion('1.0.0')
     .setContact(
       'Dorabangs Node.js Team',
