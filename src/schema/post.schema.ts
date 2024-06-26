@@ -1,0 +1,33 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+
+@Schema({ collection: 'posts', timestamps: true, versionKey: false })
+export class Post {
+  @Prop({ required: true })
+  userId: string;
+
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Folder' })
+  folderId: MongooseSchema.Types.ObjectId;
+
+  @Prop({ required: true })
+  url: string;
+
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop({ required: true })
+  description!: string;
+
+  @Prop({ default: false })
+  isFavorite: boolean;
+
+  @Prop({
+    required: false,
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'PostAIClassification',
+  })
+  aiClassificationId?: MongooseSchema.Types.ObjectId;
+}
+
+export type PostDocument = HydratedDocument<Post>;
+export const PostSchema = SchemaFactory.createForClass(Post);
