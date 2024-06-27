@@ -3,7 +3,7 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Keyword, KeywordSchema } from './keyword.schema';
 
 @Schema({
-  collection: 'post_ai_classification',
+  collection: 'post_ai_classifications',
   timestamps: true,
   versionKey: false,
 })
