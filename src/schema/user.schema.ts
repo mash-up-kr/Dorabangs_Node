@@ -4,7 +4,7 @@ import { HydratedDocument } from 'mongoose';
 @Schema({ collection: 'users', timestamps: true, versionKey: false })
 export class User {
   @Prop({ required: true, unique: true })
-  imei: string; // Refers to Device ID
+  deviceToken: string;
 }
 
 export type UserDocument = HydratedDocument<User>;
