@@ -84,7 +84,7 @@ module.exports = {
     libraryTarget: 'commonjs',
   },
   module: {
-    rules: [{ test: /\.ts$/, loader: 'ts-loader' }],
+    rules: [{ test: /\.ts$/, loader: 'swc-loader' }],
   },
   stats: {
     warningsFilter: [
