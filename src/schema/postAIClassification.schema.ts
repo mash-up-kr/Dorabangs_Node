@@ -17,7 +17,7 @@ export class PostAIClassification {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true, type: KeywordSchema })
+  @Prop({ required: true, type: [KeywordSchema] })
   keywords: Keyword[];
 
   @Prop({ type: Date })
