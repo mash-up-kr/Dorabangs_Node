@@ -15,8 +15,8 @@ export class Post {
   @Prop({ required: true })
   title!: string;
 
-  @Prop({ required: true })
-  description!: string;
+  @Prop({ required: true, default: null })
+  description?: string | null;
 
   @Prop({ default: false })
   isFavorite: boolean;
