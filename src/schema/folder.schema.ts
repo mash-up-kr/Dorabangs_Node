@@ -4,8 +4,8 @@ import { FolderType } from '../types/folder-type.enum';
 
 @Schema({ collection: 'folders', timestamps: true, versionKey: false })
 export class Folder {
-  @Prop({ required: true })
-  userId: string;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  userId: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
   name: string;

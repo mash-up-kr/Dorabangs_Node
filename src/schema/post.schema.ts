@@ -3,8 +3,8 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ collection: 'posts', timestamps: true, versionKey: false })
 export class Post {
-  @Prop({ required: true })
-  userId: string;
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  userId: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Folder' })
   folderId: MongooseSchema.Types.ObjectId;
