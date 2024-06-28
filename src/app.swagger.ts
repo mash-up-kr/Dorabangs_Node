@@ -18,7 +18,11 @@ export function nestSwaggerConfig<
     .build();
 
   const document = SwaggerModule.createDocument(app, config.build());
+
   SwaggerModule.setup('docs', app, document, {
     explorer: true,
+    swaggerOptions: {
+      persistAuthorization: true, // https://github.com/scottie1984/swagger-ui-express/issues/44#issuecomment-974749930
+    },
   });
 }
