@@ -7,10 +7,6 @@ import { CreateUserDocs, UserControllerDocs } from './docs';
 @UserControllerDocs
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
-  @Get()
-  listUser() {
-    return this.userService.listUser();
-  }
 
   @Post()
   @CreateUserDocs

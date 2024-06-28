@@ -16,10 +16,6 @@ export class UsersService {
     private readonly config: ConfigService,
   ) {}
 
-  listUser() {
-    return this.userModel.find().exec();
-  }
-
   async createUser(dto: CreateUserDto) {
     const user = await this.userModel
       .findOneAndUpdate(
