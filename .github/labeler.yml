@@ -13,7 +13,6 @@ actions:
       - any-glob-to-any-file: '.github/**'
 document:
   - changed-files:
-      - any-glob-to-any-file: '**/*.md'
-      - all-globs-to-all-files: '!.github/**'
+      - any-glob-to-any-file: ['**/*.md', '!.github/**']
 release:
   - base-branch: 'main'
