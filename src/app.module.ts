@@ -13,7 +13,7 @@ import { UsersModule } from './modules/users/users.module';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
