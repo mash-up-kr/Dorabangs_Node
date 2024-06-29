@@ -6,7 +6,7 @@ export class CreatePostDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: '폴더 id', required: true })
-  folderId: Types.ObjectId;
+  folderId: string;
 
   @IsString()
   @IsNotEmpty()

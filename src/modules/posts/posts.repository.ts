@@ -11,7 +11,7 @@ export class PostsRepository {
 
   async createPost(
     userId: string,
-    folderId: Types.ObjectId,
+    folderId: string,
     url: string,
     title: string,
   ): Promise<boolean> {
