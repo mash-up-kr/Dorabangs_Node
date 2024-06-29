@@ -7,7 +7,7 @@ import * as cheerio from 'cheerio';
  *
  * Parse Content and Title
  */
-export async function parseURL(url: string): Promise<{
+export async function parseURLTitleAndContent(url: string): Promise<{
   title: string;
   content: string;
 }> {
