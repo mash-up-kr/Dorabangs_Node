@@ -1,4 +1,4 @@
-import { SummarizeURLContent } from '../types/types';
+import { SummarizeURLContent } from '@src/infrastructure/ai/types/types';
 
 export class SummarizeURLContentResponse {
   success: boolean;
