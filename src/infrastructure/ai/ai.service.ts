@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI, { RateLimitError, OpenAIError } from 'openai';
 import { summarizeURLContentFunctionFactory } from './functions';
-import { SummarizeURLContentResponse } from './response';
+import { SummarizeURLContentDto } from './dto';
 import { gptVersion, mockFolderLists } from './ai.constant';
 import { SummarizeURLContent } from './types/types';
 
@@ -20,7 +20,7 @@ export class AiService {
     content: string,
     userFolderList: string[],
     temperature = 0.5,
-  ): Promise<SummarizeURLContentResponse> {
+  ): Promise<SummarizeURLContentDto> {
     try {
       // 사용자 폴더 + 서버에서 임의로 붙여주는 폴더 리스트
       const folderLists = [...userFolderList, ...mockFolderLists];
@@ -65,13 +65,13 @@ export class AiService {
       const checkIsUserCategory = userFolderList.includes(
         summaryResult.category,
       );
-      return new SummarizeURLContentResponse({
+      return new SummarizeURLContentDto({
         success: true,
         isUserCategory: checkIsUserCategory,
         response: summaryResult,
       });
     } catch (err) {
-      return new SummarizeURLContentResponse({
+      return new SummarizeURLContentDto({
         success: false,
         message:
           err instanceof RateLimitError
