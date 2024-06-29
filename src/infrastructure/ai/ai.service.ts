@@ -20,7 +20,7 @@ export class AiService {
     content: string,
     userFolderList: string[],
     temperature = 0.5,
-  ) {
+  ): Promise<SummarizeURLContentResponse> {
     try {
       // 사용자 폴더 + 서버에서 임의로 붙여주는 폴더 리스트
       const folderLists = [...userFolderList, ...mockFolderLists];
@@ -75,10 +75,10 @@ export class AiService {
         success: false,
         message:
           err instanceof RateLimitError
-            ? '크레딧을 모두 사용했습니다. 노티 부탁드려요!'
+            ? '크레딧을 모두 소진하였습니다.'
             : err instanceof OpenAIError
               ? err.message
-              : '요약에 실패했습니다',
+              : '요약에 실패하였습니다.',
       });
     }
   }
