@@ -10,7 +10,7 @@ export class Folder {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true, enum: FolderType })
+  @Prop({ required: true, enum: FolderType, type: String })
   type: FolderType;
 }
 
