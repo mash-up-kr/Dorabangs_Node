@@ -4,9 +4,7 @@ import { PostsRepository } from '@src/modules/posts/posts.repository';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly postRepository: PostsRepository) {
-    this.postRepository = postRepository;
-  }
+  constructor(private readonly postRepository: PostsRepository) {}
   async createPost(
     createPostDto: CreatePostDto,
     userId: string,

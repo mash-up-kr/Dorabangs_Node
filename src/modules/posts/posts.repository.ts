@@ -5,9 +5,9 @@ import { Post } from '@src/infrastructure';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private readonly postModel: Model<Post>) {
-    this.postModel = postModel;
-  }
+  constructor(
+    @InjectModel(Post.name) private readonly postModel: Model<Post>,
+  ) {}
 
   async createPost(
     userId: string,

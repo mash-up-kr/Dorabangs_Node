@@ -11,9 +11,7 @@ import { CreatePostDocs } from '@src/modules/posts/docs/createPost.docs';
 @Controller('posts')
 @UseGuards(JwtGuard)
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {
-    this.postsService = postsService;
-  }
+  constructor(private readonly postsService: PostsService) {}
 
   @Post()
   @CreatePostDocs
