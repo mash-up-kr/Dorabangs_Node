@@ -3,7 +3,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWT_STRATEGY_TOKEN } from './strategy.token';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload, ReqUserPayload } from '@src/common/types/type';
 import { User } from '@src/infrastructure';
