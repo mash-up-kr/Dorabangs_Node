@@ -1,26 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
+import { MutateFolderDto } from './dto/mutate-folder.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class FoldersService {
-  create(createFolderDto: CreateFolderDto) {
-    return 'This action adds a new folder';
-  }
+  async create(userId: Types.ObjectId, createFolderDto: MutateFolderDto) {}
 
-  findAll() {
-    return `This action returns all folders`;
-  }
+  async findAll(userId: Types.ObjectId) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} folder`;
-  }
+  async findOne(userId: Types.ObjectId, folderId: string) {}
 
-  update(id: number, updateFolderDto: UpdateFolderDto) {
-    return `This action updates a #${id} folder`;
-  }
+  async update(
+    userId: Types.ObjectId,
+    folderId: string,
+    updateFolderDto: MutateFolderDto,
+  ) {}
 
-  remove(id: number) {
-    return `This action removes a #${id} folder`;
-  }
+  async remove(userID: Types.ObjectId, folderId: string) {}
 }

@@ -8,40 +8,65 @@ import {
   Delete,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
+import { MutateFolderDto } from './dto';
+import { GetUser } from '@src/common';
+import {
+  CreateFolderDocs,
+  DeleteFolderDocs,
+  FindAllFolderDocs,
+  FindLinksInFolderDocs,
+  FolderControllerDocs,
+  UpdateFolderDocs,
+} from './docs';
+import { Types } from 'mongoose';
 
+@FolderControllerDocs
 @Controller('folders')
 export class FoldersController {
   constructor(private readonly foldersService: FoldersService) {}
 
+  @CreateFolderDocs
   @Post()
-  create(@Body() createFolderDto: CreateFolderDto) {
-    return this.foldersService.create(createFolderDto);
+  async create(
+    @GetUser() userId: Types.ObjectId,
+    @Body() createFolderDto: MutateFolderDto,
+  ) {
+    const folder = await this.foldersService.create(userId, createFolderDto);
+
+    return folder;
   }
 
+  @FindAllFolderDocs
   @Get()
-  findAll() {
-    return this.foldersService.findAll();
+  async findAll(@GetUser() userId: Types.ObjectId) {
+    return this.foldersService.findAll(userId);
   }
 
-  @Get(':folderId')
-  findOne(@Param('id') id: string) {
-    return this.foldersService.findOne(+id);
-  }
-
+  @FindLinksInFolderDocs
   @Get(':folderId/posts')
-  findLinksInFolder(@Param('id') id: string) {
-    return this.foldersService.findOne(+id);
+  async findLinksInFolder(
+    @GetUser() userId: Types.ObjectId,
+    @Param('folderId') folderId: string,
+  ) {
+    return this.foldersService.findOne(userId, folderId);
   }
 
+  @UpdateFolderDocs
   @Patch(':folderId')
-  update(@Param('id') id: string, @Body() updateFolderDto: UpdateFolderDto) {
-    return this.foldersService.update(+id, updateFolderDto);
+  async update(
+    @GetUser() userId: Types.ObjectId,
+    @Param('folderId') folderId: string,
+    @Body() updateFolderDto: MutateFolderDto,
+  ) {
+    return this.foldersService.update(userId, folderId, updateFolderDto);
   }
 
+  @DeleteFolderDocs
   @Delete(':folderId')
-  remove(@Param('id') id: string) {
-    return this.foldersService.remove(+id);
+  async remove(
+    @GetUser() userId: Types.ObjectId,
+    @Param('folderId') folderId: string,
+  ) {
+    return this.foldersService.remove(userId, folderId);
   }
 }
