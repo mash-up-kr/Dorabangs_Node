@@ -28,11 +28,9 @@ export class PostsRepository {
     }
   }
 
-  async getPostCountByFolderIds(folderIds: string[]) {
-    const p = await this.postModel.find({ folderId: { $in: folderIds } });
-
+  async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
     const posts = await this.postModel
-      .aggregate([
+      .aggregate<{ _id: Types.ObjectId; count: number }>([
         {
           $match: {
             folderId: { $in: folderIds },
@@ -48,5 +46,20 @@ export class PostsRepository {
       .exec();
 
     return posts;
+  }
+
+  async getCount(folderId: string) {
+    const count = await this.postModel.countDocuments({ folderId });
+
+    return count;
+  }
+
+  async findByFolderId(folderId: string, offset: number, limit: number) {
+    const folders = await this.postModel
+      .find({ folderId })
+      .skip(offset)
+      .limit(limit);
+
+    return folders;
   }
 }

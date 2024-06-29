@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
+import { GetPostQueryDto } from './dto/find-in-folder.dto';
 
 @Injectable()
 export class PostsService {
@@ -18,5 +19,18 @@ export class PostsService {
       createPostDto.url,
       title,
     );
+  }
+
+  async findByFolderId(folderId: string, query: GetPostQueryDto) {
+    const offset = (query.page - 1) * query.pageCount;
+
+    const count = await this.postRepository.getCount(folderId);
+    const posts = await this.postRepository.findByFolderId(
+      folderId,
+      offset,
+      query.pageCount,
+    );
+
+    return { count, posts };
   }
 }

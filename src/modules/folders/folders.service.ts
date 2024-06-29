@@ -26,15 +26,15 @@ export class FoldersService {
 
   async findAll(userId: Types.ObjectId): Promise<FolderWithCount[]> {
     const folders = await this.folderRepository.findByUserId(userId.toString());
-    const folderIds = folders.map((folder) => folder._id.toString());
+    const folderIds = folders.map((folder) => folder._id);
 
     const posts = await this.postRepository.getPostCountByFolderIds(folderIds);
 
     const foldersWithCounts = folders.map((folder) => {
-      const postCount = posts.find((post) => post.fold.equals(folder._id));
+      const post = posts.find((post) => post._id.equals(folder._id));
       return {
         ...folder.toJSON(),
-        postCount: postCount ?? 0,
+        postCount: post?.count ?? 0,
       } satisfies FolderWithCount;
     });
 

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
 import { MutateFolderDto } from './dto';
@@ -21,14 +22,23 @@ import {
   UpdateFolderDocs,
 } from './docs';
 import { Types } from 'mongoose';
-import { FolderListResponse, FolderSummaryResponse } from './responses';
+import {
+  FolderListResponse,
+  FolderSummaryResponse,
+  PostListInFolderResponse,
+} from './responses';
 import { JwtGuard } from '../users/guards';
+import { PostsService } from '../posts/posts.service';
+import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
 
 @FolderControllerDocs
 @UseGuards(JwtGuard)
 @Controller('folders')
 export class FoldersController {
-  constructor(private readonly foldersService: FoldersService) {}
+  constructor(
+    private readonly foldersService: FoldersService,
+    private readonly postsService: PostsService,
+  ) {}
 
   @CreateFolderDocs
   @Post()
@@ -61,8 +71,11 @@ export class FoldersController {
   async findLinksInFolder(
     @GetUser() userId: Types.ObjectId,
     @Param('folderId') folderId: string,
+    @Query() query: GetPostQueryDto,
   ) {
-    return this.foldersService.findOne(userId, folderId);
+    const result = await this.postsService.findByFolderId(folderId, query);
+
+    return new PostListInFolderResponse(result.count, result.posts);
   }
 
   @UpdateFolderDocs
