@@ -1,40 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { CreateUserDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/common/types/type';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@src/infrastructure';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly userRepository: UsersRepository,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<string> {
-    const user = await this.userModel
-      .findOneAndUpdate(
-        {
-          deviceToken: dto.deviceToken,
-        },
-        {
-          $set: {
-            deviceToken: dto.deviceToken,
-          },
-        },
-        {
-          new: true,
-          upsert: true,
-        },
-      )
-      .lean();
+    // 새로운 user의 ID
+    const userId = await this.userRepository.createUser(dto.deviceToken);
+    // JWT Token Payload
     const tokenPayload: JwtPayload = {
-      id: user._id.toString(),
+      id: userId,
     };
+    // JWT Token 발급
     const token = await this.issueAccessToken(tokenPayload);
     return token;
   }

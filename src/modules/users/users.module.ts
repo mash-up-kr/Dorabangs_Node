@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './guards/strategy';
 import { User, UserSchema } from '@src/infrastructure';
+import { UsersRepository } from './users.repository';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { User, UserSchema } from '@src/infrastructure';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, JwtStrategy],
+  providers: [UsersService, UsersRepository, JwtStrategy],
 })
 export class UsersModule {}
