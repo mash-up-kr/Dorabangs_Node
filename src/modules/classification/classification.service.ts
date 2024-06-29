@@ -42,7 +42,6 @@ export class ClassificationService {
       .find({ _id: { $in: uniqueFolderIds } })
       .exec();
 
-    // return matchedFolders;
     return matchedFolders.map((folder) => new AIFolderNameServiceDto(folder));
   }
 
