@@ -22,13 +22,13 @@ export class PostsService {
   }
 
   async findByFolderId(folderId: string, query: GetPostQueryDto) {
-    const offset = (query.page - 1) * query.pageCount;
+    const offset = (query.page - 1) * query.limit;
 
     const count = await this.postRepository.getCount(folderId);
     const posts = await this.postRepository.findByFolderId(
       folderId,
       offset,
-      query.pageCount,
+      query.limit,
     );
 
     return { count, posts };

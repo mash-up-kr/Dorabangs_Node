@@ -76,7 +76,12 @@ export class FoldersController {
   ) {
     const result = await this.postsService.findByFolderId(folderId, query);
 
-    return new PostListInFolderResponse(result.count, result.posts);
+    return new PostListInFolderResponse(
+      query.page,
+      query.limit,
+      result.count,
+      result.posts,
+    );
   }
 
   @UpdateFolderDocs
