@@ -16,7 +16,7 @@ export const CreateFolderDocs = applyDecorators(
   }),
 );
 
-export const FindAllFolderDocs = applyDecorators(
+export const FindAFolderListDocs = applyDecorators(
   ApiOperation({
     summary: '내 폴더 목록 조회',
     description:
@@ -24,6 +24,16 @@ export const FindAllFolderDocs = applyDecorators(
   }),
   ApiResponse({
     type: FolderListResponse,
+  }),
+);
+
+export const FindFolderDocs = applyDecorators(
+  ApiOperation({
+    summary: '폴더 단일 조회',
+    description: '',
+  }),
+  ApiResponse({
+    type: FolderResponse,
   }),
 );
 
