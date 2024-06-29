@@ -12,7 +12,7 @@ export class FoldersService {
     private readonly postRepository: PostsRepository,
   ) {}
 
-  async create(userId: Types.ObjectId, createFolderDto: MutateFolderDto) {
+  async create(userId: string, createFolderDto: MutateFolderDto) {
     const folder = await this.folderRepository.create(
       userId.toString(),
       createFolderDto.name,
@@ -21,7 +21,7 @@ export class FoldersService {
     return folder;
   }
 
-  async findAll(userId: Types.ObjectId): Promise<FolderWithCount[]> {
+  async findAll(userId: string): Promise<FolderWithCount[]> {
     const folders = await this.folderRepository.findByUserId(userId.toString());
     const folderIds = folders.map((folder) => folder._id);
 
@@ -38,7 +38,7 @@ export class FoldersService {
     return foldersWithCounts;
   }
 
-  async findOne(userId: Types.ObjectId, folderId: string) {
+  async findOne(userId: string, folderId: string) {
     const folder = await this.folderRepository.findOneOrFail({
       _id: folderId,
       userId,
@@ -48,7 +48,7 @@ export class FoldersService {
   }
 
   async update(
-    userId: Types.ObjectId,
+    userId: string,
     folderId: string,
     updateFolderDto: MutateFolderDto,
   ) {
@@ -61,7 +61,7 @@ export class FoldersService {
     await folder.save();
   }
 
-  async remove(userId: Types.ObjectId, folderId: string) {
+  async remove(userId: string, folderId: string) {
     const folder = await this.folderRepository.findOneOrFail({
       userId,
       _id: folderId,

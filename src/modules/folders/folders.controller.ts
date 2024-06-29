@@ -43,16 +43,15 @@ export class FoldersController {
   @CreateFolderDocs
   @Post()
   async create(
-    @GetUser('id') userId: Types.ObjectId,
+    @GetUser('id') userId: string,
     @Body() createFolderDto: MutateFolderDto,
   ) {
     await this.foldersService.create(userId, createFolderDto);
-    return true;
   }
 
   @FindAFolderListDocs
   @Get()
-  async findAll(@GetUser() userId: Types.ObjectId) {
+  async findAll(@GetUser() userId: string) {
     const folders = await this.foldersService.findAll(userId);
     return new FolderListResponse(folders);
   }
@@ -60,7 +59,7 @@ export class FoldersController {
   @FindFolderDocs
   @Get(':folderId')
   async findOne(
-    @GetUser() userId: Types.ObjectId,
+    @GetUser() userId: string,
     @Param('folderId') folderId: string,
   ) {
     const folder = await this.foldersService.findOne(userId, folderId);
@@ -70,7 +69,7 @@ export class FoldersController {
   @FindLinksInFolderDocs
   @Get(':folderId/posts')
   async findLinksInFolder(
-    @GetUser() userId: Types.ObjectId,
+    @GetUser() userId: string,
     @Param('folderId') folderId: string,
     @Query() query: GetPostQueryDto,
   ) {
@@ -91,7 +90,7 @@ export class FoldersController {
   @UpdateFolderDocs
   @Patch(':folderId')
   async update(
-    @GetUser() userId: Types.ObjectId,
+    @GetUser() userId: string,
     @Param('folderId') folderId: string,
     @Body() updateFolderDto: MutateFolderDto,
   ) {
@@ -100,10 +99,7 @@ export class FoldersController {
 
   @DeleteFolderDocs
   @Delete(':folderId')
-  async remove(
-    @GetUser() userId: Types.ObjectId,
-    @Param('folderId') folderId: string,
-  ) {
+  async remove(@GetUser() userId: string, @Param('folderId') folderId: string) {
     await this.foldersService.remove(userId, folderId);
   }
 }

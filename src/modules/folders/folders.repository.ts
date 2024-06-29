@@ -12,7 +12,7 @@ import { FolderType } from '@src/infrastructure/database/types/folder-type.enum'
 export class FolderRepository {
   constructor(
     @InjectModel(Folder.name)
-    private readonly folderModel: Model<FolderDocument>,
+    private readonly folderModel: Model<Folder>,
   ) {}
 
   async create(userId: string, name: string, type = FolderType.CUSTOM) {
