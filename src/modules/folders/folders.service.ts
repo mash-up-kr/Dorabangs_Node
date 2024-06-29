@@ -39,7 +39,7 @@ export class FoldersService {
   }
 
   async findOne(userId: Types.ObjectId, folderId: string) {
-    const folder = await this.folderRepository.findOne({
+    const folder = await this.folderRepository.findOneOrFail({
       _id: folderId,
       userId,
     });
@@ -52,26 +52,20 @@ export class FoldersService {
     folderId: string,
     updateFolderDto: MutateFolderDto,
   ) {
-    const folder = await this.folderRepository.findOne({
+    const folder = await this.folderRepository.findOneOrFail({
       _id: folderId,
       userId,
     });
-    if (!folder) {
-      throw new NotFoundException('folder not found');
-    }
 
     folder.name = updateFolderDto.name;
     await folder.save();
   }
 
   async remove(userId: Types.ObjectId, folderId: string) {
-    const folder = await this.folderRepository.findOne({
+    const folder = await this.folderRepository.findOneOrFail({
       userId,
       _id: folderId,
     });
-    if (!folder) {
-      throw new NotFoundException('folder not found');
-    }
 
     await folder.deleteOne().exec();
   }

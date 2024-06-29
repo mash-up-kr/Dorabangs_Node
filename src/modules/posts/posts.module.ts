@@ -5,6 +5,7 @@ import { PostsRepository } from '@src/modules/posts/posts.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Post, PostSchema } from '@src/infrastructure';
 import { UsersModule } from '@src/modules/users/users.module';
+import { FolderRepository } from '../folders/folders.repository';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { UsersModule } from '@src/modules/users/users.module';
     UsersModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsRepository],
+  providers: [PostsService, PostsRepository, FolderRepository],
 })
 export class PostsModule {}

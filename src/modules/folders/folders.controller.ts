@@ -74,7 +74,11 @@ export class FoldersController {
     @Param('folderId') folderId: string,
     @Query() query: GetPostQueryDto,
   ) {
-    const result = await this.postsService.findByFolderId(folderId, query);
+    const result = await this.postsService.findByFolderId(
+      userId,
+      folderId,
+      query,
+    );
 
     return new PostListInFolderResponse(
       query.page,
