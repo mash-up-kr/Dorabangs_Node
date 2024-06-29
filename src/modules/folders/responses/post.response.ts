@@ -30,8 +30,8 @@ export class PostResponse {
   @ApiProperty()
   title: string;
 
-  @ApiProperty()
-  description: string | null;
+  @ApiProperty({ nullable: true })
+  description: string;
 
   @ApiProperty()
   isFavorite: string;
