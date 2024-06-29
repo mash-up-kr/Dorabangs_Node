@@ -26,6 +26,10 @@ export class PostsService {
     );
   }
 
+  /**
+   * @todo
+   * post 조회하는 플로우까지 개발되면 읽지 않음 여부 필터 적용하기
+   */
   async findByFolderId(
     userId: string,
     folderId: string,

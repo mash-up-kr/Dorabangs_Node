@@ -21,7 +21,6 @@ import {
   FolderControllerDocs,
   UpdateFolderDocs,
 } from './docs';
-import { Types } from 'mongoose';
 import {
   FolderListResponse,
   FolderSummaryResponse,
