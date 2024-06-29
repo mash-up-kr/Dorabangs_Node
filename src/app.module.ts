@@ -9,6 +9,7 @@ import { DatabaseModule } from '@src/infrastructure';
 import { UsersModule } from './modules/users/users.module';
 import { FoldersModule } from './modules/folders/folders.module';
 import { LinksModule } from './modules/links/links.module';
+import { PostsModule } from './modules/posts/posts.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { LinksModule } from './modules/links/links.module';
     UsersModule,
     FoldersModule,
     LinksModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

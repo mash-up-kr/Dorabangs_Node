@@ -17,13 +17,12 @@ export type ICommonErrorResponse = {
 export type ICommonSuccessResponse = {
   success: false;
   error: ExceptionPayload;
-}
-
+};
 
 export type JwtPayload = {
   id: string;
 };
 
 export type ReqUserPayload = {
-  id: Types.ObjectId;
+  id: string;
 };
