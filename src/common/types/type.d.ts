@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 // Exception Payload
 export type ExceptionPayload = {
   code?: string;
@@ -16,4 +17,13 @@ export type ICommonErrorResponse = {
 export type ICommonSuccessResponse = {
   success: false;
   error: ExceptionPayload;
+}
+
+
+export type JwtPayload = {
+  id: string;
+};
+
+export type ReqUserPayload = {
+  id: Types.ObjectId;
 };
