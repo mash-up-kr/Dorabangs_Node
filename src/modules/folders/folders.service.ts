@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { FolderWithCount } from './dto/folder-with-count.dto';
 import { FolderRepository } from './folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 
 @Injectable()
 export class FoldersService {
@@ -16,6 +17,7 @@ export class FoldersService {
     const folder = await this.folderRepository.create(
       userId,
       createFolderDto.name,
+      FolderType.CUSTOM,
     );
 
     return folder;

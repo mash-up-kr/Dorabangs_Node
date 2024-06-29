@@ -15,11 +15,7 @@ export class FolderRepository {
     private readonly folderModel: Model<Folder>,
   ) {}
 
-  async create(
-    userId: string,
-    name: string,
-    type: FolderType = FolderType.CUSTOM,
-  ) {
+  async create(userId: string, name: string, type: FolderType) {
     const folder = await this.folderModel.create({
       userId,
       name,
