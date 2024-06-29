@@ -50,9 +50,15 @@ export class ClassificationService {
       .find({ folderId })
       .populate<{
         aiClassificationId: PostAIClassification;
-      }>('aiClassificationId')
+      }>({
+        path: 'aiClassificationId',
+        match: { deletedAt: null }, // deletedAt이 null인 것만 필터링
+      })
       .sort({ createdAt: -1 })
       .exec();
-    return posts.map((post) => new AIPostServiceDto(post));
+
+    return posts
+      .filter((post) => post.aiClassificationId)
+      .map((post) => new AIPostServiceDto(post));
   }
 }

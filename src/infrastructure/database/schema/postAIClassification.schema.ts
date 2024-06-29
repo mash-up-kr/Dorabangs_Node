@@ -27,7 +27,7 @@ export class PostAIClassification extends BaseDocument {
   @Prop({ type: Date })
   completedAt: Date;
 
-  @Prop({ type: Date })
+  @Prop({ default: null })
   deletedAt: Date;
 }
 
