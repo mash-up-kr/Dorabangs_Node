@@ -4,9 +4,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   Folder,
   FolderSchema,
+  Post,
   PostAIClassification,
   PostAIClassificationSchema,
+  PostSchema,
 } from '@src/infrastructure/database/schema';
+
 import { ClassificationController } from './classification.controller';
 
 @Module({
@@ -14,6 +17,7 @@ import { ClassificationController } from './classification.controller';
     MongooseModule.forFeature([
       { name: Folder.name, schema: FolderSchema },
       { name: PostAIClassification.name, schema: PostAIClassificationSchema },
+      { name: Post.name, schema: PostSchema },
     ]),
   ],
   controllers: [ClassificationController],

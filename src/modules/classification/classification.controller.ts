@@ -1,13 +1,16 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Param } from '@nestjs/common';
 import { ClassificationService } from './classification.service';
 import { GetUser } from '@src/common';
-import { ClassificationControllerDocs, GetAIFolderNameListDocs } from './docs';
-import { JwtGuard } from '../users/guards';
 import {
-  GetAIFolderNameListItem,
-  GetAIFolderNameListResponse,
-} from './dto/getAIFolderNameLIst.dto';
+  ClassificationControllerDocs,
+  GetAIFolderNameListDocs,
+  GetAIPostListDocs,
+} from './docs';
+import { JwtGuard } from '../users/guards';
+
 import { Types } from 'mongoose';
+import { AIPostListResponse } from './dto/getAIPostList.dto';
+import { AIFolderNameListResponse } from './dto/getAIFolderNameLIst.dto';
 
 @Controller('ai')
 @UseGuards(JwtGuard)
@@ -18,25 +21,17 @@ export class ClassificationController {
   @Get('/suggestions') //TODO : 정렬
   @GetAIFolderNameListDocs
   async getSuggestedFolderNameList(@GetUser('id') userId: Types.ObjectId) {
-    const folders = await this.classificationService.getFolderNameList(userId);
+    const folderNames =
+      await this.classificationService.getFolderNameList(userId);
 
-    const folderNameList = folders.map(
-      (folder) =>
-        new GetAIFolderNameListItem({
-          id: folder._id.toString(),
-          name: folder.name,
-        }),
-    );
-
-    const response = new GetAIFolderNameListResponse({
-      list: folderNameList,
-    });
-
-    return response;
+    return new AIFolderNameListResponse(folderNames);
   }
+
   @Get('/suggestions/:folderId')
-  @GetAIFolderNameListDocs
-  async getSuggestedPostList(@GetUser('id') userId: Types.ObjectId) {
-    //await this.classificationService.return;
+  @GetAIPostListDocs
+  async getSuggestedPostList(@Param('folderId') folderId: string) {
+    const posts = await this.classificationService.getPostList(folderId);
+
+    return new AIPostListResponse(posts);
   }
 }

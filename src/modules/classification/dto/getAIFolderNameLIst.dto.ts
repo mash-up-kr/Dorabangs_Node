@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { FolderDocument } from '@src/infrastructure';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class GetAIFolderNameListItem {
+export class AIFolderNameServiceDto {
   @ApiProperty({ description: '폴더 id' })
   @IsNotEmpty()
   @IsString()
@@ -12,19 +13,19 @@ export class GetAIFolderNameListItem {
   @IsString()
   name: string;
 
-  constructor(data: GetAIFolderNameListItem) {
-    Object.assign(this, data);
+  constructor(data: FolderDocument) {
+    (this.id = data._id.toString()), (this.name = data.name);
   }
 }
 
-export class GetAIFolderNameListResponse {
+export class AIFolderNameListResponse {
   @ApiProperty({
-    type: GetAIFolderNameListItem,
+    type: AIFolderNameServiceDto,
     isArray: true,
   })
-  list: GetAIFolderNameListItem[];
+  list: AIFolderNameServiceDto[];
 
-  constructor(data: GetAIFolderNameListResponse) {
-    Object.assign(this, data);
+  constructor(data: AIFolderNameServiceDto[]) {
+    this.list = data;
   }
 }

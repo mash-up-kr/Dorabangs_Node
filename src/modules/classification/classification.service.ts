@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import {
   Folder,
   FolderDocument,
+  Post,
   PostAIClassification,
 } from '@src/infrastructure/database/schema';
+
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { AIFolderNameServiceDto } from './dto/getAIFolderNameLIst.dto';
+import { AIPostServiceDto } from './dto/getAIPostList.dto';
 
 @Injectable()
 export class ClassificationService {
@@ -13,9 +17,12 @@ export class ClassificationService {
     @InjectModel(Folder.name) private folderModel: Model<Folder>,
     @InjectModel(PostAIClassification.name)
     private postAiClassificationModel: Model<PostAIClassification>,
+    @InjectModel(Post.name) private postModel: Model<Post>,
   ) {}
 
-  async getFolderNameList(userId: Types.ObjectId): Promise<FolderDocument[]> {
+  async getFolderNameList(
+    userId: Types.ObjectId,
+  ): Promise<AIFolderNameServiceDto[]> {
     const folders = await this.folderModel.find({ userId }).exec();
     const folderIds = folders.map((folder) => folder._id);
 
@@ -35,6 +42,18 @@ export class ClassificationService {
       .find({ _id: { $in: uniqueFolderIds } })
       .exec();
 
-    return matchedFolders;
+    // return matchedFolders;
+    return matchedFolders.map((folder) => new AIFolderNameServiceDto(folder));
+  }
+
+  async getPostList(folderId: string): Promise<AIPostServiceDto[]> {
+    const posts = await this.postModel
+      .find({ folderId })
+      .populate<{
+        aiClassificationId: PostAIClassification;
+      }>('aiClassificationId')
+      .sort({ createdAt: -1 })
+      .exec();
+    return posts.map((post) => new AIPostServiceDto(post));
   }
 }
