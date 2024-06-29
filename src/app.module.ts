@@ -7,6 +7,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
+import { FoldersModule } from './modules/folders/folders.module';
+import { LinksModule } from './modules/links/links.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { UsersModule } from './modules/users/users.module';
       },
     }),
     UsersModule,
+    FoldersModule,
+    LinksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
