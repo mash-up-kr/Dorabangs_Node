@@ -3,13 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import OpenAI, { RateLimitError, OpenAIError } from 'openai';
 import { summarizeURLContentFunctionFactory } from './functions';
 import { SummarizeURLContentResponse } from './response';
+import { gptVersion, mockFolderLists } from './ai.constant';
+import { SummarizeURLContent } from './types/types';
 
 @Injectable()
 export class AiService {
   private openai: OpenAI;
-  private gptVersion = 'gpt-3.5-turbo-1106';
-  // 서버에서 붙여주는 임의의 카테고리 리스트
-  private mockFolderLists = [];
 
   constructor(private readonly config: ConfigService) {
     this.openai = new OpenAI({
@@ -23,9 +22,11 @@ export class AiService {
     temperature = 0.5,
   ) {
     try {
+      // 사용자 폴더 + 서버에서 임의로 붙여주는 폴더 리스트
+      const folderLists = [...userFolderList, ...mockFolderLists];
       const promptResult = await this.openai.chat.completions.create(
         {
-          model: this.gptVersion,
+          model: gptVersion,
           messages: [
             {
               role: 'system',
@@ -42,7 +43,7 @@ export class AiService {
           tools: [
             {
               type: 'function',
-              function: summarizeURLContentFunctionFactory(userFolderList),
+              function: summarizeURLContentFunctionFactory(folderLists),
             },
           ],
           tool_choice: {
@@ -56,15 +57,18 @@ export class AiService {
         },
       );
 
-      const tokenUsageData = promptResult.usage;
-      const functionCall = JSON.parse(
+      // Function Call 결과
+      const summaryResult: SummarizeURLContent = JSON.parse(
         promptResult.choices[0].message.tool_calls[0].function.arguments,
+      );
+      // 분류된 카테고리가 사용자 카테고리 범위에 속해있는지에 대해 검사
+      const checkIsUserCategory = userFolderList.includes(
+        summaryResult.category,
       );
       return new SummarizeURLContentResponse({
         success: true,
-        inputToken: tokenUsageData.prompt_tokens,
-        outputToken: tokenUsageData.completion_tokens,
-        response: functionCall,
+        isUserCategory: checkIsUserCategory,
+        response: summaryResult,
       });
     } catch (err) {
       return new SummarizeURLContentResponse({

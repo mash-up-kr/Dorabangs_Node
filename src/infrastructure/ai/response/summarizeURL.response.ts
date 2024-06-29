@@ -2,8 +2,7 @@ import { SummarizeURLContent } from '@src/infrastructure/ai/types/types';
 
 export class SummarizeURLContentResponse {
   success: boolean;
-  inputToken?: number;
-  outputToken?: number;
+  isUserCategory?: boolean;
   response?: SummarizeURLContent;
   message?: string;
 

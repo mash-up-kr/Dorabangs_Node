@@ -6,5 +6,5 @@ export enum OpenAIPlatform {
 export type SummarizeURLContent = {
   summary: string;
   keywords: string[];
-  category: string[];
+  category: string;
 };
