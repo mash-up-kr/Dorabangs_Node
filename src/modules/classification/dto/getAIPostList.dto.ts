@@ -22,6 +22,11 @@ type InputType = Document<
     _id: Types.ObjectId;
   };
 export class AIPostServiceDto {
+  @ApiProperty({ description: 'Id' })
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
   @ApiProperty({ description: 'Title' })
   @IsNotEmpty()
   @IsString()
@@ -46,6 +51,7 @@ export class AIPostServiceDto {
   createdAt: Date;
 
   constructor(data: InputType) {
+    this.id = data.id;
     this.title = data.title;
     this.url = data.url;
     this.description = data.description;
