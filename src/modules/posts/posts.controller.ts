@@ -19,7 +19,7 @@ export class PostsController {
   @CreatePostDocs
   async createPost(
     @Body() createPostDto: CreatePostDto,
-    @GetUser('id') userId: Types.ObjectId,
+    @GetUser('id') userId: string,
   ): Promise<boolean> {
     return await this.postsService.createPost(createPostDto, userId);
   }

@@ -10,7 +10,7 @@ export class PostsRepository {
   }
 
   async createPost(
-    userId: Types.ObjectId,
+    userId: string,
     folderId: Types.ObjectId,
     url: string,
     title: string,

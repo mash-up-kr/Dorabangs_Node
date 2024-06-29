@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
-import { Types } from 'mongoose';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class PostsService {
   }
   async createPost(
     createPostDto: CreatePostDto,
-    userId: Types.ObjectId,
+    userId: string,
   ): Promise<boolean> {
     // TODO get title from url
     const title: string = 'temp title';
