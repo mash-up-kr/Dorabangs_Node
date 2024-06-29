@@ -22,7 +22,7 @@ jobs:
       - name: pnpm settings
         uses: pnpm/action-setup@v4
         with:
-          run_install: false
+          run_install: true
       - name: Install dependencies
         run: pnpm install
       - name: Check Application Build
