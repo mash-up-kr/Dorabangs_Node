@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { CommonResponseInterceptor, RootExceptionFilter } from './common';
 
 export async function nestAppConfig<
@@ -43,12 +41,12 @@ function configFilterStandAlone<T extends INestApplication = INestApplication>(
 function configExceptionFilterWithSentry<
   T extends INestApplication = INestApplication,
 >(app: T) {
-  const config = app.get<ConfigService>(ConfigService);
-  Sentry.init({
-    dsn: config.get<string>('SENTRY_DSN'),
-    integrations: [nodeProfilingIntegration()],
-    tracesSampleRate: 1.0,
-    profilesSampleRate: 1.0,
-  });
-  Sentry.setupNestErrorHandler(app, new RootExceptionFilter());
+  // const config = app.get<ConfigService>(ConfigService);
+  // Sentry.init({
+  //   dsn: config.get<string>('SENTRY_DSN'),
+  //   integrations: [nodeProfilingIntegration()],
+  //   tracesSampleRate: 1.0,
+  //   profilesSampleRate: 1.0,
+  // });
+  // Sentry.setupNestErrorHandler(app, new RootExceptionFilter());
 }
