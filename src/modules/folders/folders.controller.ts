@@ -13,7 +13,8 @@ import { GetUser } from '@src/common';
 import {
   CreateFolderDocs,
   DeleteFolderDocs,
-  FindAllFolderDocs,
+  FindAFolderListDocs,
+  FindFolderDocs,
   FindLinksInFolderDocs,
   FolderControllerDocs,
   UpdateFolderDocs,
@@ -36,10 +37,19 @@ export class FoldersController {
     return folder;
   }
 
-  @FindAllFolderDocs
+  @FindAFolderListDocs
   @Get()
   async findAll(@GetUser() userId: Types.ObjectId) {
-    return this.foldersService.findAll(userId);
+    return await this.foldersService.findAll(userId);
+  }
+
+  @FindFolderDocs
+  @Get(':folderId')
+  async findOne(
+    @GetUser() userId: Types.ObjectId,
+    @Param('folderId') folderId: string,
+  ) {
+    return this.foldersService.findOne(userId, folderId);
   }
 
   @FindLinksInFolderDocs
