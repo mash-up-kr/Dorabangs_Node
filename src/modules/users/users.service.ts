@@ -6,7 +6,6 @@ import { CreateUserDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/common/types/type';
 import { ConfigService } from '@nestjs/config';
-import { CreateUserResponse } from './response';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +15,7 @@ export class UsersService {
     private readonly config: ConfigService,
   ) {}
 
-  async createUser(dto: CreateUserDto) {
+  async createUser(dto: CreateUserDto): Promise<string> {
     const user = await this.userModel
       .findOneAndUpdate(
         {
@@ -37,9 +36,7 @@ export class UsersService {
       id: user._id.toString(),
     };
     const token = await this.issueAccessToken(tokenPayload);
-    return new CreateUserResponse({
-      accessToken: token,
-    });
+    return token;
   }
 
   private async issueAccessToken(payload: JwtPayload) {
