@@ -9,7 +9,7 @@ export class UsersRepository {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async createUser(deviceToken: string): Promise<string> {
+  async findOrCreateUser(deviceToken: string): Promise<string> {
     const user = await this.userModel
       .findOneAndUpdate(
         {
