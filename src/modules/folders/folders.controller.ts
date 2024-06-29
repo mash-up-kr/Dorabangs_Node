@@ -36,15 +36,15 @@ export class FoldersController {
     @GetUser('id') userId: Types.ObjectId,
     @Body() createFolderDto: MutateFolderDto,
   ) {
-    const folder = await this.foldersService.create(userId, createFolderDto);
-
-    return new FolderSummaryResponse(folder);
+    await this.foldersService.create(userId, createFolderDto);
+    return true;
   }
 
   @FindAFolderListDocs
   @Get()
   async findAll(@GetUser() userId: Types.ObjectId) {
-    return await this.foldersService.findAll(userId);
+    const folders = await this.foldersService.findAll(userId);
+    return folders;
   }
 
   @FindFolderDocs
