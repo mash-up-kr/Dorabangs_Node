@@ -1,9 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { MutateFolderDto } from './dto/mutate-folder.dto';
-import { Model, Types } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { Folder, Post } from '@src/infrastructure';
-import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { Types } from 'mongoose';
 import { FolderWithCount } from './dto/folder-with-count.dto';
 import { FolderRepository } from './folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
@@ -41,13 +38,41 @@ export class FoldersService {
     return foldersWithCounts;
   }
 
-  async findOne(userId: Types.ObjectId, folderId: string) {}
+  async findOne(userId: Types.ObjectId, folderId: string) {
+    const folder = await this.folderRepository.findOne({
+      _id: folderId,
+      userId,
+    });
+
+    return folder;
+  }
 
   async update(
     userId: Types.ObjectId,
     folderId: string,
     updateFolderDto: MutateFolderDto,
-  ) {}
+  ) {
+    const folder = await this.folderRepository.findOne({
+      _id: folderId,
+      userId,
+    });
+    if (!folder) {
+      throw new NotFoundException('folder not found');
+    }
 
-  async remove(userID: Types.ObjectId, folderId: string) {}
+    folder.name = updateFolderDto.name;
+    await folder.save();
+  }
+
+  async remove(userId: Types.ObjectId, folderId: string) {
+    const folder = await this.folderRepository.findOne({
+      userId,
+      _id: folderId,
+    });
+    if (!folder) {
+      throw new NotFoundException('folder not found');
+    }
+
+    await folder.deleteOne().exec();
+  }
 }

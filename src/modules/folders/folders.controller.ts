@@ -63,7 +63,8 @@ export class FoldersController {
     @GetUser() userId: Types.ObjectId,
     @Param('folderId') folderId: string,
   ) {
-    return this.foldersService.findOne(userId, folderId);
+    const folder = await this.foldersService.findOne(userId, folderId);
+    return new FolderSummaryResponse(folder);
   }
 
   @FindLinksInFolderDocs
@@ -85,7 +86,7 @@ export class FoldersController {
     @Param('folderId') folderId: string,
     @Body() updateFolderDto: MutateFolderDto,
   ) {
-    return this.foldersService.update(userId, folderId, updateFolderDto);
+    await this.foldersService.update(userId, folderId, updateFolderDto);
   }
 
   @DeleteFolderDocs
@@ -94,6 +95,6 @@ export class FoldersController {
     @GetUser() userId: Types.ObjectId,
     @Param('folderId') folderId: string,
   ) {
-    return this.foldersService.remove(userId, folderId);
+    await this.foldersService.remove(userId, folderId);
   }
 }
