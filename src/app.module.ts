@@ -12,7 +12,7 @@ import { DatabaseModule } from './infrastructure';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
     DatabaseModule,
   ],
