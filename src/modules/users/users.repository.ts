@@ -9,24 +9,18 @@ export class UsersRepository {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async findOrCreateUser(deviceToken: string): Promise<string> {
+  async findOrCreate(deviceToken: string) {
     const user = await this.userModel
-      .findOneAndUpdate(
-        {
-          deviceToken: deviceToken,
-        },
-        {
-          $set: {
-            deviceToken: deviceToken,
-          },
-        },
-        {
-          new: true,
-          upsert: true,
-        },
-      )
+      .findOne({
+        deviceToken: deviceToken,
+      })
       .lean();
-    const userId = user._id.toString();
-    return userId;
+    if (user) {
+      return user;
+    }
+    const newUser = await this.userModel.create({
+      deviceToken: deviceToken,
+    });
+    return newUser;
   }
 }

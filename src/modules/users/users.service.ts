@@ -13,10 +13,10 @@ export class UsersService {
 
   async createUser(dto: CreateUserDto): Promise<string> {
     // 새로운 user의 ID
-    const userId = await this.userRepository.findOrCreateUser(dto.deviceToken);
+    const user = await this.userRepository.findOrCreate(dto.deviceToken);
     // JWT Token Payload
     const tokenPayload: JwtPayload = {
-      id: userId,
+      id: user._id.toString(),
     };
     // JWT Token 발급
     const token = await this.authService.issueAccessToken(tokenPayload);
