@@ -62,7 +62,6 @@ export class RootExceptionFilter implements ExceptionFilter {
     captureException(targetException);
     const exceptionResponse: ICommonResponse = {
       success: false,
-      data: null,
       error: responseErrorPayload,
     };
 

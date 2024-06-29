@@ -11,7 +11,6 @@ export class CommonResponseInterceptor implements NestInterceptor {
       map((payload = {}): ICommonResponse => {
         return {
           success: true,
-          error: null,
           data: payload,
         };
       }),

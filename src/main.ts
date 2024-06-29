@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 
 // Custom Packages
 import { AppModule } from './app.module';
-import { nestAppConfig } from './app.config';
+import { nestAppConfig, nestResponseConfig } from './app.config';
 import { nestSwaggerConfig } from './app.swagger';
 
 async function bootstrap() {
@@ -13,6 +13,8 @@ async function bootstrap() {
   nestAppConfig(app);
   // Config application Swagger
   nestSwaggerConfig(app);
+  // Config Response Type
+  nestResponseConfig(app, false);
 
   await app.listen(3000);
 }

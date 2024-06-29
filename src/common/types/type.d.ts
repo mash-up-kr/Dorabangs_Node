@@ -4,9 +4,16 @@ export type ExceptionPayload = {
   message: string | object;
 };
 
-// Common Response
-export interface ICommonResponse {
-  success: boolean;
+export type ICommonResponse = ICommonErrorResponse | ICommonSuccessResponse;
+
+// Error Response
+export type ICommonErrorResponse = {
+  success: true;
   data: any;
+};
+
+// Success Response
+export type ICommonSuccessResponse = {
+  success: false;
   error: ExceptionPayload;
-}
+};

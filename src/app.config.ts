@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
-import { RootExceptionFilter } from './common';
+import { CommonResponseInterceptor, RootExceptionFilter } from './common';
 
 export async function nestAppConfig<
   T extends INestApplication = INestApplication,
@@ -20,14 +20,13 @@ export async function nestAppConfig<
       transform: true,
     }),
   );
-
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 }
 
-export function nestFilterConfig<T extends INestApplication = INestApplication>(
-  app: T,
-  connectSentry = false,
-) {
+export function nestResponseConfig<
+  T extends INestApplication = INestApplication,
+>(app: T, connectSentry = false) {
+  app.useGlobalInterceptors(new CommonResponseInterceptor());
   connectSentry
     ? configExceptionFilterWithSentry(app)
     : configFilterStandAlone(app);
