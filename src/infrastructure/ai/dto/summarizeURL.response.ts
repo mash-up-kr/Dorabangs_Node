@@ -21,12 +21,11 @@ export class SummarizeURLContentDto {
 
   constructor(data: SummarizeResultType) {
     // true를 명시하지 않으면 Discriminate Union이 동작 안함
+    this.success = data.success;
     if (data.success === true) {
-      this.success = data.success;
       this.isUserCategory = data.isUserCategory;
       this.response = data.response;
     } else {
-      this.success = data.success;
       this.message = data.message;
     }
   }
