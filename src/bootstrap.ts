@@ -3,7 +3,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
 import { AppModule } from './app.module';
 import { nestSwaggerConfig } from './app.swagger';
-import { nestAppConfig } from './app.config';
+import { nestAppConfig, nestResponseConfig } from './app.config';
 
 export async function bootstrap() {
   const expressInstance: express.Express = express();
@@ -17,6 +17,8 @@ export async function bootstrap() {
   nestAppConfig(app);
   // Config application Swagger
   nestSwaggerConfig(app);
+  // Config Response
+  nestResponseConfig(app, false);
 
   return { app, expressInstance };
 }
