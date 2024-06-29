@@ -2,18 +2,17 @@ import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './guards/strategy';
 import { User, UserSchema } from '@src/infrastructure';
+import { UsersRepository } from './users.repository';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    JwtModule.register({
-      global: true,
-    }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, JwtStrategy],
+  providers: [UsersService, UsersRepository, JwtStrategy],
 })
 export class UsersModule {}
