@@ -16,7 +16,7 @@ export class AiService {
     });
   }
 
-  async summarizeURLContent(
+  async summarizeLinkContent(
     content: string,
     userFolderList: string[],
     temperature = 0.5,
