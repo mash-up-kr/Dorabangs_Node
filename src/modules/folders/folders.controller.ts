@@ -21,7 +21,7 @@ import {
   UpdateFolderDocs,
 } from './docs';
 import { Types } from 'mongoose';
-import { FolderSummaryResponse } from './responses';
+import { FolderListResponse, FolderSummaryResponse } from './responses';
 import { JwtGuard } from '../users/guards';
 
 @FolderControllerDocs
@@ -44,7 +44,7 @@ export class FoldersController {
   @Get()
   async findAll(@GetUser() userId: Types.ObjectId) {
     const folders = await this.foldersService.findAll(userId);
-    return folders;
+    return new FolderListResponse(folders);
   }
 
   @FindFolderDocs

@@ -27,4 +27,26 @@ export class PostsRepository {
       throw new InternalServerErrorException('create post DB error');
     }
   }
+
+  async getPostCountByFolderIds(folderIds: string[]) {
+    const p = await this.postModel.find({ folderId: { $in: folderIds } });
+
+    const posts = await this.postModel
+      .aggregate([
+        {
+          $match: {
+            folderId: { $in: folderIds },
+          },
+        },
+        {
+          $group: {
+            _id: '$folderId',
+            count: { $sum: 1 },
+          },
+        },
+      ])
+      .exec();
+
+    return posts;
+  }
 }

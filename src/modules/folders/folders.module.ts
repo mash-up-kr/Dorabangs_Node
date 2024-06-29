@@ -3,6 +3,8 @@ import { FoldersService } from './folders.service';
 import { FoldersController } from './folders.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Folder, FolderSchema, Post, PostSchema } from '@src/infrastructure';
+import { FolderRepository } from './folders.repository';
+import { PostsRepository } from '../posts/posts.repository';
 
 @Module({
   imports: [
@@ -12,6 +14,6 @@ import { Folder, FolderSchema, Post, PostSchema } from '@src/infrastructure';
     ]),
   ],
   controllers: [FoldersController],
-  providers: [FoldersService],
+  providers: [FoldersService, FolderRepository, PostsRepository],
 })
 export class FoldersModule {}
