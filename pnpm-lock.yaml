@@ -38,9 +38,6 @@ importers:
       '@sentry/profiling-node':
         specifier: ^8.9.2
         version: 8.13.0
-      '@types/axios':
-        specifier: ^0.14.0
-        version: 0.14.0
       aws-lambda:
         specifier: ^1.0.7
         version: 1.0.7
@@ -102,6 +99,9 @@ importers:
       '@swc/core':
         specifier: ^1.6.5
         version: 1.6.5
+      '@types/axios':
+        specifier: ^0.14.0
+        version: 0.14.0
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.21
