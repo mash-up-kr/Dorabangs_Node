@@ -7,7 +7,6 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@src/infrastructure';
 import { AiModule } from './infrastructure/ai/ai.module';
-import { ParserModule } from './infrastructure/parser/parser.module';
 
 @Module({
   imports: [
@@ -18,7 +17,6 @@ import { ParserModule } from './infrastructure/parser/parser.module';
     }),
     DatabaseModule,
     AiModule,
-    ParserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
