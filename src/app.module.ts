@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
+import { ClassificationModule } from './modules/classification/classification.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UsersModule } from './modules/users/users.module';
       },
     }),
     UsersModule,
+    ClassificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
