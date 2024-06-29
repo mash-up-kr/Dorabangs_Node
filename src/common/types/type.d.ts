@@ -17,8 +17,7 @@ export type ICommonErrorResponse = {
 export type ICommonSuccessResponse = {
   success: false;
   error: ExceptionPayload;
-}
-
+};
 
 export type JwtPayload = {
   id: string;
