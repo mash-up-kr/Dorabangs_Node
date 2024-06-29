@@ -41,7 +41,7 @@ export class PostsService {
     });
 
     const offset = (query.page - 1) * query.limit;
-    const count = await this.postRepository.getCount(folderId);
+    const count = await this.postRepository.getCountByFolderId(folderId);
     const posts = await this.postRepository.findByFolderId(
       folderId,
       offset,

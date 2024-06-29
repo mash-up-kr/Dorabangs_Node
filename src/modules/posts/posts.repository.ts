@@ -48,7 +48,7 @@ export class PostsRepository {
     return posts;
   }
 
-  async getCount(folderId: string) {
+  async getCountByFolderId(folderId: string) {
     const count = await this.postModel.countDocuments({ folderId });
 
     return count;

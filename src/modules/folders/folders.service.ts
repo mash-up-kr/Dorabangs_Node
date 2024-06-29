@@ -14,7 +14,7 @@ export class FoldersService {
 
   async create(userId: string, createFolderDto: MutateFolderDto) {
     const folder = await this.folderRepository.create(
-      userId.toString(),
+      userId,
       createFolderDto.name,
     );
 
@@ -22,7 +22,7 @@ export class FoldersService {
   }
 
   async findAll(userId: string): Promise<FolderWithCount[]> {
-    const folders = await this.folderRepository.findByUserId(userId.toString());
+    const folders = await this.folderRepository.findByUserId(userId);
     const folderIds = folders.map((folder) => folder._id);
 
     const posts = await this.postRepository.getPostCountByFolderIds(folderIds);
