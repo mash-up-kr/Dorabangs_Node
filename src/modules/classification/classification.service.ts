@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Folder, FolderDocument, PostAIClassification } from '@src/schema';
+import {
+  Folder,
+  FolderDocument,
+  PostAIClassification,
+} from '@src/infrastructure/database/schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 

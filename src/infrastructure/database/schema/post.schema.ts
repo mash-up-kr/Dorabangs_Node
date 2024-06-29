@@ -4,19 +4,19 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 @Schema({ collection: 'posts', timestamps: true, versionKey: false })
 export class Post {
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  userId: MongooseSchema.Types.ObjectId;
+  userId!: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Folder' })
-  folderId: MongooseSchema.Types.ObjectId;
+  folderId!: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
-  url: string;
+  url!: string;
 
   @Prop({ required: true })
   title!: string;
 
-  @Prop({ required: true, default: null })
-  description?: string;
+  @Prop({ default: null, type: String })
+  description: string | null;
 
   @Prop({ default: false })
   isFavorite: boolean;

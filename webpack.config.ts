@@ -1,13 +1,21 @@
 import CopyPlugin from 'copy-webpack-plugin';
 import * as path from 'path';
 import * as webpack from 'webpack';
+import { sentryWebpackPlugin } from '@sentry/webpack-plugin';
+
 const swaggerUiModulePath = path.dirname(require.resolve('swagger-ui-dist'));
+
 module.exports = {
   entry: './src/handler.ts',
   mode: 'none',
   target: 'node',
   devtool: 'source-map',
   plugins: [
+    // sentryWebpackPlugin({
+    //   org: 'mashup-linkit',
+    //   project: 'linkit-tracker',
+    //   authToken: process.env.SENTRY_AUTH_TOKEN,
+    // }),
     new webpack.IgnorePlugin({
       checkResource(resource) {
         const lazyImports = [

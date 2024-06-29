@@ -6,7 +6,7 @@ import {
   FolderSchema,
   PostAIClassification,
   PostAIClassificationSchema,
-} from '@src/schema';
+} from '@src/infrastructure/database/schema';
 import { ClassificationController } from './classification.controller';
 
 @Module({
