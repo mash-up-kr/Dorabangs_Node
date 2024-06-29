@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { MutateFolderDto } from './dto/mutate-folder.dto';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Folder, Post } from '@src/schema';
-import { FolderType } from '@src/types/folder-type.enum';
+import { Folder, Post } from '@src/infrastructure';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 
 @Injectable()
 export class FoldersService {

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { FoldersService } from './folders.service';
 import { FoldersController } from './folders.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Folder, FolderSchema, Post, PostSchema } from '@src/schema';
+import { Folder, FolderSchema, Post, PostSchema } from '@src/infrastructure';
 
 @Module({
   imports: [

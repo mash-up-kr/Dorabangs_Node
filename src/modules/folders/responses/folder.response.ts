@@ -1,6 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FolderType } from '@src/types/folder-type.enum';
-import { IsEnum } from 'class-validator';
 import { FolderSummaryResponse } from './folder-summary.response';
 import { Types } from 'mongoose';
 

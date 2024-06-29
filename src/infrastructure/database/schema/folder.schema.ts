@@ -13,8 +13,8 @@ export class Folder {
   @Prop({ required: true, enum: FolderType, type: String })
   type: FolderType;
 
-  @Prop({ required: true, default: new Date() })
-  createdAt: Date;
+  @Prop({ required: true, default: new Date().toISOString() })
+  createdAt: string;
 }
 
 export type FolderDocument = HydratedDocument<Folder>;

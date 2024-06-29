@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
 import { MutateFolderDto } from './dto';
@@ -20,9 +21,11 @@ import {
   UpdateFolderDocs,
 } from './docs';
 import { Types } from 'mongoose';
-import { FolderResponse, FolderSummaryResponse } from './responses';
+import { FolderSummaryResponse } from './responses';
+import { JwtGuard } from '../users/guards';
 
 @FolderControllerDocs
+@UseGuards(JwtGuard)
 @Controller('folders')
 export class FoldersController {
   constructor(private readonly foldersService: FoldersService) {}
