@@ -1,4 +1,3 @@
-import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 /**
@@ -11,9 +10,9 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   title: string;
   content: string;
 }> {
-  const request = await axios.get(url);
-  const html = request.data;
-  const $ = cheerio.load(html);
+  const fetchTest = await fetch(url);
+  const fetchHTML = await fetchTest.text();
+  const $ = cheerio.load(fetchHTML);
   // HTML Element의 title
   const title = $('title').text();
 
