@@ -24,39 +24,12 @@ export class AiService {
     try {
       // 사용자 폴더 + 서버에서 임의로 붙여주는 폴더 리스트
       const folderLists = [...userFolderList, ...mockFolderLists];
-      const promptResult = await this.openai.chat.completions.create(
-        {
-          model: gptVersion,
-          messages: [
-            {
-              role: 'system',
-              content: '한글로 답변 부탁해',
-            },
-            {
-              role: 'user',
-              content: `주어진 글에 대해 요약하고 키워드 추출, 분류 부탁해
-  
-  ${content}
-              `,
-            },
-          ],
-          tools: [
-            {
-              type: 'function',
-              function: summarizeURLContentFunctionFactory(folderLists),
-            },
-          ],
-          tool_choice: {
-            type: 'function',
-            function: { name: 'summarizeURL' },
-          },
-          temperature: temperature,
-        },
-        {
-          maxRetries: 5,
-        },
+      // AI Summary 호출
+      const promptResult = await this.invokeAISummary(
+        content,
+        folderLists,
+        temperature,
       );
-
       // Function Call 결과
       const summaryResult: SummarizeURLContent = JSON.parse(
         promptResult.choices[0].message.tool_calls[0].function.arguments,
@@ -81,5 +54,45 @@ export class AiService {
               : '요약에 실패하였습니다.',
       });
     }
+  }
+
+  private async invokeAISummary(
+    content: string,
+    folderList: string[],
+    temperature: number,
+  ) {
+    const promptResult = await this.openai.chat.completions.create(
+      {
+        model: gptVersion,
+        messages: [
+          {
+            role: 'system',
+            content: '한글로 답변 부탁해',
+          },
+          {
+            role: 'user',
+            content: `주어진 글에 대해 요약하고 키워드 추출, 분류 부탁해
+
+${content}
+            `,
+          },
+        ],
+        tools: [
+          {
+            type: 'function',
+            function: summarizeURLContentFunctionFactory(folderList),
+          },
+        ],
+        tool_choice: {
+          type: 'function',
+          function: { name: 'summarizeURL' },
+        },
+        temperature: temperature,
+      },
+      {
+        maxRetries: 5,
+      },
+    );
+    return promptResult;
   }
 }
