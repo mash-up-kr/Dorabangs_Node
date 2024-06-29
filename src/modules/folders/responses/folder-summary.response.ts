@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { FolderType } from '@src/types/folder-type.enum';
 import { IsEnum } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class FolderSummaryResponse {
   @ApiProperty()
@@ -13,9 +14,13 @@ export class FolderSummaryResponse {
   type: FolderType;
 
   @ApiProperty()
-  createdAt: string;
+  createdAt: Date;
 
-  constructor(data: FolderSummaryResponse) {
+  constructor(
+    data: Omit<FolderSummaryResponse, 'id'> & { _id: Types.ObjectId },
+  ) {
     Object.assign(this, data);
+
+    this.id = data._id.toString();
   }
 }

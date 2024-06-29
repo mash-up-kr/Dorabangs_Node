@@ -20,6 +20,7 @@ import {
   UpdateFolderDocs,
 } from './docs';
 import { Types } from 'mongoose';
+import { FolderResponse, FolderSummaryResponse } from './responses';
 
 @FolderControllerDocs
 @Controller('folders')
@@ -29,12 +30,12 @@ export class FoldersController {
   @CreateFolderDocs
   @Post()
   async create(
-    @GetUser() userId: Types.ObjectId,
+    @GetUser('id') userId: Types.ObjectId,
     @Body() createFolderDto: MutateFolderDto,
   ) {
     const folder = await this.foldersService.create(userId, createFolderDto);
 
-    return folder;
+    return new FolderSummaryResponse(folder);
   }
 
   @FindAFolderListDocs
