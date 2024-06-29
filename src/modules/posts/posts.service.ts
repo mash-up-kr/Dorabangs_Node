@@ -27,7 +27,7 @@ export class PostsService {
   }
 
   async findByFolderId(
-    userId: Types.ObjectId,
+    userId: string,
     folderId: string,
     query: GetPostQueryDto,
   ) {
