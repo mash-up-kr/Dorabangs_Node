@@ -1,2 +1,2 @@
-export * from './schema';
-export * from './database.module';
+export * from '@src/infrastructure/database/schema';
+export * from '@src/infrastructure/database/database.module';

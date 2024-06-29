@@ -1,1 +1,1 @@
-export * from './database';
+export * from '@src/infrastructure/database';
