@@ -24,13 +24,12 @@ export class JwtStrategy extends PassportStrategy(
   }
 
   async validate(payload: JwtPayload): Promise<ReqUserPayload> {
-    const id = new Types.ObjectId(payload.id);
-    const user = await this.userModel.findById(id);
+    const user = await this.userModel.findById(payload.id);
     if (!user) {
       throw new UnauthorizedException('인증에 실패하였습니다.');
     }
     return {
-      id,
+      id: payload.id,
     };
   }
 }

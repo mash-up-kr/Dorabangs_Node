@@ -24,5 +24,5 @@ export type JwtPayload = {
 };
 
 export type ReqUserPayload = {
-  id: Types.ObjectId;
+  id: string;
 };
