@@ -26,20 +26,14 @@ export class ClassificationService {
     const folders = await this.folderModel.find({ userId }).exec();
     const folderIds = folders.map((folder) => folder._id);
 
-    const classifications = await this.postAiClassificationModel
-      .find({ suggestedFolderId: { $in: folderIds } })
+    const classificationIds = await this.postAiClassificationModel
+      .distinct('suggestedFolderId')
+      .where('suggestedFolderId')
+      .in(folderIds)
       .exec();
 
-    const uniqueFolderIds = [
-      ...new Set(
-        classifications.map((classification) =>
-          classification.suggestedFolderId.toString(),
-        ),
-      ),
-    ];
-
     const matchedFolders = await this.folderModel
-      .find({ _id: { $in: uniqueFolderIds } })
+      .find({ _id: { $in: classificationIds } })
       .exec();
 
     return matchedFolders.map((folder) => new AIFolderNameServiceDto(folder));
@@ -52,7 +46,7 @@ export class ClassificationService {
         aiClassificationId: PostAIClassification;
       }>({
         path: 'aiClassificationId',
-        match: { deletedAt: null }, // deletedAt이 null인 것만 필터링
+        match: { deletedAt: null },
       })
       .sort({ createdAt: -1 })
       .exec();
