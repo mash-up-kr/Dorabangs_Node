@@ -41,18 +41,18 @@ export class ClassificationService {
 
   async getPostList(folderId: string): Promise<AIPostServiceDto[]> {
     const posts = await this.postModel
-      .find({ folderId })
+      .find()
       .populate<{
         aiClassificationId: PostAIClassification;
       }>({
         path: 'aiClassificationId',
-        match: { deletedAt: null },
+        match: { deletedAt: null, suggestedFolderId: folderId },
       })
       .sort({ createdAt: -1 })
       .exec();
 
     return posts
       .filter((post) => post.aiClassificationId)
-      .map((post) => new AIPostServiceDto(post));
+      .map((post) => new AIPostServiceDto(post, post.aiClassificationId));
   }
 }

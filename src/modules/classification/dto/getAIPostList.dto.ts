@@ -50,13 +50,13 @@ export class AIPostServiceDto {
   @IsString()
   createdAt: Date;
 
-  constructor(data: InputType) {
-    this.id = data.id;
-    this.title = data.title;
-    this.url = data.url;
-    this.description = data.description;
-    this.keywords = data.aiClassificationId.keywords;
-    this.createdAt = data.aiClassificationId.createdAt;
+  constructor(post: PostDocument, aiClassificationId: PostAIClassification) {
+    this.id = post.id;
+    this.title = post.title;
+    this.url = post.url;
+    this.description = post.description;
+    this.keywords = aiClassificationId.keywords;
+    this.createdAt = aiClassificationId.createdAt;
   }
 }
 
