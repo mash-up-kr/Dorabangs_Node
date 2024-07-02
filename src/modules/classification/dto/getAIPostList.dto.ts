@@ -6,21 +6,6 @@ import { Document } from 'mongoose';
 import { MergeType } from 'mongoose';
 import { Types } from 'mongoose';
 
-type InputType = Document<
-  unknown,
-  {},
-  MergeType<
-    Post,
-    {
-      aiClassificationId: PostAIClassification;
-    }
-  >
-> &
-  Omit<Post, 'aiClassificationId'> & {
-    aiClassificationId: PostAIClassification;
-  } & {
-    _id: Types.ObjectId;
-  };
 export class AIPostServiceDto {
   @ApiProperty({ description: 'Id' })
   @IsNotEmpty()
