@@ -7,22 +7,16 @@ import { MergeType } from 'mongoose';
 import { Types } from 'mongoose';
 
 export class AIPostServiceDto {
-  @ApiProperty({ description: 'Id' })
   id: string;
 
-  @ApiProperty({ description: 'Title' })
   title: string;
 
-  @ApiProperty({ description: 'URL' })
   url: string;
 
-  @ApiProperty({ description: 'Description' })
   description: string;
 
-  @ApiProperty({ description: 'Keywords' })
   keywords: string[];
 
-  @ApiProperty({ description: 'Created At' })
   createdAt: Date;
 
   constructor(post: PostDocument, aiClassificationId: AIClassification) {
