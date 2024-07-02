@@ -1,4 +1,11 @@
-import { Controller, Get, UseGuards, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Param,
+  Query,
+  Patch,
+} from '@nestjs/common';
 import { ClassificationService } from './classification.service';
 import { GetUser } from '@src/common';
 import {
@@ -9,6 +16,7 @@ import {
 import { JwtGuard } from '../users/guards';
 import { AIFolderNameListResponse } from './response/ai-folder-list.dto';
 import { AIPostListResponse } from './response/ai-post-list.dto';
+import { PatchAIPostDocs } from './docs/patchAIPost.docs';
 
 @Controller('classification')
 @UseGuards(JwtGuard)
@@ -37,5 +45,12 @@ export class ClassificationController {
     );
 
     return new AIPostListResponse(posts);
+  }
+  @Patch('/posts')
+  @PatchAIPostDocs
+  async moveAllPost(@Query('suggestionFolderId') suggestionFolderId: string) {
+    await this.classificationService.moveAllPostTosuggestionFolder(
+      suggestionFolderId,
+    );
   }
 }

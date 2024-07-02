@@ -6,7 +6,7 @@ import {
 } from '@src/infrastructure/database/schema';
 
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import mongoose, { Model, Mongoose, Schema, Types } from 'mongoose';
 import { AIFolderNameServiceDto } from './dto/getAIFolderNameLIst.dto';
 import { AIPostServiceDto } from './dto/getAIPostList.dto';
 
@@ -54,5 +54,32 @@ export class ClassificationService {
     return posts
       .filter((post) => post.aiClassificationId)
       .map((post) => new AIPostServiceDto(post, post.aiClassificationId));
+  }
+  async moveAllPostTosuggestionFolder(suggestedFolderId: string) {
+    const postList = await this.postModel
+      .find()
+      .populate<{
+        aiClassificationId: AIClassification;
+      }>({
+        path: 'aiClassificationId',
+        match: {
+          suggestedFolderId: suggestedFolderId,
+          deletedAt: null,
+        },
+      })
+      .exec();
+
+    const filteredPosts = postList.filter((post) => post.aiClassificationId);
+
+    for (const post of filteredPosts) {
+      await post.updateOne({ folderId: suggestedFolderId }).exec();
+    }
+
+    await this.postAiClassificationModel
+      .updateMany(
+        { suggestedFolderId: suggestedFolderId, deletedAt: null },
+        { $set: { deletedAt: new Date() } },
+      )
+      .exec();
   }
 }
