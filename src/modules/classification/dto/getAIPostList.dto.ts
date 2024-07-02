@@ -8,31 +8,21 @@ import { Types } from 'mongoose';
 
 export class AIPostServiceDto {
   @ApiProperty({ description: 'Id' })
-  @IsNotEmpty()
-  @IsString()
   id: string;
 
   @ApiProperty({ description: 'Title' })
-  @IsNotEmpty()
-  @IsString()
   title: string;
 
   @ApiProperty({ description: 'URL' })
-  @IsNotEmpty()
-  @IsString()
   url: string;
 
   @ApiProperty({ description: 'Description' })
-  @IsNotEmpty()
-  @IsString()
   description: string;
 
   @ApiProperty({ description: 'Keywords' })
-  @IsArray()
   keywords: string[];
 
   @ApiProperty({ description: 'Created At' })
-  @IsString()
   createdAt: Date;
 
   constructor(post: PostDocument, aiClassificationId: PostAIClassification) {
