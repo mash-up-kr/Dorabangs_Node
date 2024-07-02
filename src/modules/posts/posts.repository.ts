@@ -13,6 +13,13 @@ export class PostsRepository {
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
   ) {}
 
+  async getUserPostCount(userId: string) {
+    const userPostCount = await this.postModel.countDocuments({
+      userId: userId,
+    });
+    return userPostCount;
+  }
+
   async listPost(
     userId: string,
     page: number,
