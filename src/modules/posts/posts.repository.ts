@@ -4,14 +4,47 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { Post } from '@src/infrastructure';
+import { OrderType } from '@src/common';
 
 @Injectable()
 export class PostsRepository {
   constructor(
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
   ) {}
+
+  async getUserPostCount(userId: string) {
+    const userPostCount = await this.postModel.countDocuments({
+      userId: userId,
+    });
+    return userPostCount;
+  }
+
+  async listPost(
+    userId: string,
+    page: number,
+    limit: number,
+    isFavorite?: boolean,
+    order = OrderType.desc,
+  ) {
+    // Skip Query
+    const skipQuery = (page - 1) * limit;
+    const queryFilter: FilterQuery<Post> = {
+      userId: userId,
+    };
+    // If isFavorite is not undefined and is typeof boolean
+    if (isFavorite !== undefined && typeof isFavorite === 'boolean') {
+      queryFilter['isFavorite'] = isFavorite;
+    }
+    const posts = await this.postModel
+      .find(queryFilter)
+      .sort([['createdAt', order === OrderType.desc ? -1 : 1]])
+      .skip(skipQuery)
+      .limit(limit)
+      .lean();
+    return posts;
+  }
 
   async findPostOrThrow(userId: string, postId: string) {
     const post = await this.postModel
