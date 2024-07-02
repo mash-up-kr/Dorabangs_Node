@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, Min } from 'class-validator';
+
+export enum OrderType {
+  asc = 'asc',
+  desc = 'desc',
+}
 
 // Pagination 들어가는 API에 대해서 상속해주세용
 export class PaginationQuery {
@@ -25,6 +30,14 @@ export class PaginationQuery {
   @IsNumber()
   @Min(1)
   readonly limit = 10;
+
+  @ApiProperty({
+    required: false,
+    enum: OrderType,
+  })
+  @IsOptional()
+  @IsEnum(OrderType)
+  readonly order: OrderType;
 }
 
 // Pagination API Response의 Metadata로 추가해주세용
@@ -53,14 +66,18 @@ export class PaginationMetadata {
   }
 
   @Expose()
-  @ApiProperty()
-  get hasNext() {
+  @ApiProperty({
+    type: Boolean,
+  })
+  get hasNext(): boolean {
     return Boolean(this._nextPage);
   }
 
   @Expose()
-  @ApiProperty()
-  get total() {
+  @ApiProperty({
+    type: Number,
+  })
+  get total(): number {
     return this._total;
   }
 }

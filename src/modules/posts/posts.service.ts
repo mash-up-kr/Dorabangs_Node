@@ -8,13 +8,20 @@ export class PostsService {
   constructor(private readonly postRepository: PostsRepository) {}
 
   async listPost(userId: string, query: ListPostQueryDto) {
-    const posts = await this.postRepository.listPost(
-      userId,
-      query.page,
-      query.limit,
-      query.favorite,
-    );
-    return posts;
+    const [count, posts] = await Promise.all([
+      this.postRepository.getUserPostCount(userId),
+      this.postRepository.listPost(
+        userId,
+        query.page,
+        query.limit,
+        query.favorite,
+        query.order,
+      ),
+    ]);
+    return {
+      count,
+      posts,
+    };
   }
 
   async createPost(

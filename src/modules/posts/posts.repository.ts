@@ -4,8 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { Post } from '@src/infrastructure';
+import { OrderType } from '@src/common';
 
 @Injectable()
 export class PostsRepository {
@@ -25,6 +26,7 @@ export class PostsRepository {
     page: number,
     limit: number,
     isFavorite?: boolean,
+    order = OrderType.desc,
   ) {
     // Skip Query
     const skipQuery = (page - 1) * limit;
@@ -37,6 +39,7 @@ export class PostsRepository {
     }
     const posts = await this.postModel
       .find(queryFilter)
+      .sort([['createdAt', order === OrderType.desc ? -1 : 1]])
       .skip(skipQuery)
       .limit(limit)
       .lean();
