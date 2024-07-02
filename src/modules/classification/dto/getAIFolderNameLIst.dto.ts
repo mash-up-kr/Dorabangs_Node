@@ -14,7 +14,8 @@ export class AIFolderNameServiceDto {
   name: string;
 
   constructor(data: FolderDocument) {
-    (this.id = data._id.toString()), (this.name = data.name);
+    this.id = data._id.toString();
+    this.name = data.name;
   }
 }
 
