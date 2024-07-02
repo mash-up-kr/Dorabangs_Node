@@ -20,9 +20,7 @@ export class ClassificationService {
     @InjectModel(Post.name) private postModel: Model<Post>,
   ) {}
 
-  async getFolderNameList(
-    userId: Types.ObjectId,
-  ): Promise<AIFolderNameServiceDto[]> {
+  async getFolderNameList(userId: String): Promise<AIFolderNameServiceDto[]> {
     const folders = await this.folderModel.find({ userId }).exec();
     const folderIds = folders.map((folder) => folder._id);
 
@@ -39,9 +37,12 @@ export class ClassificationService {
     return matchedFolders.map((folder) => new AIFolderNameServiceDto(folder));
   }
 
-  async getPostList(folderId: string): Promise<AIPostServiceDto[]> {
+  async getPostList(
+    userId: string,
+    folderId: string,
+  ): Promise<AIPostServiceDto[]> {
     const posts = await this.postModel
-      .find()
+      .find({ userId: userId })
       .populate<{
         aiClassificationId: PostAIClassification;
       }>({

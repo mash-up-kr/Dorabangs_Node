@@ -20,7 +20,7 @@ export class ClassificationController {
 
   @Get('/suggestions') //TODO : 정렬
   @GetAIFolderNameListDocs
-  async getSuggestedFolderNameList(@GetUser('id') userId: Types.ObjectId) {
+  async getSuggestedFolderNameList(@GetUser() userId: String) {
     const folderNames =
       await this.classificationService.getFolderNameList(userId);
 
@@ -29,8 +29,14 @@ export class ClassificationController {
 
   @Get('/suggestions/:folderId')
   @GetAIPostListDocs
-  async getSuggestedPostList(@Param('folderId') folderId: string) {
-    const posts = await this.classificationService.getPostList(folderId);
+  async getSuggestedPostList(
+    @GetUser() userId: string,
+    @Param('folderId') folderId: string,
+  ) {
+    const posts = await this.classificationService.getPostList(
+      userId,
+      folderId,
+    );
 
     return new AIPostListResponse(posts);
   }
