@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AIFolderNameListResponse } from '../dto/getAIFolderNameLIst.dto';
+import { AIFolderNameListResponse } from '../response/ai-folder-list.dto';
 
 export const GetAIFolderNameListDocs = applyDecorators(
   ApiOperation({

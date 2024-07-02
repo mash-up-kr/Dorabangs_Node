@@ -28,13 +28,3 @@ export class AIPostServiceDto {
     this.createdAt = aiClassificationId.createdAt;
   }
 }
-
-export class AIPostListResponse {
-  @ApiProperty({ type: [AIPostServiceDto] })
-  @Type(() => AIPostServiceDto)
-  list: AIPostServiceDto[];
-
-  constructor(data: AIPostServiceDto[]) {
-    this.list = data;
-  }
-}

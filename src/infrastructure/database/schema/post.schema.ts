@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { AIClassification } from './postAIClassification.schema';
+import { AIClassification } from './AIClassification.schema';
 
 @Schema({ collection: 'posts', timestamps: true, versionKey: false })
 export class Post {
@@ -25,7 +25,7 @@ export class Post {
   @Prop({
     required: false,
     type: MongooseSchema.Types.ObjectId,
-    ref: 'PostAIClassification',
+    ref: 'AIClassification',
   })
   aiClassificationId?: MongooseSchema.Types.ObjectId | AIClassification;
 }

@@ -1,13 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import {
-  Keyword,
-  KeywordSchema,
-} from '@src/infrastructure/database/schema/keyword.schema';
+
 import { BaseDocument } from './base.schema';
 
 @Schema({
-  collection: 'post_ai_classifications',
+  collection: 'ai_classifications',
   timestamps: true,
   versionKey: false,
 })
