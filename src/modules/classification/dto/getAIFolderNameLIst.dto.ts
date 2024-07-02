@@ -12,15 +12,3 @@ export class AIFolderNameServiceDto {
     this.name = data.name;
   }
 }
-
-export class AIFolderNameListResponse {
-  @ApiProperty({
-    type: AIFolderNameServiceDto,
-    isArray: true,
-  })
-  list: AIFolderNameServiceDto[];
-
-  constructor(data: AIFolderNameServiceDto[]) {
-    this.list = data;
-  }
-}

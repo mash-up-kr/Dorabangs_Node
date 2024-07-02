@@ -7,10 +7,8 @@ import {
   GetAIPostListDocs,
 } from './docs';
 import { JwtGuard } from '../users/guards';
-
-import { Types } from 'mongoose';
-import { AIPostListResponse } from './dto/getAIPostList.dto';
-import { AIFolderNameListResponse } from './dto/getAIFolderNameLIst.dto';
+import { AIFolderNameListResponse } from './response/ai-folder-list.dto';
+import { AIPostListResponse } from './response/ai-post-list.dto';
 
 @Controller('classification')
 @UseGuards(JwtGuard)
