@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
-import { UpdatePostDto } from './dto';
+import { ListPostQueryDto, UpdatePostDto } from './dto';
 
 @Injectable()
 export class PostsService {
   constructor(private readonly postRepository: PostsRepository) {}
+
+  async listPost(userId: string, query: ListPostQueryDto) {
+    const posts = await this.postRepository.listPost(
+      userId,
+      query.page,
+      query.limit,
+      query.favorite,
+    );
+    return posts;
+  }
+
   async createPost(
     createPostDto: CreatePostDto,
     userId: string,
