@@ -11,7 +11,7 @@ import { BaseDocument } from './base.schema';
   timestamps: true,
   versionKey: false,
 })
-export class PostAIClassification extends BaseDocument {
+export class AIClassification extends BaseDocument {
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'Folder' })
   suggestedFolderId: MongooseSchema.Types.ObjectId;
 
@@ -31,7 +31,6 @@ export class PostAIClassification extends BaseDocument {
   deletedAt: Date;
 }
 
-export type PostAIClassificationDocument =
-  HydratedDocument<PostAIClassification>;
+export type PostAIClassificationDocument = HydratedDocument<AIClassification>;
 export const PostAIClassificationSchema =
-  SchemaFactory.createForClass(PostAIClassification);
+  SchemaFactory.createForClass(AIClassification);

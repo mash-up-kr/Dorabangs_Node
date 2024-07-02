@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import {
   Folder,
-  FolderDocument,
   Post,
-  PostAIClassification,
+  AIClassification,
 } from '@src/infrastructure/database/schema';
 
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,8 +14,8 @@ import { AIPostServiceDto } from './dto/getAIPostList.dto';
 export class ClassificationService {
   constructor(
     @InjectModel(Folder.name) private folderModel: Model<Folder>,
-    @InjectModel(PostAIClassification.name)
-    private postAiClassificationModel: Model<PostAIClassification>,
+    @InjectModel(AIClassification.name)
+    private postAiClassificationModel: Model<AIClassification>,
     @InjectModel(Post.name) private postModel: Model<Post>,
   ) {}
 
@@ -44,7 +43,7 @@ export class ClassificationService {
     const posts = await this.postModel
       .find({ userId: userId })
       .populate<{
-        aiClassificationId: PostAIClassification;
+        aiClassificationId: AIClassification;
       }>({
         path: 'aiClassificationId',
         match: { deletedAt: null, suggestedFolderId: folderId },

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsArray, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Post, PostAIClassification, PostDocument } from '@src/infrastructure';
+import { Post, AIClassification, PostDocument } from '@src/infrastructure';
 import { Document } from 'mongoose';
 import { MergeType } from 'mongoose';
 import { Types } from 'mongoose';
@@ -25,7 +25,7 @@ export class AIPostServiceDto {
   @ApiProperty({ description: 'Created At' })
   createdAt: Date;
 
-  constructor(post: PostDocument, aiClassificationId: PostAIClassification) {
+  constructor(post: PostDocument, aiClassificationId: AIClassification) {
     this.id = post.id;
     this.title = post.title;
     this.url = post.url;
