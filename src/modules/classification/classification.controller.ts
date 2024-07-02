@@ -12,7 +12,7 @@ import { Types } from 'mongoose';
 import { AIPostListResponse } from './dto/getAIPostList.dto';
 import { AIFolderNameListResponse } from './dto/getAIFolderNameLIst.dto';
 
-@Controller('ai')
+@Controller('classification')
 @UseGuards(JwtGuard)
 @ClassificationControllerDocs
 export class ClassificationController {
