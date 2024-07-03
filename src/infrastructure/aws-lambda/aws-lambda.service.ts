@@ -13,7 +13,7 @@ export class AwsLambdaService {
     },
   });
 
-  invoke_lambda(lambdaFunctionName: string, payload: object): void {
+  invokeLambda(lambdaFunctionName: string, payload: object): void {
     const command = new InvokeCommand({
       FunctionName: lambdaFunctionName,
       InvocationType: 'Event',

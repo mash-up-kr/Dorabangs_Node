@@ -27,7 +27,7 @@ export class PostsService {
       postContent: content,
       folderList: ['dummy_folder_list'],
     };
-    this.awsLambdaService.invoke_lambda(ai_lambda_function_name, payload);
+    this.awsLambdaService.invokeLambda(ai_lambda_function_name, payload);
 
     return await this.postRepository.createPost(
       userId,
