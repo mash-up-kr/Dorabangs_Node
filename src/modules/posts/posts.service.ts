@@ -39,12 +39,12 @@ export class PostsService {
     );
   }
 
-  async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
+  async updatePostFolder(userId: string, postId: string, dto: UpdatePostDto) {
     // Find if post exist
     await this.postRepository.findPostOrThrow(userId, postId);
 
     // Update post folder id
-    await this.postRepository.updatePost(userId, postId, dto.folderId);
+    await this.postRepository.updatePostFolder(userId, postId, dto.folderId);
 
     //return response;
     return true;

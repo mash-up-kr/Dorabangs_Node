@@ -14,12 +14,14 @@ import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { GetUser, PaginationMetadata } from '@src/common';
 import { JwtGuard } from '@src/modules/users/guards';
 import { ListPostQueryDto, UpdatePostDto } from './dto';
-import { UpdatePostDocs } from './docs/updatePost.docs';
-import { CreatePostDocs } from './docs';
-import { ListPostDocs } from './docs/listPost.docs';
+import {
+  CreatePostDocs,
+  DeletePostDocs,
+  ListPostDocs,
+  PostControllerDocs,
+  UpdatePostFolderDocs,
+} from './docs';
 import { ListPostItem, ListPostResponse } from './response';
-import { PostControllerDocs } from './docs/controller.docs';
-import { DeletePostDocs } from './docs/deletePost.docs';
 
 @Controller('posts')
 @PostControllerDocs
@@ -45,14 +47,14 @@ export class PostsController {
     return await this.postsService.createPost(createPostDto, userId);
   }
 
-  @Patch(':postId')
-  @UpdatePostDocs
-  async updatePost(
+  @Patch(':postId/move')
+  @UpdatePostFolderDocs
+  async updatePostFolder(
     @GetUser() userId: string,
     @Param('postId') postId: string,
     @Body() dto: UpdatePostDto,
   ) {
-    return await this.postsService.updatePost(userId, postId, dto);
+    return await this.postsService.updatePostFolder(userId, postId, dto);
   }
 
   @Delete(':postId')

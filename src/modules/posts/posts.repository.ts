@@ -59,7 +59,7 @@ export class PostsRepository {
     return post;
   }
 
-  async updatePost(userId: string, postId: string, folderId: string) {
+  async updatePostFolder(userId: string, postId: string, folderId: string) {
     const updatedPost = await this.postModel
       .updateOne(
         {
@@ -94,14 +94,16 @@ export class PostsRepository {
   }
 
   async deletePost(userId: string, postId: string) {
-    const { deletedCount } = await this.postModel.deleteOne({
-      _id: postId,
-      userId: userId,
-    });
+    const deleteResult = await this.postModel
+      .deleteOne({
+        _id: postId,
+        userId: userId,
+      })
+      .exec();
     // If deletion faild, deletedCount will return 0
-    if (!deletedCount) {
+    if (!deleteResult.deletedCount) {
       throw new NotFoundException('Post를 찾을 수 없습니다.');
     }
-    return true;
+    return deleteResult;
   }
 }
