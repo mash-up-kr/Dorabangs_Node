@@ -82,4 +82,12 @@ export class ClassificationService {
       )
       .exec();
   }
+
+  async abortClassification(userId: string, postId: string) {
+    const post = await this.postModel.findById(postId).exec();
+
+    await this.postAiClassificationModel
+      .findByIdAndUpdate(post.aiClassificationId, { deletedAt: new Date() })
+      .exec();
+  }
 }

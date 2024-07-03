@@ -5,6 +5,7 @@ import {
   Param,
   Query,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { ClassificationService } from './classification.service';
 import { GetUser } from '@src/common';
@@ -17,6 +18,7 @@ import { JwtGuard } from '../users/guards';
 import { AIFolderNameListResponse } from './response/ai-folder-list.dto';
 import { AIPostListResponse } from './response/ai-post-list.dto';
 import { PatchAIPostDocs } from './docs/patchAIPost.docs';
+import { DeleteAIClassificationDocs } from './docs/deleteAIClassification';
 
 @Controller('classification')
 @UseGuards(JwtGuard)
@@ -52,5 +54,14 @@ export class ClassificationController {
     await this.classificationService.moveAllPostTosuggestionFolder(
       suggestionFolderId,
     );
+  }
+
+  @Delete('/posts/:postId')
+  @DeleteAIClassificationDocs
+  async abortClassification(
+    @GetUser() userId: string,
+    @Query('postId') postId: string,
+  ) {
+    await this.classificationService.abortClassification(userId, postId);
   }
 }
