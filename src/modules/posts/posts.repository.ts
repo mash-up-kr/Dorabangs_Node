@@ -92,4 +92,11 @@ export class PostsRepository {
       throw new InternalServerErrorException('create post DB error');
     }
   }
+
+  async deletePost(userId: string, postId: string) {
+    await this.postModel.deleteOne({
+      _id: postId,
+      userId: userId,
+    });
+  }
 }

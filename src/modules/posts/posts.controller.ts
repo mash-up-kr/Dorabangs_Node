@@ -7,6 +7,7 @@ import {
   Param,
   Get,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PostsService } from '@src/modules/posts/posts.service';
@@ -51,5 +52,10 @@ export class PostsController {
     @Body() dto: UpdatePostDto,
   ) {
     return await this.postsService.updatePost(userId, postId, dto);
+  }
+
+  @Delete(':postId')
+  async deletePost(@GetUser() userId: string, @Param('postId') postId: string) {
+    return await this.postsService.deletePost(userId, postId);
   }
 }
