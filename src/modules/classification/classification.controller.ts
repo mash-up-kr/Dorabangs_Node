@@ -13,12 +13,12 @@ import {
   ClassificationControllerDocs,
   GetAIFolderNameListDocs,
   GetAIPostListDocs,
+  DeleteAIClassificationDocs,
+  PatchAIPostDocs,
 } from './docs';
 import { JwtGuard } from '../users/guards';
 import { AIFolderNameListResponse } from './response/ai-folder-list.dto';
 import { AIPostListResponse } from './response/ai-post-list.dto';
-import { PatchAIPostDocs } from './docs/patchAIPost.docs';
-import { DeleteAIClassificationDocs } from './docs/deleteAIClassification';
 
 @Controller('classification')
 @UseGuards(JwtGuard)
