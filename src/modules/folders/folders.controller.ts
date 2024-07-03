@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
 import { MutateFolderDto } from './dto';
@@ -20,8 +21,11 @@ import {
   UpdateFolderDocs,
 } from './docs';
 import { Types } from 'mongoose';
+import { FolderSummaryResponse } from './responses';
+import { JwtGuard } from '../users/guards';
 
 @FolderControllerDocs
+@UseGuards(JwtGuard)
 @Controller('folders')
 export class FoldersController {
   constructor(private readonly foldersService: FoldersService) {}
@@ -29,18 +33,18 @@ export class FoldersController {
   @CreateFolderDocs
   @Post()
   async create(
-    @GetUser() userId: Types.ObjectId,
+    @GetUser('id') userId: Types.ObjectId,
     @Body() createFolderDto: MutateFolderDto,
   ) {
-    const folder = await this.foldersService.create(userId, createFolderDto);
-
-    return folder;
+    await this.foldersService.create(userId, createFolderDto);
+    return true;
   }
 
   @FindAFolderListDocs
   @Get()
   async findAll(@GetUser() userId: Types.ObjectId) {
-    return await this.foldersService.findAll(userId);
+    const folders = await this.foldersService.findAll(userId);
+    return folders;
   }
 
   @FindFolderDocs

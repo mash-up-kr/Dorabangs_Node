@@ -79,7 +79,9 @@ module.exports = {
       ],
     }),
   ],
-  externals: {},
+  externals: {
+    '@aws-sdk': '@aws-sdk',
+  },
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {

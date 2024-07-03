@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { FolderDocument } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 
 export class FolderSummaryResponse {
@@ -12,9 +13,12 @@ export class FolderSummaryResponse {
   type: FolderType;
 
   @ApiProperty()
-  createdAt: string;
+  createdAt: Date;
 
-  constructor(data: FolderSummaryResponse) {
-    Object.assign(this, data);
+  constructor(data: FolderDocument) {
+    this.id = data._id.toString();
+    this.name = data.name;
+    this.type = data.type;
+    this.createdAt = data.createdAt;
   }
 }
