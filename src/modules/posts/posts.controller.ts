@@ -7,8 +7,8 @@ import {
   Param,
   Get,
   Query,
+  Delete,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { PostsService } from '@src/modules/posts/posts.service';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { GetUser, PaginationMetadata } from '@src/common';
@@ -18,9 +18,11 @@ import { UpdatePostDocs } from './docs/updatePost.docs';
 import { CreatePostDocs } from './docs';
 import { ListPostDocs } from './docs/listPost.docs';
 import { ListPostItem, ListPostResponse } from './response';
+import { PostControllerDocs } from './docs/controller.docs';
+import { DeletePostDocs } from './docs/deletePost.docs';
 
-@ApiTags('posts')
 @Controller('posts')
+@PostControllerDocs
 @UseGuards(JwtGuard)
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
@@ -51,5 +53,11 @@ export class PostsController {
     @Body() dto: UpdatePostDto,
   ) {
     return await this.postsService.updatePost(userId, postId, dto);
+  }
+
+  @Delete(':postId')
+  @DeletePostDocs
+  async deletePost(@GetUser() userId: string, @Param('postId') postId: string) {
+    return await this.postsService.deletePost(userId, postId);
   }
 }

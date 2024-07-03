@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ListPostResponse } from '../response';
 
 export const ListPostDocs = applyDecorators(
@@ -9,5 +9,4 @@ export const ListPostDocs = applyDecorators(
   ApiResponse({
     type: ListPostResponse,
   }),
-  ApiBearerAuth(),
 );

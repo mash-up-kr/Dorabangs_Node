@@ -48,7 +48,7 @@ export class PostsRepository {
 
   async findPostOrThrow(userId: string, postId: string) {
     const post = await this.postModel
-      .findById({
+      .findOne({
         _id: postId,
         userId: userId,
       })
@@ -91,5 +91,17 @@ export class PostsRepository {
     } catch (error) {
       throw new InternalServerErrorException('create post DB error');
     }
+  }
+
+  async deletePost(userId: string, postId: string) {
+    const { deletedCount } = await this.postModel.deleteOne({
+      _id: postId,
+      userId: userId,
+    });
+    // If deletion faild, deletedCount will return 0
+    if (!deletedCount) {
+      throw new NotFoundException('Post를 찾을 수 없습니다.');
+    }
+    return true;
   }
 }
