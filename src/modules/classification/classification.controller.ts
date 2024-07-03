@@ -50,8 +50,12 @@ export class ClassificationController {
   }
   @Patch('/posts')
   @PatchAIPostDocs
-  async moveAllPost(@Query('suggestionFolderId') suggestionFolderId: string) {
+  async moveAllPost(
+    @GetUser() userId: string,
+    @Query('suggestionFolderId') suggestionFolderId: string,
+  ) {
     await this.classificationService.moveAllPostTosuggestionFolder(
+      userId,
       suggestionFolderId,
     );
   }

@@ -11,6 +11,8 @@ import {
 } from '@src/infrastructure/database/schema';
 
 import { ClassificationController } from './classification.controller';
+import { ClassficiationRepository } from './classification.repository';
+import { PostsRepository } from '../posts/posts.repository';
 
 @Module({
   imports: [
@@ -21,6 +23,6 @@ import { ClassificationController } from './classification.controller';
     ]),
   ],
   controllers: [ClassificationController],
-  providers: [ClassificationService],
+  providers: [ClassificationService, ClassficiationRepository, PostsRepository],
 })
 export class ClassificationModule {}
