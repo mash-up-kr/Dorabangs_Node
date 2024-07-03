@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
-import { ListPostQueryDto, UpdatePostDto } from './dto';
+import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
 
 @Injectable()
 export class PostsService {
@@ -39,7 +39,21 @@ export class PostsService {
     );
   }
 
-  async updatePostFolder(userId: string, postId: string, dto: UpdatePostDto) {
+  async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
+    // Find if user post exist
+    await this.postRepository.findPostOrThrow(userId, postId);
+
+    // Update post data
+    await this.postRepository.updatePost(userId, postId, dto);
+
+    return true;
+  }
+
+  async updatePostFolder(
+    userId: string,
+    postId: string,
+    dto: UpdatePostFolderDto,
+  ) {
     // Find if post exist
     await this.postRepository.findPostOrThrow(userId, postId);
 

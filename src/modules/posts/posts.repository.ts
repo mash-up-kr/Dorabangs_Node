@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Post } from '@src/infrastructure';
 import { OrderType } from '@src/common';
+import { PostUpdateableFields } from './type/type';
 
 @Injectable()
 export class PostsRepository {
@@ -93,7 +94,34 @@ export class PostsRepository {
     }
   }
 
-  async deletePost(userId: string, postId: string) {
+  async updatePost(
+    userId: string,
+    postId: string,
+    updateFields: PostUpdateableFields,
+  ) {
+    const updateResult = await this.postModel
+      .updateOne(
+        {
+          _id: postId,
+          userId: userId,
+        },
+        {
+          $set: {
+            ...updateFields,
+          },
+        },
+      )
+      .exec();
+
+    if (!updateResult.modifiedCount) {
+      throw new NotFoundException('Post를 찾을 수 없습니다.');
+    }
+    return updateResult;
+  }
+
+  // 해당 이슈로 인해 임시로 any타입 명시
+  // https://github.com/microsoft/TypeScript/issues/42873
+  async deletePost(userId: string, postId: string): Promise<any> {
     const deleteResult = await this.postModel
       .deleteOne({
         _id: postId,
