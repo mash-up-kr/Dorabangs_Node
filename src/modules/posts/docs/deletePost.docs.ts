@@ -1,8 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
-export const UpdatePostDocs = applyDecorators(
+export const DeletePostDocs = applyDecorators(
   ApiOperation({
-    summary: 'URL 폴더 변경',
+    summary: 'URL 삭제',
   }),
 );
