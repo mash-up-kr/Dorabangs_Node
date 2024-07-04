@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { MutateFolderDto } from './dto/mutate-folder.dto';
-import { Types } from 'mongoose';
+import { Injectable } from '@nestjs/common';
+import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { FolderWithCount } from './dto/folder-with-count.dto';
 import { FolderRepository } from './folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { Type } from 'class-transformer';
 
 @Injectable()
 export class FoldersService {
@@ -13,14 +14,14 @@ export class FoldersService {
     private readonly postRepository: PostsRepository,
   ) {}
 
-  async create(userId: string, createFolderDto: MutateFolderDto) {
-    const folder = await this.folderRepository.create(
-      userId,
-      createFolderDto.name,
-      FolderType.CUSTOM,
-    );
+  async createMany(userId: string, createFolderDto: CreateFolderDto) {
+    const folders = createFolderDto.names.map((name) => ({
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      name,
+      type: FolderType.CUSTOM,
+    }));
 
-    return folder;
+    await this.folderRepository.createMany(folders);
   }
 
   async findAll(userId: string): Promise<FolderWithCount[]> {
@@ -52,7 +53,7 @@ export class FoldersService {
   async update(
     userId: string,
     folderId: string,
-    updateFolderDto: MutateFolderDto,
+    updateFolderDto: UpdateFolderDto,
   ) {
     const folder = await this.folderRepository.findOneOrFail({
       _id: folderId,

@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { FoldersService } from './folders.service';
-import { MutateFolderDto } from './dto';
+import { CreateFolderDto, UpdateFolderDto } from './dto';
 import { GetUser } from '@src/common';
 import {
   CreateFolderDocs,
@@ -43,9 +43,9 @@ export class FoldersController {
   @Post()
   async create(
     @GetUser('id') userId: string,
-    @Body() createFolderDto: MutateFolderDto,
+    @Body() createFolderDto: CreateFolderDto,
   ) {
-    await this.foldersService.create(userId, createFolderDto);
+    await this.foldersService.createMany(userId, createFolderDto);
   }
 
   @FindAFolderListDocs
@@ -91,7 +91,7 @@ export class FoldersController {
   async update(
     @GetUser() userId: string,
     @Param('folderId') folderId: string,
-    @Body() updateFolderDto: MutateFolderDto,
+    @Body() updateFolderDto: UpdateFolderDto,
   ) {
     await this.foldersService.update(userId, folderId, updateFolderDto);
   }

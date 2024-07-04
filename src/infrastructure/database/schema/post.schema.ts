@@ -23,6 +23,9 @@ export class Post extends BaseDocument {
   @Prop({ default: false })
   isFavorite: boolean;
 
+  @Prop({ default: false })
+  readAt: Date;
+
   @Prop({
     required: false,
     type: MongooseSchema.Types.ObjectId,
