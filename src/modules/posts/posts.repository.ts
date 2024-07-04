@@ -35,7 +35,7 @@ export class PostsRepository {
       userId: userId,
     };
     // If isFavorite is not undefined and is typeof boolean
-    if (isFavorite !== undefined && typeof isFavorite === 'boolean') {
+    if (isFavorite) {
       queryFilter['isFavorite'] = isFavorite;
     }
     const posts = await this.postModel
