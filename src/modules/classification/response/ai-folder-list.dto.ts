@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AIFolderNameServiceDto } from '../dto/getAIFolderNameLIst.dto';
+import { ClassificationFolderWithCount } from '../dto/classification.dto';
 
 export class AIFolderNameListResponse {
   @ApiProperty({
-    type: AIFolderNameServiceDto,
     isArray: true,
   })
-  list: AIFolderNameServiceDto[];
+  list: ClassificationFolderWithCount[];
 
-  constructor(data: AIFolderNameServiceDto[]) {
+  constructor(data: ClassificationFolderWithCount[]) {
     this.list = data;
   }
 }

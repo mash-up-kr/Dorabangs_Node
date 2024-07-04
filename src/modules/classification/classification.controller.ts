@@ -26,13 +26,12 @@ import { AIPostListResponse } from './response/ai-post-list.dto';
 export class ClassificationController {
   constructor(private readonly classificationService: ClassificationService) {}
 
-  @Get('/suggestions') //TODO : 정렬
+  @Get('/suggestions')
   @GetAIFolderNameListDocs
-  async getSuggestedFolderNameList(@GetUser() userId: String) {
-    const folderNames =
-      await this.classificationService.getFolderNameList(userId);
+  async getSuggestedFolderNameList(@GetUser() userId: string) {
+    const folders = await this.classificationService.getFolderNameList(userId);
 
-    return new AIFolderNameListResponse(folderNames);
+    return new AIFolderNameListResponse(folders);
   }
 
   @Get('/suggestions/:folderId')

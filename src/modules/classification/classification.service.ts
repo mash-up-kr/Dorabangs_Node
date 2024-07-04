@@ -11,6 +11,7 @@ import { AIFolderNameServiceDto } from './dto/getAIFolderNameLIst.dto';
 import { AIPostServiceDto } from './dto/getAIPostList.dto';
 import { ClassficiationRepository } from './classification.repository';
 import { PostsRepository } from '../posts/posts.repository';
+import { ClassificationFolderWithCount } from './dto/classification.dto';
 
 @Injectable()
 export class ClassificationService {
@@ -21,18 +22,12 @@ export class ClassificationService {
     private readonly postRepository: PostsRepository,
   ) {}
 
-  async getFolderNameList(userId: String): Promise<AIFolderNameServiceDto[]> {
-    const folders = await this.folderModel.find({ userId }).exec();
-    const folderIds = folders.map((folder) => folder._id);
-
-    const classificationIds =
-      await this.classficationRepository.findBySuggestedFolderId(folderIds);
-
-    const matchedFolders = await this.folderModel
-      .find({ _id: { $in: classificationIds } })
-      .exec();
-
-    return matchedFolders.map((folder) => new AIFolderNameServiceDto(folder));
+  async getFolderNameList(
+    userId: string,
+  ): Promise<ClassificationFolderWithCount[]> {
+    return await this.classficationRepository.findContainedFolderByUserId(
+      new Types.ObjectId(userId),
+    );
   }
 
   async getPostList(
