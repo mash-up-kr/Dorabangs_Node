@@ -3,4 +3,3 @@ export * from './folder.schema';
 export * from './keyword.schema';
 export * from './post.schema';
 export * from './AIClassification.schema';
-export * from './postUserRead.schema';

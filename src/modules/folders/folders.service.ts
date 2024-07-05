@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { FolderWithCount } from './dto/folder-with-count.dto';
+import { Schema as MongooseSchema } from 'mongoose';
 import { FolderRepository } from './folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { Type } from 'class-transformer';
+import { sum } from '@src/common';
+import { FolderListServiceDto } from './dto/folder-with-count.dto';
+import { Folder, FolderDocument } from '@src/infrastructure';
 
 @Injectable()
 export class FoldersService {
@@ -24,21 +25,51 @@ export class FoldersService {
     await this.folderRepository.createMany(folders);
   }
 
-  async findAll(userId: string): Promise<FolderWithCount[]> {
+  async findAll(userId: string): Promise<FolderListServiceDto> {
     const folders = await this.folderRepository.findByUserId(userId);
     const folderIds = folders.map((folder) => folder._id);
 
-    const posts = await this.postRepository.getPostCountByFolderIds(folderIds);
+    const groupedFolders =
+      await this.postRepository.getPostCountByFolderIds(folderIds);
 
-    const foldersWithCounts = folders.map((folder) => {
-      const post = posts.find((post) => post._id.equals(folder._id));
-      return {
-        ...folder.toJSON(),
-        postCount: post?.count ?? 0,
-      } satisfies FolderWithCount;
-    });
+    const allPostCount = sum(groupedFolders, (folder) => folder.count);
+    const favoritePostCount =
+      await this.postRepository.findFavoritePostCount(userId);
 
-    return foldersWithCounts;
+    const defaultFolder = folders.find(
+      (folder) => folder.type === FolderType.DEFAULT,
+    );
+    const customFolders = folders
+      .filter((folder) => folder.type === FolderType.CUSTOM)
+      .map((folder) => {
+        const post = groupedFolders.find((folder) =>
+          folder._id.equals(folder._id),
+        );
+        return {
+          ...folder.toJSON(),
+          postCount: post?.count ?? 0,
+        };
+      });
+
+    const all = {
+      id: null,
+      name: '모든 링크',
+      type: FolderType.ALL,
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      postCount: allPostCount,
+    };
+    const favorite = {
+      id: null,
+      name: '즐겨찾기',
+      type: FolderType.FAVORITE,
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      postCount: favoritePostCount,
+    };
+
+    const defaultFolders = [all, favorite, defaultFolder].filter(
+      (folder) => !!folder,
+    );
+    return { defaultFolders, customFolders };
   }
 
   async findOne(userId: string, folderId: string) {

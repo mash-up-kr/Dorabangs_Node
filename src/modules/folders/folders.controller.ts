@@ -51,8 +51,8 @@ export class FoldersController {
   @FindAFolderListDocs
   @Get()
   async findAll(@GetUser() userId: string) {
-    const folders = await this.foldersService.findAll(userId);
-    return new FolderListResponse(folders);
+    const result = await this.foldersService.findAll(userId);
+    return new FolderListResponse(result);
   }
 
   @FindFolderDocs
