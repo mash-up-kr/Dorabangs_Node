@@ -26,3 +26,5 @@ export type JwtPayload = {
 export type ReqUserPayload = {
   id: string;
 };
+
+export type FunctionType = (...args: any[]) => any;

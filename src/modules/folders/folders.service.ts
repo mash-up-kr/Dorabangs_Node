@@ -1,35 +1,106 @@
 import { Injectable } from '@nestjs/common';
-import { MutateFolderDto } from './dto/mutate-folder.dto';
-import { Model, Types } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { Folder, Post } from '@src/infrastructure';
+import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
+import { Schema as MongooseSchema } from 'mongoose';
+import { FolderRepository } from './folders.repository';
+import { PostsRepository } from '../posts/posts.repository';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { sum } from '@src/common';
+import { FolderListServiceDto } from './dto/folder-with-count.dto';
+import { Folder, FolderDocument } from '@src/infrastructure';
 
 @Injectable()
 export class FoldersService {
   constructor(
-    @InjectModel(Folder.name) private readonly folderModel: Model<Folder>,
-    @InjectModel(Post.name) private readonly postModel: Model<Post>,
+    private readonly folderRepository: FolderRepository,
+    private readonly postRepository: PostsRepository,
   ) {}
-  async create(userId: Types.ObjectId, createFolderDto: MutateFolderDto) {
-    const folder = await this.folderModel.create({
-      userId,
-      name: createFolderDto.name,
+
+  async createMany(userId: string, createFolderDto: CreateFolderDto) {
+    const folders = createFolderDto.names.map((name) => ({
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      name,
       type: FolderType.CUSTOM,
+    }));
+
+    await this.folderRepository.createMany(folders);
+  }
+
+  async findAll(userId: string): Promise<FolderListServiceDto> {
+    const folders = await this.folderRepository.findByUserId(userId);
+    const folderIds = folders.map((folder) => folder._id);
+
+    const groupedFolders =
+      await this.postRepository.getPostCountByFolderIds(folderIds);
+
+    const allPostCount = sum(groupedFolders, (folder) => folder.count);
+    const favoritePostCount =
+      await this.postRepository.findFavoritePostCount(userId);
+
+    const defaultFolder = folders.find(
+      (folder) => folder.type === FolderType.DEFAULT,
+    );
+    const customFolders = folders
+      .filter((folder) => folder.type === FolderType.CUSTOM)
+      .map((folder) => {
+        const post = groupedFolders.find((folder) =>
+          folder._id.equals(folder._id),
+        );
+        return {
+          ...folder.toJSON(),
+          postCount: post?.count ?? 0,
+        };
+      });
+
+    const all = {
+      id: null,
+      name: '모든 링크',
+      type: FolderType.ALL,
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      postCount: allPostCount,
+    };
+    const favorite = {
+      id: null,
+      name: '즐겨찾기',
+      type: FolderType.FAVORITE,
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      postCount: favoritePostCount,
+    };
+
+    const defaultFolders = [all, favorite, defaultFolder].filter(
+      (folder) => !!folder,
+    );
+    return { defaultFolders, customFolders };
+  }
+
+  async findOne(userId: string, folderId: string) {
+    const folder = await this.folderRepository.findOneOrFail({
+      _id: folderId,
+      userId,
     });
 
     return folder;
   }
 
-  async findAll(userId: Types.ObjectId) {}
-
-  async findOne(userId: Types.ObjectId, folderId: string) {}
-
   async update(
-    userId: Types.ObjectId,
+    userId: string,
     folderId: string,
-    updateFolderDto: MutateFolderDto,
-  ) {}
+    updateFolderDto: UpdateFolderDto,
+  ) {
+    const folder = await this.folderRepository.findOneOrFail({
+      _id: folderId,
+      userId,
+    });
 
-  async remove(userID: Types.ObjectId, folderId: string) {}
+    folder.name = updateFolderDto.name;
+    await folder.save();
+  }
+
+  async remove(userId: string, folderId: string) {
+    const folder = await this.folderRepository.findOneOrFail({
+      userId,
+      _id: folderId,
+    });
+
+    await folder.deleteOne().exec();
+  }
 }

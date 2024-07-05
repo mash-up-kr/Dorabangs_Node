@@ -16,7 +16,7 @@ export class FolderSummaryResponse {
   createdAt: Date;
 
   constructor(data: FolderDocument) {
-    this.id = data._id.toString();
+    this.id = data._id ? data._id.toString() : data.id;
     this.name = data.name;
     this.type = data.type;
     this.createdAt = data.createdAt;
