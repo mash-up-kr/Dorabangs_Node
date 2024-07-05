@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
-import { Post } from '@src/infrastructure';
+import { AIClassification, Post } from '@src/infrastructure';
 import { OrderType } from '@src/common';
 import { PostUpdateableFields } from './type/type';
 
@@ -13,6 +13,8 @@ import { PostUpdateableFields } from './type/type';
 export class PostsRepository {
   constructor(
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
+    @InjectModel(AIClassification.name)
+    private readonly aiClassificationModel: Model<AIClassification>,
   ) {}
 
   async getUserPostCount(userId: string) {
@@ -121,7 +123,11 @@ export class PostsRepository {
 
   // 해당 이슈로 인해 임시로 any타입 명시
   // https://github.com/microsoft/TypeScript/issues/42873
-  async deletePost(userId: string, postId: string): Promise<any> {
+  async deletePost(
+    userId: string,
+    postId: string,
+    aiClassificationId?: string,
+  ): Promise<any> {
     const deleteResult = await this.postModel
       .deleteOne({
         _id: postId,
@@ -131,6 +137,13 @@ export class PostsRepository {
     // If deletion faild, deletedCount will return 0
     if (!deleteResult.deletedCount) {
       throw new NotFoundException('Post를 찾을 수 없습니다.');
+    }
+    if (aiClassificationId) {
+      await this.aiClassificationModel
+        .deleteOne({
+          _id: aiClassificationId,
+        })
+        .exec();
     }
     return deleteResult;
   }

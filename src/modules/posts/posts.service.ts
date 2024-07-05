@@ -66,8 +66,12 @@ export class PostsService {
 
   async deletePost(userId: string, postId: string) {
     // Find if post is user's post. If it's not throw NotFoundError
-    await this.postRepository.findPostOrThrow(userId, postId);
-    await this.postRepository.deletePost(userId, postId);
+    const post = await this.postRepository.findPostOrThrow(userId, postId);
+    await this.postRepository.deletePost(
+      userId,
+      postId,
+      post.aiClassificationId.toString(),
+    );
     return true;
   }
 }
