@@ -34,7 +34,7 @@ export class ClassificationController {
     return new AIFolderNameListResponse(folders);
   }
 
-  @Get('/suggestions/:folderId')
+  @Get('/posts/:folderId')
   @GetAIPostListDocs
   async getSuggestedPostListInFolder(
     @GetUser() userId: string,
