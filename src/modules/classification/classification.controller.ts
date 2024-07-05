@@ -26,6 +26,12 @@ import { AIPostListResponse } from './response/ai-post-list.dto';
 export class ClassificationController {
   constructor(private readonly classificationService: ClassificationService) {}
 
+  @Get('/count')
+  async countClassifiedCount(@GetUser() userId: string) {
+    const count = await this.classificationService.countClassifiedCount(userId);
+    return count;
+  }
+
   @Get('/folders')
   @GetAIFolderNameListDocs
   async getSuggestedFolderNameList(@GetUser() userId: string) {
