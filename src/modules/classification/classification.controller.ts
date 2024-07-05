@@ -26,7 +26,7 @@ import { AIPostListResponse } from './response/ai-post-list.dto';
 export class ClassificationController {
   constructor(private readonly classificationService: ClassificationService) {}
 
-  @Get('/suggestions')
+  @Get('/folders')
   @GetAIFolderNameListDocs
   async getSuggestedFolderNameList(@GetUser() userId: string) {
     const folders = await this.classificationService.getFolderNameList(userId);
