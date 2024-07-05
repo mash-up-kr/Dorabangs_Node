@@ -36,7 +36,7 @@ export class ClassificationController {
 
   @Get('/suggestions/:folderId')
   @GetAIPostListDocs
-  async getSuggestedPostList(
+  async getSuggestedPostListInFolder(
     @GetUser() userId: string,
     @Param('folderId') folderId: string,
     @Query() paingQuery: PaginationQuery,
