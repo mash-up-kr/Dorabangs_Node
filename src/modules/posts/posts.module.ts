@@ -10,6 +10,8 @@ import {
   PostSchema,
 } from '@src/infrastructure';
 import { UsersModule } from '@src/modules/users/users.module';
+import { AwsLambdaModule } from '@src/infrastructure/aws-lambda/aws-lambda.module';
+import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { UsersModule } from '@src/modules/users/users.module';
       { name: AIClassification.name, schema: PostAIClassificationSchema },
     ]),
     UsersModule,
+    AwsLambdaModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsRepository],
+  providers: [PostsService, PostsRepository, AwsLambdaService],
 })
 export class PostsModule {}
