@@ -28,6 +28,6 @@ export class AIClassification extends BaseDocument {
   deletedAt: Date;
 }
 
-export type PostAIClassificationDocument = HydratedDocument<AIClassification>;
-export const PostAIClassificationSchema =
+export type AIClassificationDocument = HydratedDocument<AIClassification>;
+export const AIClassificationSchema =
   SchemaFactory.createForClass(AIClassification);
