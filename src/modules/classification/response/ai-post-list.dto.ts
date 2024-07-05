@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { AIPostServiceDto } from '../dto/getAIPostList.dto';
+import {
+  ClassificationPostList,
+  PostListInClassificationFolder,
+} from '../dto/classification.dto';
 
 export class AIPostListResponse {
-  @ApiProperty({ type: [AIPostServiceDto] })
-  @Type(() => AIPostServiceDto)
-  list: AIPostServiceDto[];
+  @ApiProperty()
+  list: PostListInClassificationFolder[] | ClassificationPostList[];
 
-  constructor(data: AIPostServiceDto[]) {
+  constructor(
+    data: PostListInClassificationFolder[] | ClassificationPostList[],
+  ) {
     this.list = data;
   }
 }

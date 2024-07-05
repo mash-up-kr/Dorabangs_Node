@@ -4,7 +4,7 @@ import { AIPostListResponse } from '../response/ai-post-list.dto';
 
 export const GetAIPostListDocs = applyDecorators(
   ApiOperation({
-    summary: '폴더 안에 들어있는 Post(링크) 리스트',
+    summary: 'Post(링크) 리스트',
     description: 'AI 분류 추천된 링크 리스트.',
   }),
   ApiResponse({

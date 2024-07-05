@@ -6,12 +6,15 @@ import {
 } from '@src/infrastructure/database/schema';
 
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, Mongoose, Schema, Types } from 'mongoose';
-import { AIPostServiceDto } from './dto/getAIPostList.dto';
+import { Model, Types } from 'mongoose';
 import { ClassficiationRepository } from './classification.repository';
 import { PostsRepository } from '../posts/posts.repository';
-import { ClassificationFolderWithCount } from './dto/classification.dto';
+import {
+  ClassificationFolderWithCount,
+  PostListInClassificationFolder,
+} from './dto/classification.dto';
 import { PaginationQuery } from '@src/common';
+import { PostListInFolderResponse } from '../folders/responses';
 
 @Injectable()
 export class ClassificationService {
@@ -30,23 +33,42 @@ export class ClassificationService {
     );
   }
 
-  async getPostList(
-    userId: string,
-    folderId: string,
-    paingQuery: PaginationQuery,
-  ): Promise<AIPostServiceDto[]> {
-    const offset = (paingQuery.page - 1) * paingQuery.limit;
+  async getPostList(userId: string, paingQuery: PaginationQuery) {
+    const orderedFolderIdList = await this.getFolderOrder(userId);
 
-    const posts = await this.postRepository.findBySuggestedFolderId(
-      userId,
-      folderId,
+    const offset = (paingQuery.page - 1) * paingQuery.limit;
+    return await this.postRepository.findAndSortBySuggestedFolderIds(
+      new Types.ObjectId(userId),
+      orderedFolderIdList,
       offset,
       paingQuery.limit,
     );
+  }
 
-    return posts
-      .filter((post) => post.aiClassificationId)
-      .map((post) => new AIPostServiceDto(post, post.aiClassificationId));
+  async getFolderOrder(userId: string) {
+    const orderedFolderList =
+      await this.classficationRepository.findContainedFolderByUserId(
+        new Types.ObjectId(userId),
+      );
+
+    return orderedFolderList.map(
+      (folder) => new Types.ObjectId(folder.folderId),
+    );
+  }
+
+  async getPostListInFolder(
+    userId: string,
+    folderId: string,
+    paingQuery: PaginationQuery,
+  ): Promise<PostListInClassificationFolder[]> {
+    const offset = (paingQuery.page - 1) * paingQuery.limit;
+
+    return await this.postRepository.findBySuggestedFolderId(
+      userId,
+      new Types.ObjectId(folderId),
+      offset,
+      paingQuery.limit,
+    );
   }
   async moveAllPostTosuggestionFolder(
     userId: string,

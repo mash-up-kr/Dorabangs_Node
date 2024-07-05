@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { AIClassification } from './AIClassification.schema';
+import { BaseDocument } from './base.schema';
 
 @Schema({ collection: 'posts', timestamps: true, versionKey: false })
-export class Post {
+export class Post extends BaseDocument {
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: 'User' })
   userId!: MongooseSchema.Types.ObjectId;
 

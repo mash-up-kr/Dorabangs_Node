@@ -33,7 +33,19 @@ export class ClassificationController {
 
     return new AIFolderNameListResponse(folders);
   }
+  @Get('/posts')
+  @GetAIPostListDocs
+  async getSuggestedPostList(
+    @GetUser() userId: string,
+    @Query() paingQuery: PaginationQuery,
+  ) {
+    const posts = await this.classificationService.getPostList(
+      userId,
+      paingQuery,
+    );
 
+    return new AIPostListResponse(posts);
+  }
   @Get('/posts/:folderId')
   @GetAIPostListDocs
   async getSuggestedPostListInFolder(
@@ -41,7 +53,7 @@ export class ClassificationController {
     @Param('folderId') folderId: string,
     @Query() paingQuery: PaginationQuery,
   ) {
-    const posts = await this.classificationService.getPostList(
+    const posts = await this.classificationService.getPostListInFolder(
       userId,
       folderId,
       paingQuery,
