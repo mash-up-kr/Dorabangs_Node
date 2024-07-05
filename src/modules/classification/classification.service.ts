@@ -7,11 +7,11 @@ import {
 
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, Mongoose, Schema, Types } from 'mongoose';
-import { AIFolderNameServiceDto } from './dto/getAIFolderNameLIst.dto';
 import { AIPostServiceDto } from './dto/getAIPostList.dto';
 import { ClassficiationRepository } from './classification.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { ClassificationFolderWithCount } from './dto/classification.dto';
+import { PaginationQuery } from '@src/common';
 
 @Injectable()
 export class ClassificationService {
@@ -33,10 +33,15 @@ export class ClassificationService {
   async getPostList(
     userId: string,
     folderId: string,
+    paingQuery: PaginationQuery,
   ): Promise<AIPostServiceDto[]> {
+    const offset = (paingQuery.page - 1) * paingQuery.limit;
+
     const posts = await this.postRepository.findBySuggestedFolderId(
       userId,
       folderId,
+      offset,
+      paingQuery.limit,
     );
 
     return posts
@@ -47,14 +52,13 @@ export class ClassificationService {
     userId: string,
     suggestedFolderId: string,
   ) {
-    const postList = await this.postRepository.findBySuggestedFolderId(
-      userId,
-      suggestedFolderId,
-    );
+    const postIdList =
+      await this.postRepository.findFolderIdsBySuggestedFolderId(
+        userId,
+        suggestedFolderId,
+      );
 
-    const filteredPosts = postList.filter((post) => post.aiClassificationId);
-
-    for (const post of filteredPosts) {
+    for (const post of postIdList) {
       await this.postRepository.updateFolderId(
         post._id.toString(),
         suggestedFolderId,

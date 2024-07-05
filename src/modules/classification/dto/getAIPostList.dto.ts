@@ -19,6 +19,12 @@ export class AIPostServiceDto {
 
   createdAt: Date;
 
+  isRead: boolean;
+
+  /**
+   *
+   * TODO : 건회오빠꺼 머지되면 this.isRead = post.isRead; 로 수정 예정
+   */
   constructor(post: PostDocument, aiClassificationId: AIClassification) {
     this.id = post.id;
     this.title = post.title;
@@ -26,5 +32,6 @@ export class AIPostServiceDto {
     this.description = post.description;
     this.keywords = aiClassificationId.keywords;
     this.createdAt = aiClassificationId.createdAt;
+    this.isRead = false;
   }
 }

@@ -4,11 +4,11 @@ import {
   UseGuards,
   Param,
   Query,
-  Patch,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { ClassificationService } from './classification.service';
-import { GetUser } from '@src/common';
+import { GetUser, PaginationQuery } from '@src/common';
 import {
   ClassificationControllerDocs,
   GetAIFolderNameListDocs,
@@ -39,10 +39,12 @@ export class ClassificationController {
   async getSuggestedPostList(
     @GetUser() userId: string,
     @Param('folderId') folderId: string,
+    @Query() paingQuery: PaginationQuery,
   ) {
     const posts = await this.classificationService.getPostList(
       userId,
       folderId,
+      paingQuery,
     );
 
     return new AIPostListResponse(posts);

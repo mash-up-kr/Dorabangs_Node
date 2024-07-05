@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AIClassification, Post } from '@src/infrastructure';
+import { PaginationQuery } from '@src/common';
 
 @Injectable()
 export class PostsRepository {
@@ -27,7 +28,12 @@ export class PostsRepository {
       throw new InternalServerErrorException('create post DB error');
     }
   }
-  async findBySuggestedFolderId(userId: string, suggestedFolderId: string) {
+  async findBySuggestedFolderId(
+    userId: string,
+    suggestedFolderId: string,
+    offset: number,
+    limit: number,
+  ) {
     return await this.postModel
       .find({ userId: userId })
       .populate<{
@@ -37,6 +43,25 @@ export class PostsRepository {
         match: { deletedAt: null, suggestedFolderId: suggestedFolderId },
       })
       .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit)
+      .exec();
+  }
+
+  async findFolderIdsBySuggestedFolderId(
+    userId: string,
+    suggestedFolderId: string,
+  ) {
+    return await this.postModel
+      .find({ userId: userId })
+      .populate<{
+        aiClassificationId: AIClassification;
+      }>({
+        path: 'aiClassificationId',
+        match: { deletedAt: null, suggestedFolderId: suggestedFolderId },
+      })
+      .sort({ createdAt: -1 })
+      .select('_id')
       .exec();
   }
 
