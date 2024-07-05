@@ -29,7 +29,7 @@ export class PostsRepository {
   }
 
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
-    const posts = await this.postModel
+    const folders = await this.postModel
       .aggregate<{ _id: Types.ObjectId; count: number }>([
         {
           $match: {
@@ -39,13 +39,13 @@ export class PostsRepository {
         {
           $group: {
             _id: '$folderId',
-            count: { $sum: 1 },
+            postCount: { $sum: 1 },
           },
         },
       ])
       .exec();
 
-    return posts;
+    return folders;
   }
 
   async getCountByFolderId(folderId: string) {
@@ -61,5 +61,14 @@ export class PostsRepository {
       .limit(limit);
 
     return folders;
+  }
+
+  async findFavoritePostCount(userId: string) {
+    const count = await this.postModel.countDocuments({
+      userId,
+      isFavorite: true,
+    });
+
+    return count;
   }
 }

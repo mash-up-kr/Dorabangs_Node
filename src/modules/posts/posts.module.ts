@@ -19,6 +19,12 @@ import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.serv
     AwsLambdaModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsRepository, FolderRepository, AwsLambdaService],
+  providers: [
+    PostsService,
+    PostsRepository,
+    FolderRepository,
+    AwsLambdaService,
+  ],
+  exports: [PostsService],
 })
 export class PostsModule {}
