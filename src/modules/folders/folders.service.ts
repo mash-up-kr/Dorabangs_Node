@@ -17,7 +17,7 @@ export class FoldersService {
 
   async createMany(userId: string, createFolderDto: CreateFolderDto) {
     const folders = createFolderDto.names.map((name) => ({
-      userId: new MongooseSchema.Types.ObjectId(userId),
+      userId: userId,
       name,
       type: FolderType.CUSTOM,
     }));
