@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FolderResponse } from './folder.response';
 import { PostDocument } from '@src/infrastructure';
 
 /**
@@ -50,6 +49,6 @@ export class PostResponse {
     this.title = data.title;
     this.description = data.description;
     this.isFavorite = data.isFavorite;
-    this.createdAt = data.createdAt;
+    this.createdAt = data.createdAt.toISOString();
   }
 }
