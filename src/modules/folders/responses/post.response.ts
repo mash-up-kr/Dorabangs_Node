@@ -49,6 +49,6 @@ export class PostResponse {
     this.title = data.title;
     this.description = data.description;
     this.isFavorite = data.isFavorite;
-    this.createdAt = data.createdAt;
+    this.createdAt = data.createdAt.toISOString();
   }
 }
