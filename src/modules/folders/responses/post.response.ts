@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FolderResponse } from './folder.response';
 import { PostDocument } from '@src/infrastructure';
 
 /**
@@ -38,7 +37,7 @@ export class PostResponse {
   isFavorite: boolean;
 
   @ApiProperty()
-  createdAt: string;
+  createdAt: Date;
 
   @ApiProperty({ type: Keyword, isArray: true })
   keywords: Keyword[];

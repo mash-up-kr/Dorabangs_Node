@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
 import { GetPostQueryDto } from './dto/find-in-folder.dto';
@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 export class PostsService {
   constructor(
     private readonly postRepository: PostsRepository,
+    @Inject(forwardRef(() => FolderRepository))
     private readonly folderRepository: FolderRepository,
     private readonly awsLambdaService: AwsLambdaService,
     private readonly config: ConfigService,

@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import { Schema as MongooseSchema } from 'mongoose';
 import { FolderWithCount } from './dto/folder-with-count.dto';
 import { FolderRepository } from './folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { Type } from 'class-transformer';
 
 @Injectable()
 export class FoldersService {
   constructor(
     private readonly folderRepository: FolderRepository,
+    @Inject(forwardRef(() => PostsRepository))
     private readonly postRepository: PostsRepository,
   ) {}
 

@@ -11,8 +11,8 @@ import { UsersModule } from './modules/users/users.module';
 import { ClassificationModule } from './modules/classification/classification.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { FoldersModule } from './modules/folders/folders.module';
-import { LinksModule } from './modules/links/links.module';
 import { PostsModule } from './modules/posts/posts.module';
+import { LinksModule } from './modules/links/links.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
 import { OnboardModule } from './modules/onboard/onboard.module';
 
@@ -28,9 +28,9 @@ import { OnboardModule } from './modules/onboard/onboard.module';
     UsersModule,
     ClassificationModule,
     AuthModule,
+    PostsModule,
     FoldersModule,
     LinksModule,
-    PostsModule,
     AwsLambdaModule,
     OnboardModule,
   ],
