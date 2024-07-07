@@ -14,6 +14,7 @@ import { FoldersModule } from './modules/folders/folders.module';
 import { LinksModule } from './modules/links/links.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
+import { OnboardModule } from './modules/onboard/onboard.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
     LinksModule,
     PostsModule,
     AwsLambdaModule,
+    OnboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
