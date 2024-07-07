@@ -13,7 +13,7 @@ export class ClassficiationRepository {
     private readonly folderModel: Model<Folder>,
   ) {}
 
-  async countClassifiedCountByUserId(userId: string) {
+  async countClassifiedPostByUserId(userId: string) {
     // Get folder list with '_id' projection
     const userFolders = await this.folderModel.find(
       {

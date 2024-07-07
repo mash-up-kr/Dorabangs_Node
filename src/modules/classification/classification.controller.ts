@@ -27,8 +27,8 @@ export class ClassificationController {
   constructor(private readonly classificationService: ClassificationService) {}
 
   @Get('/count')
-  async countClassifiedCount(@GetUser() userId: string) {
-    const count = await this.classificationService.countClassifiedCount(userId);
+  async countClassifiedPost(@GetUser() userId: string) {
+    const count = await this.classificationService.countClassifiedPost(userId);
     return count;
   }
 

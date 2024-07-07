@@ -19,9 +19,9 @@ export class ClassificationService {
     private readonly postRepository: PostsRepository,
   ) {}
 
-  async countClassifiedCount(userId: string) {
+  async countClassifiedPost(userId: string) {
     const count =
-      await this.classficationRepository.countClassifiedCountByUserId(userId);
+      await this.classficationRepository.countClassifiedPostByUserId(userId);
     return count;
   }
 
