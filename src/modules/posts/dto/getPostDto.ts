@@ -15,16 +15,16 @@ export class GetPostDto {
   @ApiProperty({ type: Boolean, description: '즐겨찾기 여부' })
   isFavorite: boolean;
   @ApiProperty({ type: Date, description: '생성 일시' })
-  createdAt: string;
+  createdAt: Date;
   @ApiProperty({ type: Date, description: '업데이트 일시' })
-  updatedAt: string;
+  updatedAt: Date;
 
   constructor(post: Post) {
     this.folderId = post.folderId.toString();
     this.userId = post.userId.toString();
     this.url = post.url;
     this.title = post.title;
-    this.description = post.title;
+    this.description = post.description;
     this.isFavorite = post.isFavorite;
     this.createdAt = post.createdAt;
     this.updatedAt = post.updatedAt;
