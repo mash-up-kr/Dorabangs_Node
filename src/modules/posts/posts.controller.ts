@@ -1,5 +1,5 @@
 import { Controller, Post, Body, UseGuards, Get, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PostsService } from '@src/modules/posts/posts.service';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { GetUser, PaginationQuery } from '@src/common';
@@ -23,12 +23,12 @@ export class PostsController {
   async getPost(
     @GetUser('id') userId: string,
     @Query() pagingQuery: PaginationQuery,
-    @Query('isFavorite') is_favorite?: boolean,
+    @Query('isFavorite') isFavorite?: boolean,
   ): Promise<PostListResponse> {
     const { postDtoList, postCount } = await this.postsService.getPost(
       userId,
       pagingQuery,
-      is_favorite,
+      isFavorite,
     );
     return new PostListResponse(postDtoList, postCount);
   }
