@@ -3,7 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { AiModule } from '@src/infrastructure/ai/ai.module';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 
-export const handler: Handler = async (event: any) => {
+export const handler: Handler = async (event: any, context: Context) => {
+  console.log(`context ${context}`);
+  console.log(`event body 확인 ${event}`);
   const data = JSON.parse(event.body);
   // event 데이터 잘 들어오는지 확인용
   console.log(data);
@@ -15,9 +17,10 @@ export const handler: Handler = async (event: any) => {
     data.postContent,
     data.folderList,
   );
-
+  //
   if (summarizeUrlContent.success === true) {
     return true;
     // TODO create row PostAIClassification
   }
+  return true;
 };
