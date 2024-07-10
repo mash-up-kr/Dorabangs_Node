@@ -12,3 +12,93 @@ datasource db {
   provider = "postgresql"
   url      = env("POSTGRES_URL")
 }
+
+model User {
+  id          String @id @default(uuid())
+  deviceToken String @unique @db.VarChar(20)
+
+  // Relations
+  folders           Folder[]
+  posts             Post[]
+  aiClassifications AIClassification[]
+
+  @@map("users")
+}
+
+enum FolderType {
+  custom
+  default
+}
+
+model Folder {
+  id         String     @id @default(uuid())
+  name       String     @db.VarChar(30)
+  type       FolderType
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+
+  // Relations
+  user_id            String
+  user               User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  ai_classifications AIClassification[]
+
+  @@unique([name, user_id])
+  @@map("folders")
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  url         String   @db.VarChar(2048) // Standard Chrome Maximum URL length 
+  title       String   @db.VarChar(50)
+  description String?  @db.VarChar(3000)
+  is_favorite Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  user_id       String
+  user          User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post_keywords PostKeyword[]
+
+  @@map("posts")
+}
+
+model AIClassification {
+  id          String    @id @default(uuid())
+  url         String    @db.VarChar(2048)
+  description String?   @db.VarChar(3000)
+  keywords    String[]  @default([])
+  deleted_at  DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+  // Relations
+  suggested_folder_id String?
+  folder              Folder? @relation(fields: [suggested_folder_id], references: [id], onDelete: SetNull)
+  user_id             String
+  user                User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("ai_classifications")
+}
+
+model PostKeyword {
+  id String @id @default(uuid())
+
+  // Relations
+  post_id    String
+  post       Post    @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  keyword_id String
+  keyword    Keyword @relation(fields: [keyword_id], references: [id], onDelete: Restrict)
+
+  @@map("post_keywords")
+}
+
+model Keyword {
+  id   String @id @default(uuid())
+  name String @db.VarChar(100)
+
+  // Relations
+  post_keywords PostKeyword[]
+
+  @@map("keywords")
+}
