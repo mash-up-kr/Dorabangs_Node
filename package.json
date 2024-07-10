@@ -17,6 +17,8 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "db:up": "docker-compose up -d",
     "db:down": "docker compose down",
+    "pg:up": "docker compose up -d",
+    "pg:down": "docker compose down",
     "start": "cross-env NODE_ENV=local nest start",
     "start:dev": "cross-env NODE_ENV=local nest start --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
