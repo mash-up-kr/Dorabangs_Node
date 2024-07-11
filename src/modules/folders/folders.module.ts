@@ -6,6 +6,7 @@ import { Folder, FolderSchema, Post, PostSchema } from '@src/infrastructure';
 import { FolderRepository } from './folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { PostsModule } from '../posts/posts.module';
+import { PostsService } from '@src/modules/posts/posts.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { PostsModule } from '../posts/posts.module';
     PostsModule,
   ],
   controllers: [FoldersController],
-  providers: [FoldersService, FolderRepository, PostsRepository],
+  providers: [FoldersService, FolderRepository, PostsService, PostsRepository],
 })
 export class FoldersModule {}
