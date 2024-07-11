@@ -3,7 +3,7 @@ CREATE TYPE "FolderType" AS ENUM ('custom', 'default');
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" TEXT NOT NULL,
+    "id" VARCHAR(40) NOT NULL,
     "deviceToken" VARCHAR(20) NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
@@ -11,7 +11,7 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "folders" (
-    "id" TEXT NOT NULL,
+    "id" VARCHAR(40) NOT NULL,
     "name" VARCHAR(30) NOT NULL,
     "type" "FolderType" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -23,7 +23,7 @@ CREATE TABLE "folders" (
 
 -- CreateTable
 CREATE TABLE "posts" (
-    "id" TEXT NOT NULL,
+    "id" VARCHAR(40) NOT NULL,
     "url" VARCHAR(2048) NOT NULL,
     "title" VARCHAR(50) NOT NULL,
     "description" VARCHAR(3000),
@@ -37,7 +37,7 @@ CREATE TABLE "posts" (
 
 -- CreateTable
 CREATE TABLE "ai_classifications" (
-    "id" TEXT NOT NULL,
+    "id" VARCHAR(40) NOT NULL,
     "url" VARCHAR(2048) NOT NULL,
     "description" VARCHAR(3000),
     "keywords" TEXT[] DEFAULT ARRAY[]::TEXT[],
@@ -52,7 +52,7 @@ CREATE TABLE "ai_classifications" (
 
 -- CreateTable
 CREATE TABLE "post_keywords" (
-    "id" TEXT NOT NULL,
+    "id" VARCHAR(40) NOT NULL,
     "post_id" TEXT NOT NULL,
     "keyword_id" TEXT NOT NULL,
 
@@ -61,7 +61,7 @@ CREATE TABLE "post_keywords" (
 
 -- CreateTable
 CREATE TABLE "keywords" (
-    "id" TEXT NOT NULL,
+    "id" VARCHAR(40) NOT NULL,
     "name" VARCHAR(100) NOT NULL,
 
     CONSTRAINT "keywords_pkey" PRIMARY KEY ("id")
