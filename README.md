@@ -43,6 +43,12 @@
     </tr>
 </table>
 
+## Generate prisma client (TS types)
+
+```
+pnpm pg:generate
+```
+
 ## Project Init
 
 - Local Postgres Up/Down
