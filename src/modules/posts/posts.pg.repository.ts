@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
@@ -35,5 +35,18 @@ export class PostsPGRepository {
       },
     });
     return posts;
+  }
+
+  async findPostOrThrow(userId: string, postId: string) {
+    const post = await this.prisma.post.findUnique({
+      where: {
+        id: postId,
+        user_id: userId,
+      },
+    });
+    if (!post) {
+      throw new NotFoundException('링크를 찾을 수 없습니다.');
+    }
+    return post;
   }
 }
