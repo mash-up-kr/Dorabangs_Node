@@ -15,6 +15,7 @@ import { LinksModule } from './modules/links/links.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { OnboardModule } from './modules/onboard/onboard.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
     PostsModule,
     AwsLambdaModule,
     PrismaModule,
+    OnboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
