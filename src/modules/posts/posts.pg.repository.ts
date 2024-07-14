@@ -51,12 +51,27 @@ export class PostsPGRepository {
   }
 
   async updatePostFolder(userId: string, postId: string, folderId: string) {
+    // Check if folder is user's
+    const folder = await this.prisma.folder.findUnique({
+      where: {
+        id: folderId,
+        user_id: userId,
+      },
+    });
+    if (!folder) {
+      throw new NotFoundException('폴더를 찾을 수 없습니다.');
+    }
+
+    // Update folder
     const updatedPost = await this.prisma.post.update({
       where: {
         id: postId,
         user_id: userId,
       },
-      data: {},
+      data: {
+        folder_id: folderId,
+      },
     });
+    return updatedPost;
   }
 }
