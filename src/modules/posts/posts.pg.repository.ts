@@ -49,4 +49,14 @@ export class PostsPGRepository {
     }
     return post;
   }
+
+  async updatePostFolder(userId: string, postId: string, folderId: string) {
+    const updatedPost = await this.prisma.post.update({
+      where: {
+        id: postId,
+        user_id: userId,
+      },
+      data: {},
+    });
+  }
 }

@@ -21,6 +21,7 @@
     "pg:down": "docker compose down",
     "pg:makemigrations": "npx prisma migrate dev --name $1",
     "pg:migrate": "npx prisma migrate deploy",
+    "pg:client:generate": "npx prisma generate",
     "start": "cross-env NODE_ENV=local nest start",
     "start:dev": "cross-env NODE_ENV=local nest start --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

@@ -41,6 +41,7 @@ model Folder {
   user_id            String
   user               User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
   ai_classifications AIClassification[]
+  Post               Post[]
 
   @@unique([name, user_id])
   @@map("folders")
@@ -56,9 +57,13 @@ model Post {
   updated_at  DateTime @updatedAt
 
   // Relations
-  user_id       String
-  user          User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  post_keywords PostKeyword[]
+  user_id           String
+  user              User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  folder_id         String
+  folder            Folder            @relation(fields: [folder_id], references: [id], onDelete: Cascade)
+  classification_id String?           @unique
+  classification    AIClassification? @relation(fields: [classification_id], references: [id], onDelete: SetNull)
+  post_keywords     PostKeyword[]
 
   @@map("posts")
 }
@@ -77,6 +82,7 @@ model AIClassification {
   folder              Folder? @relation(fields: [suggested_folder_id], references: [id], onDelete: SetNull)
   user_id             String
   user                User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  posts               Post?
 
   @@map("ai_classifications")
 }
