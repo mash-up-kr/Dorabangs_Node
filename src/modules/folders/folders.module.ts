@@ -4,9 +4,7 @@ import { FoldersController } from './folders.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Folder, FolderSchema, Post, PostSchema } from '@src/infrastructure';
 import { FolderRepository } from './folders.repository';
-import { PostsRepository } from '../posts/posts.repository';
 import { PostsModule } from '../posts/posts.module';
-import { PostsService } from '../posts/posts.service';
 
 @Module({
   imports: [
@@ -17,6 +15,6 @@ import { PostsService } from '../posts/posts.service';
     PostsModule,
   ],
   controllers: [FoldersController],
-  providers: [FoldersService, FolderRepository, PostsRepository],
+  providers: [FoldersService, FolderRepository],
 })
 export class FoldersModule {}

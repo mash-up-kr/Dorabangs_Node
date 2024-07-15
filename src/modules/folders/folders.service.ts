@@ -6,7 +6,6 @@ import { PostsRepository } from '../posts/posts.repository';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { sum } from '@src/common';
 import { FolderListServiceDto } from './dto/folder-with-count.dto';
-import { Folder, FolderDocument } from '@src/infrastructure';
 
 @Injectable()
 export class FoldersService {

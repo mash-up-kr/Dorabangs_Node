@@ -1,12 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { ListPostResponse } from '../response';
 
-export const CreatePostDocs = applyDecorators(
+export const ListPostDocs = applyDecorators(
   ApiOperation({
-    summary: 'URL 링크 저장',
+    summary: '전체 피드 조회',
   }),
   ApiResponse({
-    type: Types.ObjectId,
+    type: ListPostResponse,
   }),
 );
