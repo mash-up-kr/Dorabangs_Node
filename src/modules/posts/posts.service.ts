@@ -19,7 +19,7 @@ export class PostsService {
 
   async listPost(userId: string, query: ListPostQueryDto) {
     const [count, posts] = await Promise.all([
-      this.postRepository.getUserPostCount(userId),
+      this.postRepository.getUserPostCount(userId, query.favorite),
       this.postRepository.listPost(
         userId,
         query.page,
@@ -42,14 +42,18 @@ export class PostsService {
       createPostDto.url,
     );
 
-    const ai_lambda_function_name = this.config.get<string>(
-      'LAMBDA_FUNCTION_NAME',
-    );
-    const payload = {
-      postContent: content,
-      folderList: ['dummy_folder_list'],
-    };
-    this.awsLambdaService.invokeLambda(ai_lambda_function_name, payload);
+    try {
+      const ai_lambda_function_name = this.config.get<string>(
+        'LAMBDA_FUNCTION_NAME',
+      );
+      const payload = {
+        postContent: content,
+        folderList: ['dummy_folder_list'],
+      };
+      this.awsLambdaService.invokeLambda(ai_lambda_function_name, payload);
+    } catch (err) {
+      console.error(err);
+    }
 
     return await this.postRepository.createPost(
       userId,
@@ -115,7 +119,7 @@ export class PostsService {
     await this.postRepository.deletePost(
       userId,
       postId,
-      post.aiClassificationId.toString(),
+      post.aiClassificationId?.toString(),
     );
     return true;
   }

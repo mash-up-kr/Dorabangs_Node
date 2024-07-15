@@ -21,10 +21,14 @@ export class PostsRepository {
     private readonly aiClassificationModel: Model<AIClassification>,
   ) {}
 
-  async getUserPostCount(userId: string) {
-    const userPostCount = await this.postModel.countDocuments({
+  async getUserPostCount(userId: string, isFavorite?: boolean) {
+    const queryFilter: FilterQuery<Post> = {
       userId: userId,
-    });
+    };
+    if (isFavorite) {
+      queryFilter['isFavorite'] = true;
+    }
+    const userPostCount = await this.postModel.countDocuments(queryFilter);
     return userPostCount;
   }
 
