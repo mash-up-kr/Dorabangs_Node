@@ -21,7 +21,9 @@ export class FolderRepository {
     return folder;
   }
 
-  async createMany(folders: Partial<Folder>[]) {
+  async createMany(
+    folders: { userId: string; name: string; type: FolderType }[],
+  ) {
     await this.folderModel.insertMany(folders);
   }
 
