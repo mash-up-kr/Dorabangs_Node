@@ -23,7 +23,7 @@ export class Post extends BaseDocument {
   @Prop({ default: false })
   isFavorite: boolean;
 
-  @Prop({ default: false })
+  @Prop({ default: null })
   readAt: Date;
 
   @Prop({
