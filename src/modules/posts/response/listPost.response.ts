@@ -22,6 +22,11 @@ export class ListPostItem {
   @ApiProperty()
   isFavorite: boolean;
 
+  @ApiProperty({
+    required: false,
+  })
+  readAt: Date;
+
   constructor(data: Post & { _id: Types.ObjectId }) {
     this.id = data._id.toString();
     this.folderId = data.folderId.toString();
@@ -29,6 +34,7 @@ export class ListPostItem {
     this.title = data.title;
     this.description = data.description;
     this.isFavorite = data.isFavorite;
+    this.readAt = data.readAt;
   }
 }
 
