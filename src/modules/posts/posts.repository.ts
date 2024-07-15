@@ -97,6 +97,7 @@ export class PostsRepository {
         url: url,
         title: title,
         userId: userId,
+        readAt: null,
       });
       return true;
     } catch (error) {

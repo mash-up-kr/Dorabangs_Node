@@ -12,12 +12,15 @@ export class AwsLambdaService {
     },
   });
 
-  invokeLambda(lambdaFunctionName: string, payload: object): void {
+  async invokeLambda(
+    lambdaFunctionName: string,
+    payload: object,
+  ): Promise<void> {
     const command = new InvokeCommand({
       FunctionName: lambdaFunctionName,
       InvocationType: 'Event',
       Payload: JSON.stringify(payload),
     });
-    this.client.send(command);
+    await this.client.send(command);
   }
 }
