@@ -6,21 +6,23 @@ import {
   FolderSchema,
   Post,
   AIClassification,
-  PostAIClassificationSchema,
+  AIClassificationSchema,
   PostSchema,
 } from '@src/infrastructure/database/schema';
 
 import { ClassificationController } from './classification.controller';
+import { ClassficiationRepository } from './classification.repository';
+import { PostsRepository } from '../posts/posts.repository';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Folder.name, schema: FolderSchema },
-      { name: AIClassification.name, schema: PostAIClassificationSchema },
+      { name: AIClassification.name, schema: AIClassificationSchema },
       { name: Post.name, schema: PostSchema },
     ]),
   ],
   controllers: [ClassificationController],
-  providers: [ClassificationService],
+  providers: [ClassificationService, ClassficiationRepository, PostsRepository],
 })
 export class ClassificationModule {}

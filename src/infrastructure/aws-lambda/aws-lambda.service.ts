@@ -4,16 +4,15 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AwsLambdaService {
   constructor(private readonly config: ConfigService) {}
-  // TODO  credentials 추가 필요 (acccess_key, secret_key)
   readonly client = new LambdaClient({
     region: 'ap-northeast-2',
     credentials: {
-      accessKeyId: this.config.get<string>('AWS_ACCESS_KEY'),
-      secretAccessKey: this.config.get<string>('AWS_SECRET_KEY'),
+      accessKeyId: this.config.get<string>('AWS_LAMBDA_ACCESS_KEY'),
+      secretAccessKey: this.config.get<string>('AWS_LAMBDA_SECRET_KEY'),
     },
   });
 
-  invoke_lambda(lambdaFunctionName: string, payload: object): void {
+  invokeLambda(lambdaFunctionName: string, payload: object): void {
     const command = new InvokeCommand({
       FunctionName: lambdaFunctionName,
       InvocationType: 'Event',
