@@ -23,15 +23,14 @@ export class PostsService {
       createPostDto.url,
     );
 
-    const ai_lambda_function_name = this.config.get<string>(
+    const aiLambdaFunctionName = this.config.get<string>(
       'LAMBDA_FUNCTION_NAME',
     );
     const payload = {
       postContent: content,
       folderList: ['dummy_folder_list'],
     };
-    this.awsLambdaService.invokeLambda(ai_lambda_function_name, payload);
-
+    await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
     return await this.postRepository.createPost(
       userId,
       createPostDto.folderId,

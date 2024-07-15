@@ -1,8 +1,7 @@
-import { Injectable, InternalServerErrorException, Type } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AIClassification, Post } from '@src/infrastructure';
-import { PaginationQuery } from '@src/common';
 import {
   ClassificationPostList,
   PostListInClassificationFolder,
@@ -26,6 +25,7 @@ export class PostsRepository {
         url: url,
         title: title,
         userId: userId,
+        readAt: null,
       });
       return true;
     } catch (error) {
