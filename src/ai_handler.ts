@@ -19,14 +19,15 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
     return folder.name;
   });
 
-  // Post id
-  const postId = event.postId;
   // NOTE: AI 요약 요청
   const summarizeUrlContent = await aiService.summarizeLinkContent(
     event.postContent,
     folderNames,
   );
+
+  // NOTE : 요약 성공 시 classification 생성, post 업데이트
   if (summarizeUrlContent.success) {
+    const postId = event.postId;
     const folderId = folderMapper[summarizeUrlContent.response.category];
     const post = await postRepository.findPostByIdForAIClassification(postId);
     const classification = await classificationRepository.createClassification(
@@ -40,8 +41,6 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
       classification._id.toString(),
       summarizeUrlContent.response.summary,
     );
-    return true;
-    // TODO create row PostAIClassification
   }
 
   // NOTE: cloud-watch 로그 확인용
