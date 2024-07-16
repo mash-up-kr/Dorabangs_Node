@@ -42,12 +42,14 @@ export class PostsService {
       createPostDto.url,
     );
 
+    const userFolders = await this.folderRepository.findByUserId(userId);
+    const folderNames = userFolders.map((folder) => folder.name);
     const aiLambdaFunctionName = this.config.get<string>(
       'LAMBDA_FUNCTION_NAME',
     );
     const payload = {
       postContent: content,
-      folderList: ['dummy_folder_list'],
+      folderList: folderNames,
     };
     await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
     return await this.postRepository.createPost(
