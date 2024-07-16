@@ -46,5 +46,11 @@ export const handler: Handler = async (
     return true;
     // TODO create row PostAIClassification
   }
-  return true;
+
+  // NOTE: cloud-watch 로그 확인용
+  console.log({
+    result: summarizeUrlContent.success ? 'success' : 'fail',
+    event: JSON.stringify(event, null, 2),
+    summarizeUrlContent: summarizeUrlContent,
+  });
 };
