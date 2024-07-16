@@ -23,7 +23,7 @@ export class AiService {
   ): Promise<SummarizeURLContentDto> {
     try {
       // 사용자 폴더 + 서버에서 임의로 붙여주는 폴더 리스트
-      const folderLists = [...userFolderList, ...mockFolderLists];
+      const folderLists = [...userFolderList];
       // AI Summary 호출
       const promptResult = await this.invokeAISummary(
         content,

@@ -17,14 +17,14 @@ export class ClassficiationRepository {
     keywords: string[],
     suggestedFolderId: string,
   ) {
-    await this.aiClassificationModel.create({
+    const classification = await this.aiClassificationModel.create({
       suggestedFolderId: suggestedFolderId,
       url: url,
       description: description,
       keywords: keywords,
       completedAt: new Date(),
     });
-    return true;
+    return classification;
   }
 
   async findContainedFolderByUserId(
