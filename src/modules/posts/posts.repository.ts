@@ -299,7 +299,7 @@ export class PostsRepository {
   async updatePost(
     userId: string,
     postId: string,
-    updateFields: PostUpdateableFields,
+    updateFields: Partial<PostUpdateableFields>,
   ) {
     const updateResult = await this.postModel
       .updateOne(
