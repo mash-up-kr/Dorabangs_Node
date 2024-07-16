@@ -299,7 +299,7 @@ export class PostsRepository {
   async updatePost(
     userId: string,
     postId: string,
-    updateFields: PostUpdateableFields,
+    updateFields: Partial<PostUpdateableFields>,
   ) {
     const updateResult = await this.postModel
       .updateOne(
@@ -319,6 +319,39 @@ export class PostsRepository {
       throw new NotFoundException('Post를 찾을 수 없습니다.');
     }
     return updateResult;
+  }
+
+  async findPostByIdForAIClassification(postId: string) {
+    const post = await this.postModel
+      .findOne({
+        _id: postId,
+      })
+      .lean();
+    if (!post) {
+      throw new NotFoundException('Post를 찾을 수 없습니다.');
+    }
+    return post;
+  }
+
+  async updatePostClassificationForAIClassification(
+    postId: string,
+    classificationId: string,
+    description: string,
+  ) {
+    const updatedPost = await this.postModel
+      .updateOne(
+        {
+          _id: postId,
+        },
+        {
+          $set: {
+            aiClassificationId: classificationId,
+            description: description,
+          },
+        },
+      )
+      .exec();
+    return updatedPost;
   }
 
   // 해당 이슈로 인해 임시로 any타입 명시

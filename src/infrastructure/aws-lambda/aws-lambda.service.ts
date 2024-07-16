@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import { ConfigService } from '@nestjs/config';
+import { LambdaEventPayload } from './type';
+
 @Injectable()
 export class AwsLambdaService {
   constructor(private readonly config: ConfigService) {}
@@ -14,7 +16,7 @@ export class AwsLambdaService {
 
   async invokeLambda(
     lambdaFunctionName: string,
-    payload: object,
+    payload: LambdaEventPayload,
   ): Promise<void> {
     const command = new InvokeCommand({
       FunctionName: lambdaFunctionName,
