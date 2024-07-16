@@ -1,23 +1,19 @@
 import { Context, Handler } from 'aws-lambda';
 import { NestFactory } from '@nestjs/core';
-import { AiModule } from '@src/infrastructure/ai/ai.module';
 import { AiService } from '@src/infrastructure/ai/ai.service';
+import { AppModule } from '@src/app.module';
 
 export const handler: Handler = async (event: any, context: Context) => {
-  console.log(`context ${context}`);
-  console.log(`event body 확인 ${event}`);
-  const data = JSON.parse(event.body);
-  // event 데이터 잘 들어오는지 확인용
-  console.log(data);
-  const app = await NestFactory.create(AiModule);
+  const app = await NestFactory.create(AppModule);
   const aiService = app.get(AiService);
 
+  // Post id
+  event.postId;
   // NOTE: AI 요약 요청
   const summarizeUrlContent = await aiService.summarizeLinkContent(
-    data.postContent,
-    data.folderList,
+    event.postContent,
+    event.folderList,
   );
-  //
   if (summarizeUrlContent.success === true) {
     return true;
     // TODO create row PostAIClassification
