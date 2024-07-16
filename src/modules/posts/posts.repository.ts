@@ -90,16 +90,16 @@ export class PostsRepository {
     folderId: string,
     url: string,
     title: string,
-  ): Promise<boolean> {
+  ): Promise<string> {
     try {
-      await this.postModel.create({
+      const postModel = await this.postModel.create({
         folderId: folderId,
         url: url,
         title: title,
         userId: userId,
         readAt: null,
       });
-      return true;
+      return postModel._id.toString();
     } catch (error) {
       throw new InternalServerErrorException('create post DB error');
     }
