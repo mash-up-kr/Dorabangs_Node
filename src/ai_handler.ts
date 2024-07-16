@@ -1,4 +1,4 @@
-import { Context, Handler } from 'aws-lambda';
+import { Handler } from 'aws-lambda';
 import { NestFactory } from '@nestjs/core';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AppModule } from '@src/app.module';
@@ -6,10 +6,7 @@ import { LambdaEventPayload } from './infrastructure/aws-lambda/type';
 import { ClassficiationRepository } from './modules/classification/classification.repository';
 import { PostsRepository } from './modules/posts/posts.repository';
 
-export const handler: Handler = async (
-  event: LambdaEventPayload,
-  context: Context,
-) => {
+export const handler: Handler = async (event: LambdaEventPayload) => {
   const app = await NestFactory.create(AppModule);
   const aiService = app.get(AiService);
   const classificationRepository = app.get(ClassficiationRepository);
