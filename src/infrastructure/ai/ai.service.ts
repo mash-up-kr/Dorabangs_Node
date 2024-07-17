@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import OpenAI, { RateLimitError, OpenAIError } from 'openai';
-import { summarizeURLContentFunctionFactory } from './functions';
+import OpenAI, { OpenAIError, RateLimitError } from 'openai';
+import { DiscordWebhookProvider } from '../discord/discord-webhook.provider';
+import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
-import { gptVersion, mockFolderLists } from './ai.constant';
+import { summarizeURLContentFunctionFactory } from './functions';
 import { SummarizeURLContent } from './types/types';
 
 @Injectable()
 export class AiService {
   private openai: OpenAI;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly discordProvider: DiscordWebhookProvider,
+  ) {
     this.openai = new OpenAI({
       apiKey: config.get<string>('OPENAI_API_KEY'),
     });
@@ -30,6 +34,7 @@ export class AiService {
         folderLists,
         temperature,
       );
+
       // Function Call 결과
       const summaryResult: SummarizeURLContent = JSON.parse(
         promptResult.choices[0].message.tool_calls[0].function.arguments,
@@ -61,6 +66,8 @@ export class AiService {
     folderList: string[],
     temperature: number,
   ) {
+    let elapsedTime: number = 0;
+    const startTime = new Date();
     const promptResult = await this.openai.chat.completions.create(
       {
         model: gptVersion,
@@ -93,6 +100,16 @@ ${content}
         maxRetries: 5,
       },
     );
+
+    elapsedTime = new Date().getTime() - startTime.getTime();
+    this.discordProvider.send(
+      [
+        `AI 요약 실행 시간: ${elapsedTime}ms`,
+        `Input : ${content} / [${folderList.join(', ')}]`,
+        `Output : ${promptResult} `,
+      ].join('\n'),
+    );
+
     return promptResult;
   }
 }

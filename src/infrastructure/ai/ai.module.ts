@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
+import { DiscordModule } from '../discord/discord.module';
 import { AiService } from './ai.service';
-import { DatabaseModule } from '@src/infrastructure';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DiscordModule],
   providers: [AiService],
   exports: [AiService],
 })
