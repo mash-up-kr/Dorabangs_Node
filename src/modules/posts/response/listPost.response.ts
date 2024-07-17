@@ -48,10 +48,10 @@ export class ListPostResponse {
     type: ListPostItem,
     isArray: true,
   })
-  items: ListPostItem[];
+  list: ListPostItem[];
 
   constructor(metadata: PaginationMetadata, items: ListPostItem[]) {
     this.metadata = metadata;
-    this.items = items;
+    this.list = items;
   }
 }
