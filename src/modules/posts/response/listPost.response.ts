@@ -27,6 +27,9 @@ export class ListPostItem {
   })
   readAt: Date;
 
+  @ApiProperty()
+  createdAt: Date;
+
   constructor(data: Post & { _id: Types.ObjectId }) {
     this.id = data._id.toString();
     this.folderId = data.folderId.toString();
@@ -35,6 +38,7 @@ export class ListPostItem {
     this.description = data.description;
     this.isFavorite = data.isFavorite;
     this.readAt = data.readAt;
+    this.createdAt = data.createdAt;
   }
 }
 
