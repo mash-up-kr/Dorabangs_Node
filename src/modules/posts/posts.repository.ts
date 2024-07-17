@@ -108,7 +108,7 @@ export class PostsRepository {
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
     const folders = await this.postModel.aggregate<{
       _id: Types.ObjectId;
-      count: number;
+      postCount: number;
     }>([
       {
         $match: {

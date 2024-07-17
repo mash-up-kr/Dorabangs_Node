@@ -31,7 +31,7 @@ export class FoldersService {
     const groupedFolders =
       await this.postRepository.getPostCountByFolderIds(folderIds);
 
-    const allPostCount = sum(groupedFolders, (folder) => folder.count);
+    const allPostCount = sum(groupedFolders, (folder) => folder.postCount);
     const favoritePostCount =
       await this.postRepository.findFavoritePostCount(userId);
 
@@ -41,12 +41,12 @@ export class FoldersService {
     const customFolders = folders
       .filter((folder) => folder.type === FolderType.CUSTOM)
       .map((folder) => {
-        const post = groupedFolders.find((folder) =>
-          folder._id.equals(folder._id),
+        const post = groupedFolders.find((groupedFolder) =>
+          groupedFolder._id.equals(folder._id),
         );
         return {
           ...folder.toJSON(),
-          postCount: post?.count ?? 0,
+          postCount: post?.postCount ?? 0,
         };
       });
 
