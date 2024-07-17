@@ -31,7 +31,7 @@ export class FoldersService {
     const groupedFolders =
       await this.postRepository.getPostCountByFolderIds(folderIds);
 
-    const allPostCount = sum(groupedFolders, (folder) => folder.count);
+    const allPostCount = sum(groupedFolders, (folder) => folder.postCount);
     const favoritePostCount =
       await this.postRepository.findFavoritePostCount(userId);
 
@@ -41,15 +41,18 @@ export class FoldersService {
     const customFolders = folders
       .filter((folder) => folder.type === FolderType.CUSTOM)
       .map((folder) => {
-        const post = groupedFolders.find((folder) =>
-          folder._id.equals(folder._id),
+        const post = groupedFolders.find((groupedFolder) =>
+          groupedFolder._id.equals(folder._id),
         );
         return {
           ...folder.toJSON(),
-          postCount: post?.count ?? 0,
+          postCount: post?.postCount ?? 0,
         };
       });
-
+    const customFoldersPostCount = sum(
+      customFolders,
+      (folder) => folder.postCount,
+    );
     const all = {
       id: null,
       name: '모든 링크',
@@ -64,8 +67,15 @@ export class FoldersService {
       userId: new MongooseSchema.Types.ObjectId(userId),
       postCount: favoritePostCount,
     };
+    const defaultFolderTmp = {
+      id: defaultFolder.id,
+      name: defaultFolder.name,
+      type: FolderType.DEFAULT,
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      postCount: allPostCount - customFoldersPostCount,
+    };
 
-    const defaultFolders = [all, favorite, defaultFolder].filter(
+    const defaultFolders = [all, favorite, defaultFolderTmp].filter(
       (folder) => !!folder,
     );
     return { defaultFolders, customFolders };
