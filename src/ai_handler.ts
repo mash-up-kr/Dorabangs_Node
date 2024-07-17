@@ -1,16 +1,50 @@
-import { Handler } from 'aws-lambda';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AiService } from '@src/infrastructure/ai/ai.service';
-import { AppModule } from '@src/app.module';
+import { Handler } from 'aws-lambda';
+import {
+  DatabaseModule,
+  Folder,
+  FolderSchema,
+  Post,
+  PostSchema,
+} from './infrastructure';
+import { AiModule } from './infrastructure/ai/ai.module';
 import { LambdaEventPayload } from './infrastructure/aws-lambda/type';
 import { ClassficiationRepository } from './modules/classification/classification.repository';
+import { PostKeywordsRepository } from './modules/posts/postKeywords.repository';
 import { PostsRepository } from './modules/posts/posts.repository';
 
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
+    }),
+    DatabaseModule,
+    MongooseModule.forFeature([
+      { name: Post.name, schema: PostSchema },
+      { name: Folder.name, schema: FolderSchema },
+    ]),
+    AiModule,
+  ],
+  providers: [
+    ClassficiationRepository,
+    PostsRepository,
+    PostKeywordsRepository,
+  ],
+})
+class WorkerModule {}
+
 export const handler: Handler = async (event: LambdaEventPayload) => {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(WorkerModule);
   const aiService = app.get(AiService);
   const classificationRepository = app.get(ClassficiationRepository);
   const postRepository = app.get(PostsRepository);
+  const postKeywordsRepository = app.get(PostKeywordsRepository);
 
   // Map - (Folder Name):(Folder ID)
   const folderMapper = {};
@@ -40,6 +74,10 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
       postId,
       classification._id.toString(),
       summarizeUrlContent.response.summary,
+    );
+    await postKeywordsRepository.createPostKeywords(
+      postId,
+      summarizeUrlContent.response.keywords,
     );
   }
 

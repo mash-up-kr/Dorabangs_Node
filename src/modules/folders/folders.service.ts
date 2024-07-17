@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
-import { Schema as MongooseSchema } from 'mongoose';
-import { FolderRepository } from './folders.repository';
-import { PostsRepository } from '../posts/posts.repository';
-import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { sum } from '@src/common';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { Schema as MongooseSchema } from 'mongoose';
+import { PostsRepository } from '../posts/posts.repository';
 import { FolderListServiceDto } from './dto/folder-with-count.dto';
+import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
+import { FolderRepository } from './folders.repository';
 
 @Injectable()
 export class FoldersService {
@@ -67,7 +67,7 @@ export class FoldersService {
       userId: new MongooseSchema.Types.ObjectId(userId),
       postCount: favoritePostCount,
     };
-    const defaultFolderTmp = {
+    const readLater = {
       id: defaultFolder.id,
       name: defaultFolder.name,
       type: FolderType.DEFAULT,
@@ -75,7 +75,7 @@ export class FoldersService {
       postCount: allPostCount - customFoldersPostCount,
     };
 
-    const defaultFolders = [all, favorite, defaultFolderTmp].filter(
+    const defaultFolders = [all, favorite, readLater].filter(
       (folder) => !!folder,
     );
     return { defaultFolders, customFolders };
