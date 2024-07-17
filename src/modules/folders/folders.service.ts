@@ -49,7 +49,10 @@ export class FoldersService {
           postCount: post?.postCount ?? 0,
         };
       });
-
+    const customFoldersPostCount = sum(
+      customFolders,
+      (folder) => folder.postCount,
+    );
     const all = {
       id: null,
       name: '모든 링크',
@@ -64,8 +67,15 @@ export class FoldersService {
       userId: new MongooseSchema.Types.ObjectId(userId),
       postCount: favoritePostCount,
     };
+    const defaultFolderTmp = {
+      id: defaultFolder.id,
+      name: defaultFolder.name,
+      type: FolderType.DEFAULT,
+      userId: new MongooseSchema.Types.ObjectId(userId),
+      postCount: allPostCount - customFoldersPostCount,
+    };
 
-    const defaultFolders = [all, favorite, defaultFolder].filter(
+    const defaultFolders = [all, favorite, defaultFolderTmp].filter(
       (folder) => !!folder,
     );
     return { defaultFolders, customFolders };
