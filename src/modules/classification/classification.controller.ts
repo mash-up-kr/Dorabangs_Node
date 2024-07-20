@@ -1,33 +1,41 @@
 import {
-  Controller,
-  Get,
-  UseGuards,
-  Param,
-  Query,
-  Delete,
-  Patch,
   Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ClassificationService } from './classification.service';
 import { GetUser, PaginationMetadata, PaginationQuery } from '@src/common';
+import { JwtGuard } from '../users/guards';
+import { ClassificationService } from './classification.service';
 import {
   ClassificationControllerDocs,
+  DeleteAIClassificationDocs,
   GetAIFolderNameListDocs,
   GetAIPostListDocs,
-  DeleteAIClassificationDocs,
   PatchAIPostDocs,
   PatchAIPostListDocs,
 } from './docs';
-import { JwtGuard } from '../users/guards';
+import { CountClassificationDocs } from './docs/countClassification.docs';
+import { UpdateAIClassificationDto } from './dto/classification.dto';
 import { AIFolderNameListResponse } from './response/ai-folder-list.dto';
 import { AIPostListResponse } from './response/ai-post-list.dto';
-import { UpdateAIClassificationDto } from './dto/classification.dto';
 
 @Controller('classification')
 @UseGuards(JwtGuard)
 @ClassificationControllerDocs
 export class ClassificationController {
   constructor(private readonly classificationService: ClassificationService) {}
+
+  @Get('/count')
+  @CountClassificationDocs
+  async countClassifiedPost(@GetUser() userId: string) {
+    const count = await this.classificationService.countClassifiedPost(userId);
+    return count;
+  }
 
   @Get('/folders')
   @GetAIFolderNameListDocs

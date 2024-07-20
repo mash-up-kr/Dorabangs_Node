@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { FoldersService } from './folders.service';
-import { FoldersController } from './folders.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Folder, FolderSchema, Post, PostSchema } from '@src/infrastructure';
-import { FolderRepository } from './folders.repository';
 import { PostsModule } from '../posts/posts.module';
+import { FoldersController } from './folders.controller';
+import { FolderRepository } from './folders.repository';
+import { FoldersService } from './folders.service';
 
 @Module({
   imports: [
