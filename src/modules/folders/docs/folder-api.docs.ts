@@ -6,8 +6,8 @@ import {
 } from '@nestjs/swagger';
 import {
   FolderListResponse,
+  FolderPostResponse,
   FolderResponse,
-  PostListInFolderResponse,
 } from '../responses';
 
 export const CreateFolderDocs = applyDecorators(
@@ -50,7 +50,7 @@ export const FindLinksInFolderDocs = applyDecorators(
     description: '',
   }),
   ApiResponse({
-    type: PostListInFolderResponse,
+    type: FolderPostResponse,
   }),
 );
 

@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { GetUser } from '@src/common';
+import { GetUser, PaginationMetadata } from '@src/common';
 import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
 import { PostsService } from '../posts/posts.service';
 import { JwtGuard } from '../users/guards';
@@ -26,10 +26,11 @@ import { CreateFolderDto, UpdateFolderDto } from './dto';
 import { FoldersService } from './folders.service';
 import {
   FolderListResponse,
+  FolderPostResponse,
   FolderResponse,
   FolderSummaryResponse,
-  PostListInFolderResponse,
 } from './responses';
+import { PostResponse } from './responses/post.response';
 
 @FolderControllerDocs
 @UseGuards(JwtGuard)
@@ -88,12 +89,13 @@ export class FoldersController {
       query,
     );
 
-    return new PostListInFolderResponse(
+    const metadata = new PaginationMetadata(
       query.page,
       query.limit,
       result.count,
-      result.posts,
     );
+    const posts = result.posts.map((post) => new PostResponse(post));
+    return new FolderPostResponse(metadata, posts);
   }
 
   @UpdateFolderDocs

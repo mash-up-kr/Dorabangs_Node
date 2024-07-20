@@ -34,6 +34,16 @@ export class FolderRepository {
     return folders;
   }
 
+  async checkUserHasFolder(userId: string, name: string) {
+    const checkFolder = await this.folderModel
+      .findOne({
+        userId: userId,
+        name: name,
+      })
+      .exec();
+    return checkFolder ? true : false;
+  }
+
   async findOneOrFail(param: FilterQuery<FolderDocument>) {
     const folder = await this.folderModel.findOne(param).exec();
     if (!folder) {
