@@ -168,7 +168,7 @@ export class PostsRepository {
             description: 1,
             createdAt: 1,
             readAt: 1,
-            'aiClassification.keywords': 1,
+            keywords: '$aiClassification.keywords',
           },
         },
       ])
@@ -261,7 +261,7 @@ export class PostsRepository {
             description: 1,
             createdAt: 1,
             readAt: 1,
-            'aiClassification.keywords': 1,
+            keywords: '$aiClassification.keywords',
           },
         },
       ])
