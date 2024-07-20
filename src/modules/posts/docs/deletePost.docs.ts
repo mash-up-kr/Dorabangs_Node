@@ -1,8 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOperation } from '@nestjs/swagger';
 
 export const DeletePostDocs = applyDecorators(
   ApiOperation({
-    summary: 'URL 삭제',
+    summary: '피드 삭제',
+  }),
+  ApiNotFoundResponse({
+    description: 'P001',
   }),
 );

@@ -89,7 +89,6 @@ export class ClassificationService {
       _id: postId,
     });
 
-    console.log(post.aiClassificationId);
     if (!post.aiClassificationId) {
       throw new BadRequestException(C001);
     }
@@ -97,7 +96,6 @@ export class ClassificationService {
     const classification = await this.classficationRepository.findById(
       post.aiClassificationId.toString(),
     );
-    console.log(classification);
     if (!classification) {
       throw new BadRequestException(C001);
     }
