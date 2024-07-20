@@ -5,7 +5,7 @@ import { AppModule } from '@src/app.module';
 import { LambdaEventPayload } from './infrastructure/aws-lambda/type';
 import { ClassficiationRepository } from './modules/classification/classification.repository';
 import { PostsRepository } from './modules/posts/posts.repository';
-import { PostAIStatus } from '@src/modules/posts/posts.constant';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 export const handler: Handler = async (event: LambdaEventPayload) => {
   const app = await NestFactory.create(AppModule);
@@ -27,7 +27,7 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
   );
   const postId = event.postId;
   let classificationId = null;
-  let postAIStatus = PostAIStatus.FAIL;
+  let postAiStatus = PostAiStatus.FAIL;
 
   // NOTE : 요약 성공 시 classification 생성, post 업데이트
   if (summarizeUrlContent.success) {
@@ -40,10 +40,10 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
       folderId,
     );
     classificationId = classification._id.toString();
-    postAIStatus = PostAIStatus.SUCCESS;
+    postAiStatus = PostAiStatus.SUCCESS;
   }
   await postRepository.updatePostClassificationForAIClassification(
-    postAIStatus,
+    postAiStatus,
     postId,
     classificationId,
     summarizeUrlContent.response.summary,

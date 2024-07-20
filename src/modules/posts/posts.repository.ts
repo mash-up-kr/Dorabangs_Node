@@ -12,7 +12,7 @@ import {
 } from '../classification/dto/classification.dto';
 import { OrderType } from '@src/common';
 import { PostUpdateableFields } from './type/type';
-import { PostAIStatus } from '@src/modules/posts/posts.constant';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 @Injectable()
 export class PostsRepository {
@@ -92,7 +92,7 @@ export class PostsRepository {
     url: string,
     title: string,
     thumbnail: string,
-    postAIStatus: PostAIStatus,
+    postAIStatus: PostAiStatus,
   ): Promise<string> {
     try {
       const postModel = await this.postModel.create({
@@ -102,7 +102,7 @@ export class PostsRepository {
         userId: userId,
         readAt: null,
         thumbnailImgUrl: thumbnail,
-        postAIStatus: postAIStatus,
+        aiStatus: postAIStatus,
       });
       return postModel._id.toString();
     } catch (error) {
@@ -340,7 +340,7 @@ export class PostsRepository {
   }
 
   async updatePostClassificationForAIClassification(
-    postAIStatus: PostAIStatus,
+    postAiStatus: PostAiStatus,
     postId: string | null,
     classificationId: string | null,
     description: string | null,
@@ -354,7 +354,7 @@ export class PostsRepository {
           $set: {
             aiClassificationId: classificationId,
             description: description,
-            postAIStatus: postAIStatus,
+            aiStatus: postAiStatus,
           },
         },
       )

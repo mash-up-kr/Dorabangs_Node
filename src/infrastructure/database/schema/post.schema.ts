@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { BaseDocument } from './base.schema';
 import { AIClassification } from './AIClassification.schema';
-import { PostAIStatus } from '@src/modules/posts/posts.constant';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 @Schema({ collection: 'posts', timestamps: true, versionKey: false })
 export class Post extends BaseDocument {
@@ -30,8 +30,8 @@ export class Post extends BaseDocument {
   @Prop({ required: false, type: String })
   thumbnailImgUrl?: string | null;
 
-  @Prop({ required: true, enum: PostAIStatus, type: String })
-  postAIStatus: PostAIStatus;
+  @Prop({ required: true, enum: PostAiStatus, type: String })
+  aiStatus: PostAiStatus;
 
   @Prop({
     required: false,

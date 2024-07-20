@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PaginationMetadata } from '@src/common';
 import { Post } from '@src/infrastructure';
 import { Types } from 'mongoose';
-import { PostAIStatus } from '@src/modules/posts/posts.constant';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 export class ListPostItem {
   @ApiProperty()
@@ -33,10 +33,10 @@ export class ListPostItem {
 
   @ApiProperty({
     required: true,
-    enum: PostAIStatus,
+    enum: PostAiStatus,
     description: '피드 게시글의 ai 진행 상태',
   })
-  postAIStatus: PostAIStatus;
+  aiStatus: PostAiStatus;
 
   constructor(data: Post & { _id: Types.ObjectId }) {
     this.id = data._id.toString();
@@ -47,7 +47,7 @@ export class ListPostItem {
     this.isFavorite = data.isFavorite;
     this.readAt = data.readAt;
     this.thumbnail_img_url = data.thumbnailImgUrl;
-    this.postAIStatus = data.postAIStatus;
+    this.aiStatus = data.aiStatus;
   }
 }
 

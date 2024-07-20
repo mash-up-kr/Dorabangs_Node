@@ -7,7 +7,7 @@ import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
 import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import { parseLinkTitleAndContent } from '@src/common';
 import { ConfigService } from '@nestjs/config';
-import { PostAIStatus } from '@src/modules/posts/posts.constant';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 @Injectable()
 export class PostsService {
@@ -57,7 +57,7 @@ export class PostsService {
       createPostDto.url,
       title,
       thumbnail,
-      PostAIStatus.IN_PROGRES,
+      PostAiStatus.IN_PROGRES,
     );
     const payload = {
       postContent: content,
