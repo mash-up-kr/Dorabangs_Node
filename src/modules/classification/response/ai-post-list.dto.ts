@@ -4,14 +4,24 @@ import {
   ClassificationPostList,
   PostListInClassificationFolder,
 } from '../dto/classification.dto';
+import { PaginationMetadata } from '@src/common';
 
 export class AIPostListResponse {
+  @ApiProperty({
+    type: PaginationMetadata,
+  })
+  metadata: PaginationMetadata;
+
   @ApiProperty()
   list: PostListInClassificationFolder[] | ClassificationPostList[];
 
   constructor(
-    data: PostListInClassificationFolder[] | ClassificationPostList[],
+    metaData: PaginationMetadata,
+    classificationPostList:
+      | PostListInClassificationFolder[]
+      | ClassificationPostList[],
   ) {
-    this.list = data;
+    this.metadata = metaData;
+    this.list = classificationPostList;
   }
 }

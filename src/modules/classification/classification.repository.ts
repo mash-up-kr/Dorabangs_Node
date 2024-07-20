@@ -11,6 +11,46 @@ export class ClassficiationRepository {
     private readonly aiClassificationModel: Model<AIClassification>,
   ) {}
 
+  async getClassificationPostCount(
+    userId: string,
+    suggestedFolderId?: string,
+  ): Promise<number> {
+    const result = await this.aiClassificationModel
+      .aggregate([
+        {
+          $match: {
+            deletedAt: null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'posts',
+            localField: '_id',
+            foreignField: 'aiClassificationId',
+            as: 'post',
+          },
+        },
+        {
+          $unwind: '$post',
+        },
+        {
+          $match: {
+            'post.userId': new Types.ObjectId(userId),
+            ...(suggestedFolderId && {
+              suggestedFolderId: new Types.ObjectId(suggestedFolderId),
+            }),
+          },
+        },
+        {
+          $count: 'count',
+        },
+      ])
+      .exec();
+
+    const count = result[0]?.count || 0;
+    return count;
+  }
+
   async createClassification(
     url: string,
     description: string,
