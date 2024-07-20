@@ -5,11 +5,11 @@ import { Transform } from 'class-transformer';
 
 export class GetPostQueryDto extends PaginationQuery {
   @ApiProperty({
-    description: '읽지 않음 여부',
     required: false,
+    description: '읽음 필터링 여부',
   })
-  @IsOptional()
-  @IsBoolean()
   @Transform(({ value }) => (value === 'true' ? true : false))
-  unread?: boolean;
+  @IsBoolean()
+  @IsOptional()
+  isRead: boolean;
 }

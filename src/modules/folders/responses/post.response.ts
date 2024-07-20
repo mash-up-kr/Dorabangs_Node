@@ -40,6 +40,9 @@ export class PostResponse {
   isFavorite: boolean;
 
   @ApiProperty()
+  readAt: Date;
+
+  @ApiProperty()
   createdAt: Date;
 
   @ApiProperty({ type: Keyword, isArray: true })
@@ -53,6 +56,7 @@ export class PostResponse {
     this.title = data.title;
     this.description = data.description;
     this.isFavorite = data.isFavorite;
+    this.readAt = data.readAt;
     this.createdAt = data.createdAt;
   }
 }

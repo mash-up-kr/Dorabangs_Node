@@ -19,13 +19,24 @@ export class PostsRepository {
     private readonly aiClassificationModel: Model<AIClassification>,
   ) {}
 
-  async getUserPostCount(userId: string, isFavorite?: boolean) {
+  async getUserPostCount(
+    userId: string,
+    isFavorite?: boolean,
+    isRead?: boolean,
+  ) {
     const queryFilter: FilterQuery<Post> = {
       userId: userId,
     };
     if (isFavorite) {
       queryFilter['isFavorite'] = true;
     }
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
+    }
+
     const userPostCount = await this.postModel.countDocuments(queryFilter);
     return userPostCount;
   }
@@ -36,6 +47,7 @@ export class PostsRepository {
     limit: number,
     isFavorite?: boolean,
     order = OrderType.desc,
+    isRead?: boolean,
   ) {
     // Skip Query
     const skipQuery = (page - 1) * limit;
@@ -45,6 +57,12 @@ export class PostsRepository {
     // If isFavorite is not undefined and is typeof boolean
     if (isFavorite) {
       queryFilter['isFavorite'] = true;
+    }
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
     }
     const posts = await this.postModel
       .find(queryFilter)
@@ -175,15 +193,39 @@ export class PostsRepository {
       .exec();
   }
 
-  async getCountByFolderId(folderId: string) {
-    const count = await this.postModel.countDocuments({ folderId });
+  async getCountByFolderId(folderId: string, isRead?: boolean) {
+    const queryFilter: FilterQuery<Post> = {
+      folderId: folderId,
+    };
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
+    }
+    const count = await this.postModel.countDocuments(queryFilter);
 
     return count;
   }
 
-  async findByFolderId(folderId: string, offset: number, limit: number) {
+  async findByFolderId(
+    folderId: string,
+    offset: number,
+    limit: number,
+    isRead?: boolean,
+  ) {
+    const queryFilter: FilterQuery<Post> = {
+      folderId: folderId,
+    };
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
+    }
+
     const folders = await this.postModel
-      .find({ folderId })
+      .find(queryFilter)
       .skip(offset)
       .limit(limit);
 
