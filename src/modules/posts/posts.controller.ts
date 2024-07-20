@@ -44,8 +44,10 @@ export class PostsController {
   async createPost(
     @Body() createPostDto: CreatePostDto,
     @GetUser('id') userId: string,
-  ): Promise<boolean> {
-    return await this.postsService.createPost(createPostDto, userId);
+  ) {
+    const post = await this.postsService.createPost(createPostDto, userId);
+    const postSerialize = new ListPostItem(post);
+    return postSerialize;
   }
 
   @Patch(':postId')
@@ -55,7 +57,9 @@ export class PostsController {
     @Param('postId') postId: string,
     @Body() dto: UpdatePostDto,
   ) {
-    return await this.postsService.updatePost(userId, postId, dto);
+    const post = await this.postsService.updatePost(userId, postId, dto);
+    const postSerialize = new ListPostItem(post);
+    return postSerialize;
   }
 
   @Patch(':postId/move')
