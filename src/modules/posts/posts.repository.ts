@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { OrderType } from '@src/common';
 import { AIClassification, Post, PostDocument } from '@src/infrastructure';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { FilterQuery, Model, Types } from 'mongoose';
 import {
   ClassificationPostList,
@@ -82,6 +83,8 @@ export class PostsRepository {
     folderId: string,
     url: string,
     title: string,
+    thumbnail: string,
+    postAIStatus: PostAiStatus,
   ): Promise<string> {
     const postModel = await this.postModel.create({
       folderId: folderId,
@@ -89,6 +92,8 @@ export class PostsRepository {
       title: title,
       userId: userId,
       readAt: null,
+      thumbnailImgUrl: thumbnail,
+      aiStatus: postAIStatus,
     });
     return postModel._id.toString();
   }
@@ -156,13 +161,20 @@ export class PostsRepository {
         {
           $project: {
             _id: 0,
+            folderId: { $toString: '$aiClassification.suggestedFolderId' },
             postId: { $toString: '$_id' },
             title: 1,
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: 1,
-            'aiClassification.keywords': 1,
+            isRead: {
+              $cond: {
+                if: { $eq: ['$readAt', null] },
+                then: false,
+                else: true,
+              },
+            },
+            keywords: '$aiClassification.keywords',
           },
         },
       ])
@@ -254,8 +266,14 @@ export class PostsRepository {
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: 1,
-            'aiClassification.keywords': 1,
+            isRead: {
+              $cond: {
+                if: { $eq: ['$readAt', null] },
+                then: false,
+                else: true,
+              },
+            },
+            keywords: '$aiClassification.keywords',
           },
         },
       ])
@@ -323,9 +341,10 @@ export class PostsRepository {
   }
 
   async updatePostClassificationForAIClassification(
-    postId: string,
-    classificationId: string,
-    description: string,
+    postAiStatus: PostAiStatus,
+    postId: string | null,
+    classificationId: string | null,
+    description: string | null,
   ) {
     const updatedPost = await this.postModel
       .updateOne(
@@ -336,6 +355,7 @@ export class PostsRepository {
           $set: {
             aiClassificationId: classificationId,
             description: description,
+            aiStatus: postAiStatus,
           },
         },
       )

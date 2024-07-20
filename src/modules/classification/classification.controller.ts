@@ -8,7 +8,7 @@ import {
   Patch,
 } from '@nestjs/common';
 import { ClassificationService } from './classification.service';
-import { GetUser, PaginationQuery } from '@src/common';
+import { GetUser, PaginationMetadata, PaginationQuery } from '@src/common';
 import {
   ClassificationControllerDocs,
   GetAIFolderNameListDocs,
@@ -37,29 +37,40 @@ export class ClassificationController {
   @GetAIPostListDocs
   async getSuggestedPostList(
     @GetUser() userId: string,
-    @Query() paingQuery: PaginationQuery,
+    @Query() pagingQuery: PaginationQuery,
   ) {
-    const posts = await this.classificationService.getPostList(
-      userId,
-      paingQuery,
+    const { count, classificationPostList } =
+      await this.classificationService.getPostList(userId, pagingQuery);
+
+    const metadata = new PaginationMetadata(
+      pagingQuery.page,
+      pagingQuery.limit,
+      count,
     );
 
-    return new AIPostListResponse(posts);
+    return new AIPostListResponse(metadata, classificationPostList);
   }
   @Get('/posts/:folderId')
   @GetAIPostListDocs
   async getSuggestedPostListInFolder(
     @GetUser() userId: string,
     @Param('folderId') folderId: string,
-    @Query() paingQuery: PaginationQuery,
+    @Query() pagingQuery: PaginationQuery,
   ) {
-    const posts = await this.classificationService.getPostListInFolder(
-      userId,
-      folderId,
-      paingQuery,
+    const { count, classificationPostList } =
+      await this.classificationService.getPostListInFolder(
+        userId,
+        folderId,
+        pagingQuery,
+      );
+
+    const metadata = new PaginationMetadata(
+      pagingQuery.page,
+      pagingQuery.limit,
+      count,
     );
 
-    return new AIPostListResponse(posts);
+    return new AIPostListResponse(metadata, classificationPostList);
   }
   @Patch('/posts')
   @PatchAIPostDocs
