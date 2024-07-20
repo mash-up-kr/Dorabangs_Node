@@ -43,7 +43,12 @@ export class PostsService {
     );
 
     const userFolders = await this.folderRepository.findByUserId(userId);
-    const folderNames = userFolders.map((folder) => folder.name);
+    const folders = userFolders.map((folder) => {
+      return {
+        id: folder._id.toString(),
+        name: folder.name,
+      };
+    });
     const aiLambdaFunctionName = this.config.get<string>(
       'LAMBDA_FUNCTION_NAME',
     );
@@ -55,7 +60,7 @@ export class PostsService {
     );
     const payload = {
       postContent: content,
-      folderList: folderNames,
+      folderList: folders,
       postId: postId,
     };
     await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);

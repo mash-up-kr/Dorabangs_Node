@@ -96,7 +96,7 @@ export class PostsRepository {
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
     const folders = await this.postModel.aggregate<{
       _id: Types.ObjectId;
-      count: number;
+      postCount: number;
     }>([
       {
         $match: {
@@ -248,6 +248,7 @@ export class PostsRepository {
         {
           $project: {
             _id: 0,
+            folderId: { $toString: '$aiClassification.suggestedFolderId' },
             postId: { $toString: '$_id' },
             title: 1,
             url: 1,
@@ -287,7 +288,7 @@ export class PostsRepository {
   async updatePost(
     userId: string,
     postId: string,
-    updateFields: PostUpdateableFields,
+    updateFields: Partial<PostUpdateableFields>,
   ) {
     const updateResult = await this.postModel
       .updateOne(
@@ -307,6 +308,39 @@ export class PostsRepository {
       throw new NotFoundException(P001);
     }
     return updateResult;
+  }
+
+  async findPostByIdForAIClassification(postId: string) {
+    const post = await this.postModel
+      .findOne({
+        _id: postId,
+      })
+      .lean();
+    if (!post) {
+      throw new NotFoundException('Post를 찾을 수 없습니다.');
+    }
+    return post;
+  }
+
+  async updatePostClassificationForAIClassification(
+    postId: string,
+    classificationId: string,
+    description: string,
+  ) {
+    const updatedPost = await this.postModel
+      .updateOne(
+        {
+          _id: postId,
+        },
+        {
+          $set: {
+            aiClassificationId: classificationId,
+            description: description,
+          },
+        },
+      )
+      .exec();
+    return updatedPost;
   }
 
   // 해당 이슈로 인해 임시로 any타입 명시

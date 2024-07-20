@@ -77,7 +77,7 @@ export class ClassificationController {
   @DeleteAIClassificationDocs
   async abortClassification(
     @GetUser() userId: string,
-    @Query('postId') postId: string,
+    @Param('postId') postId: string,
   ) {
     await this.classificationService.abortClassification(userId, postId);
   }

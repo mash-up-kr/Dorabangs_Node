@@ -20,6 +20,9 @@ class Keyword {
  */
 export class PostResponse {
   @ApiProperty()
+  id: string;
+
+  @ApiProperty()
   userId: string;
 
   @ApiProperty()
@@ -44,6 +47,7 @@ export class PostResponse {
   keywords: Keyword[];
 
   constructor(data: PostDocument) {
+    this.id = data._id.toString();
     this.userId = data.userId.toString();
     this.folderId = data.folderId.toString();
     this.url = data.url;

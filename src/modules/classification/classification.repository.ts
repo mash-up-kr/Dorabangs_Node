@@ -18,6 +18,22 @@ export class ClassficiationRepository {
     return classification;
   }
 
+  async createClassification(
+    url: string,
+    description: string,
+    keywords: string[],
+    suggestedFolderId: string,
+  ) {
+    const classification = await this.aiClassificationModel.create({
+      suggestedFolderId: suggestedFolderId,
+      url: url,
+      description: description,
+      keywords: keywords,
+      completedAt: new Date(),
+    });
+    return classification;
+  }
+
   async findContainedFolderByUserId(
     userId: Types.ObjectId,
   ): Promise<ClassificationFolderWithCount[]> {
