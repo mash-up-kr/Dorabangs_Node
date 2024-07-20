@@ -15,6 +15,7 @@ import { LinksModule } from './modules/links/links.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
 import { OnboardModule } from './modules/onboard/onboard.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { OnboardModule } from './modules/onboard/onboard.module';
     PostsModule,
     AwsLambdaModule,
     OnboardModule,
+    MetricsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import OpenAI, { RateLimitError, OpenAIError } from 'openai';
-import { summarizeURLContentFunctionFactory } from './functions';
+import OpenAI, { OpenAIError, RateLimitError } from 'openai';
+import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
-import { gptVersion, mockFolderLists } from './ai.constant';
+import { summarizeURLContentFunctionFactory } from './functions';
 import { SummarizeURLContent } from './types/types';
 
 @Injectable()
