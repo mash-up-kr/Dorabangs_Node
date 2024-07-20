@@ -8,19 +8,19 @@ export class ListPostItem {
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true, description: '폴더 id', type: String })
   folderId: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true, description: '피드 URL', type: String })
   url: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true, description: '피드 제목', type: String })
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false, description: '요약 정보', type: String })
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true, description: '즐겨찾기 여부', type: Boolean })
   isFavorite: boolean;
 
   @ApiProperty({ required: true, description: '생성 시간', type: Date })
@@ -30,7 +30,7 @@ export class ListPostItem {
   readAt: Date | null;
 
   @ApiProperty({ required: false, description: 'URL og 이미지' })
-  thumbnailImgUrl: string;
+  thumbnailImgUrl: string | null;
 
   @ApiProperty({
     required: true,
