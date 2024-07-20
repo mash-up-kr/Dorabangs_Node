@@ -1,20 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Folder,
-  Post,
-  AIClassification,
-} from '@src/infrastructure/database/schema';
+import { Folder, Post } from '@src/infrastructure/database/schema';
 
 import { InjectModel } from '@nestjs/mongoose';
+import { PaginationQuery } from '@src/common';
 import { Model, Types } from 'mongoose';
-import { ClassficiationRepository } from './classification.repository';
 import { PostsRepository } from '../posts/posts.repository';
+import { ClassficiationRepository } from './classification.repository';
 import {
   ClassificationFolderWithCount,
   PostListInClassificationFolder,
 } from './dto/classification.dto';
-import { PaginationQuery } from '@src/common';
-import { PostListInFolderResponse } from '../folders/responses';
 
 @Injectable()
 export class ClassificationService {

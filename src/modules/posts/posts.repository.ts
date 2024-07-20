@@ -191,7 +191,8 @@ export class PostsRepository {
     const folders = await this.postModel
       .find({ folderId })
       .skip(offset)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     return folders;
   }

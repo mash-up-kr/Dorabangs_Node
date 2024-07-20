@@ -1,17 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PostDocument } from '@src/infrastructure';
+import { Keyword, Post } from '@src/infrastructure';
+import { KeywordItem } from '@src/modules/posts/response/keyword-list.response';
+import { Types } from 'mongoose';
 
 /**
  * @todo
  * 추후 이동 예정
  */
-class Keyword {
-  @ApiProperty()
-  id: string;
-
-  @ApiProperty()
-  name: string;
-}
 
 /**
  * @todo
@@ -40,14 +35,20 @@ export class PostResponse {
   createdAt: Date;
 
   @ApiProperty({ type: Keyword, isArray: true })
-  keywords: Keyword[];
+  keywords: KeywordItem[];
 
-  constructor(data: PostDocument) {
+  constructor(
+    data: Post & {
+      _id: Types.ObjectId;
+      keywords: (Keyword & { _id: Types.ObjectId })[];
+    },
+  ) {
     this.id = data._id.toString();
     this.folderId = data.folderId.toString();
     this.url = data.url;
     this.title = data.title;
     this.description = data.description;
+    this.keywords = data.keywords.map((keyword) => new KeywordItem(keyword));
     this.isFavorite = data.isFavorite;
     this.createdAt = data.createdAt;
   }

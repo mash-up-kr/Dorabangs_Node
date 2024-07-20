@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FolderResponse } from './folder.response';
-import { PostResponse } from './post.response';
-import { PostDocument } from '@src/infrastructure';
 import { PaginationMetadata } from '@src/common';
+import { Keyword, Post } from '@src/infrastructure';
+import { Types } from 'mongoose';
+import { PostResponse } from './post.response';
 
 export class PostListInFolderResponse extends PaginationMetadata {
   @ApiProperty({ type: PostResponse, isArray: true })
@@ -12,7 +12,10 @@ export class PostListInFolderResponse extends PaginationMetadata {
     page: number,
     limit: number,
     total: number,
-    list: PostDocument[],
+    list: (Post & {
+      _id: Types.ObjectId;
+      keywords: (Keyword & { _id: Types.ObjectId })[];
+    })[],
   ) {
     super(page, limit, total);
 

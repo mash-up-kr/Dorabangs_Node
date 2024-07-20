@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { parseLinkTitleAndContent } from '@src/common';
 import { IS_LOCAL } from '@src/common/constant';
-import { Keyword } from '@src/infrastructure';
+import { Keyword, Post } from '@src/infrastructure';
 import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
+import { FlattenMaps, Types } from 'mongoose';
 import { AiClassificationService } from '../ai-classification/ai-classification.service';
 import { FolderRepository } from '../folders/folders.repository';
 import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
@@ -38,30 +39,11 @@ export class PostsService {
       ),
     ]);
 
-    const postIds = posts.map((post) => post._id.toString());
-    const postKeywords =
-      await this.postKeywordsRepository.findKeywordsByPostIds(postIds);
-    const postKeywordMap: Record<string, Keyword[]> = {};
-
-    postKeywords.forEach((postKeyword) => {
-      const postId = postKeyword.postId.toString();
-      if (!postKeywordMap[postId]) {
-        postKeywordMap[postId] = [];
-      }
-
-      /**
-       * populate때문에 강제형변환
-       */
-      const keyword = postKeyword.keywordId as any as Keyword;
-      postKeywordMap[postId].push(keyword);
-    });
+    const postsWithKeyword = await this.organizeFolderWithKeywords(posts);
 
     return {
       count,
-      posts: posts.map((post) => ({
-        ...post,
-        keywords: postKeywordMap[post._id.toString()] ?? [],
-      })),
+      posts: postsWithKeyword,
     };
   }
 
@@ -122,7 +104,12 @@ export class PostsService {
       query.limit,
     );
 
-    return { count, posts };
+    const postsWithKeyword = await this.organizeFolderWithKeywords(posts);
+
+    return {
+      count,
+      posts: postsWithKeyword,
+    };
   }
 
   async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
@@ -171,6 +158,40 @@ export class PostsService {
       userId,
       folderId: { $in: customFolderIds },
     });
+  }
+
+  private async organizeFolderWithKeywords(
+    posts: (FlattenMaps<Post> & { _id: Types.ObjectId })[],
+  ) {
+    const postIds = posts.map((post) => post._id.toString());
+    const postKeywords =
+      await this.postKeywordsRepository.findKeywordsByPostIds(postIds);
+    const postKeywordMap: Record<
+      string,
+      (Keyword & { _id: Types.ObjectId })[]
+    > = {};
+
+    postKeywords.forEach((postKeyword) => {
+      const postId = postKeyword.postId.toString();
+      if (!postKeywordMap[postId]) {
+        postKeywordMap[postId] = [];
+      }
+
+      /**
+       * populate때문에 강제형변환
+       */
+      const keyword = postKeyword.keywordId as any as Keyword & {
+        _id: Types.ObjectId;
+      };
+      postKeywordMap[postId].push(keyword);
+    });
+
+    const postsWithKeyword = posts.map((post) => ({
+      ...post,
+      keywords: postKeywordMap[post._id.toString()] ?? [],
+    }));
+
+    return postsWithKeyword;
   }
 
   private async executeAiClassification(payload: AiClassificationPayload) {

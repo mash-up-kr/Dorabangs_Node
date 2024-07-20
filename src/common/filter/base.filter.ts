@@ -22,6 +22,8 @@ export class RootExceptionFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const request = context.getRequest<Request>();
     const response: Response = context.getResponse<Response>();
+    console.log(exception);
+
     let targetException = exception;
     let responseStatusCode = 500;
     let responseErrorPayload: ExceptionPayload = {
