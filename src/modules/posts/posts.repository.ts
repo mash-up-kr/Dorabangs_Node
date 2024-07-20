@@ -381,4 +381,9 @@ export class PostsRepository {
     }
     return deleteResult;
   }
+
+  async deleteMany(param: FilterQuery<PostDocument>) {
+    await this.postModel.deleteMany(param);
+    1;
+  }
 }

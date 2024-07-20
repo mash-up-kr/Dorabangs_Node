@@ -128,4 +128,16 @@ export class PostsService {
     );
     return true;
   }
+
+  async removeAllPostsInCustomFolders(userId: string) {
+    const customFolders = await this.folderRepository.findByUserId(userId);
+    const customFolderIds = customFolders
+      .filter((folder) => folder.type === FolderType.CUSTOM)
+      .map((folder) => folder._id);
+
+    await this.postRepository.deleteMany({
+      userId,
+      folderId: { $in: customFolderIds },
+    });
+  }
 }

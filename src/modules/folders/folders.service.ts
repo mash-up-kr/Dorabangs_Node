@@ -3,7 +3,7 @@ import { sum } from '@src/common';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { Schema as MongooseSchema } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
-import { FolderListServiceDto } from './dto/folder-with-count.dto';
+import { FolderListServiceDto } from './dto/folder-list-service.dto';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
 import { FolderRepository } from './folders.repository';
 
@@ -111,5 +111,9 @@ export class FoldersService {
     });
 
     await folder.deleteOne().exec();
+  }
+
+  async removeAllCustomFolders(userId: string) {
+    await this.folderRepository.deleteAllCustomFolder(userId);
   }
 }

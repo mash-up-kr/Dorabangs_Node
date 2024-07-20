@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
 import { Folder, FolderDocument } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { FilterQuery, Model } from 'mongoose';
 
 @Injectable()
 export class FolderRepository {
@@ -39,5 +39,12 @@ export class FolderRepository {
     }
 
     return folder;
+  }
+
+  async deleteAllCustomFolder(userId: string) {
+    await this.folderModel.deleteMany({
+      userId,
+      type: FolderType.CUSTOM,
+    });
   }
 }

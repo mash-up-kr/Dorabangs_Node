@@ -1,17 +1,18 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { FoldersService } from './folders.service';
-import { CreateFolderDto, UpdateFolderDto } from './dto';
 import { GetUser } from '@src/common';
+import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
+import { PostsService } from '../posts/posts.service';
+import { JwtGuard } from '../users/guards';
 import {
   CreateFolderDocs,
   DeleteFolderDocs,
@@ -21,14 +22,13 @@ import {
   FolderControllerDocs,
   UpdateFolderDocs,
 } from './docs';
+import { CreateFolderDto, DeleteCustomFolderDto, UpdateFolderDto } from './dto';
+import { FoldersService } from './folders.service';
 import {
   FolderListResponse,
   FolderSummaryResponse,
   PostListInFolderResponse,
 } from './responses';
-import { JwtGuard } from '../users/guards';
-import { PostsService } from '../posts/posts.service';
-import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
 
 @FolderControllerDocs
 @UseGuards(JwtGuard)
@@ -94,6 +94,16 @@ export class FoldersController {
     @Body() updateFolderDto: UpdateFolderDto,
   ) {
     await this.foldersService.update(userId, folderId, updateFolderDto);
+  }
+
+  @Delete('/all')
+  async removeAll(@Query() deleteCustomFolderDto: DeleteCustomFolderDto) {
+    await this.postsService.removeAllPostsInCustomFolders(
+      deleteCustomFolderDto.userId,
+    );
+    await this.foldersService.removeAllCustomFolders(
+      deleteCustomFolderDto.userId,
+    );
   }
 
   @DeleteFolderDocs
