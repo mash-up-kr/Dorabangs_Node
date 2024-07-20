@@ -168,6 +168,7 @@ export class PostsRepository {
         {
           $project: {
             _id: 0,
+            folderId: { $toString: '$aiClassification.suggestedFolderId' },
             postId: { $toString: '$_id' },
             title: 1,
             url: 1,
