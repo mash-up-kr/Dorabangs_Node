@@ -25,24 +25,6 @@ export interface PostListInClassificationFolder {
   readAt: Date;
 }
 
-export interface ClassificationPostList {
-  postId: string;
-
-  folderId: string;
-
-  title: string;
-
-  url: string;
-
-  description: string;
-
-  keywords: string[];
-
-  createdAt: Date;
-
-  readAt: Date;
-}
-
 export class UpdateAIClassificationDto {
   @IsNotEmpty()
   @IsMongoId()
