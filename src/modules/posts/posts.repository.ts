@@ -103,7 +103,7 @@ export class PostsRepository {
     title: string,
     thumbnail: string,
     postAIStatus: PostAiStatus,
-  ): Promise<string> {
+  ): Promise<Post & { _id: Types.ObjectId }> {
     const postModel = await this.postModel.create({
       folderId: folderId,
       url: url,
@@ -113,7 +113,7 @@ export class PostsRepository {
       thumbnailImgUrl: thumbnail,
       aiStatus: postAIStatus,
     });
-    return postModel._id.toString();
+    return postModel;
   }
 
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
@@ -185,13 +185,7 @@ export class PostsRepository {
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: {
-              $cond: {
-                if: { $eq: ['$readAt', null] },
-                then: false,
-                else: true,
-              },
-            },
+            readAt: 1,
             keywords: '$aiClassification.keywords',
           },
         },
@@ -308,13 +302,7 @@ export class PostsRepository {
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: {
-              $cond: {
-                if: { $eq: ['$readAt', null] },
-                then: false,
-                else: true,
-              },
-            },
+            readAt: 1,
             keywords: '$aiClassification.keywords',
           },
         },

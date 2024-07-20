@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FolderResponse } from './folder.response';
 import { PostDocument } from '@src/infrastructure';
 
 /**

@@ -29,7 +29,7 @@ export class ListPostItem {
   readAt: Date;
 
   @ApiProperty({ required: false, description: 'URL og 이미지' })
-  thumbnail_img_url: string;
+  thumbnailImgUrl: string;
 
   @ApiProperty({
     required: true,
@@ -46,7 +46,7 @@ export class ListPostItem {
     this.description = data.description;
     this.isFavorite = data.isFavorite;
     this.readAt = data.readAt;
-    this.thumbnail_img_url = data.thumbnailImgUrl;
+    this.thumbnailImgUrl = data.thumbnailImgUrl;
     this.aiStatus = data.aiStatus;
   }
 }

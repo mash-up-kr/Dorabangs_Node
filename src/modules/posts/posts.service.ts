@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { parseLinkTitleAndContent } from '@src/common';
+import { Post } from '@src/infrastructure';
 import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
+import { Types } from 'mongoose';
 import { FolderRepository } from '../folders/folders.repository';
 import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
 import { GetPostQueryDto } from './dto/find-in-folder.dto';
@@ -43,7 +45,7 @@ export class PostsService {
   async createPost(
     createPostDto: CreatePostDto,
     userId: string,
-  ): Promise<boolean> {
+  ): Promise<Post & { _id: Types.ObjectId }> {
     // NOTE : URL에서 얻은 정보 가져옴
     const { title, content, thumbnail } = await parseLinkTitleAndContent(
       createPostDto.url,
@@ -56,7 +58,7 @@ export class PostsService {
         name: folder.name,
       };
     });
-    const postId = await this.postRepository.createPost(
+    const post = await this.postRepository.createPost(
       userId,
       createPostDto.folderId,
       createPostDto.url,
@@ -67,14 +69,14 @@ export class PostsService {
     const payload = {
       postContent: content,
       folderList: folderList,
-      postId: postId,
+      postId: post._id.toString(),
     };
 
     const aiLambdaFunctionName = this.config.get<string>(
       'LAMBDA_FUNCTION_NAME',
     );
     await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
-    return true;
+    return post;
   }
 
   /**
@@ -115,8 +117,10 @@ export class PostsService {
 
     // Update post data
     await this.postRepository.updatePost(userId, postId, dto);
-
-    return true;
+    const post = await this.postRepository.findPostOrThrow({
+      _id: postId,
+    });
+    return post;
   }
 
   async updatePostFolder(

@@ -1,17 +1,18 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { FoldersService } from './folders.service';
-import { CreateFolderDto, UpdateFolderDto } from './dto';
 import { GetUser } from '@src/common';
+import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
+import { PostsService } from '../posts/posts.service';
+import { JwtGuard } from '../users/guards';
 import {
   CreateFolderDocs,
   DeleteFolderDocs,
@@ -21,14 +22,14 @@ import {
   FolderControllerDocs,
   UpdateFolderDocs,
 } from './docs';
+import { CreateFolderDto, UpdateFolderDto } from './dto';
+import { FoldersService } from './folders.service';
 import {
   FolderListResponse,
+  FolderResponse,
   FolderSummaryResponse,
   PostListInFolderResponse,
 } from './responses';
-import { JwtGuard } from '../users/guards';
-import { PostsService } from '../posts/posts.service';
-import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
 
 @FolderControllerDocs
 @UseGuards(JwtGuard)
@@ -45,7 +46,16 @@ export class FoldersController {
     @GetUser('id') userId: string,
     @Body() createFolderDto: CreateFolderDto,
   ) {
-    await this.foldersService.createMany(userId, createFolderDto);
+    const folders = await this.foldersService.createMany(
+      userId,
+      createFolderDto,
+    );
+    const folderSerializer = folders.map(
+      (folder) => new FolderResponse(folder),
+    );
+    return {
+      list: folderSerializer,
+    };
   }
 
   @FindAFolderListDocs
@@ -93,7 +103,12 @@ export class FoldersController {
     @Param('folderId') folderId: string,
     @Body() updateFolderDto: UpdateFolderDto,
   ) {
-    await this.foldersService.update(userId, folderId, updateFolderDto);
+    const updatedFolder = await this.foldersService.update(
+      userId,
+      folderId,
+      updateFolderDto,
+    );
+    return new FolderResponse(updatedFolder);
   }
 
   @DeleteFolderDocs
