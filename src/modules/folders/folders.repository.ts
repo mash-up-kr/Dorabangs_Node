@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
 import { Folder, FolderDocument } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { FilterQuery, Model } from 'mongoose';
+import { F002 } from './error';
 
 @Injectable()
 export class FolderRepository {
@@ -35,7 +36,7 @@ export class FolderRepository {
   async findOneOrFail(param: FilterQuery<FolderDocument>) {
     const folder = await this.folderModel.findOne(param).exec();
     if (!folder) {
-      throw new NotFoundException('folder not found');
+      throw new NotFoundException(F002);
     }
 
     return folder;

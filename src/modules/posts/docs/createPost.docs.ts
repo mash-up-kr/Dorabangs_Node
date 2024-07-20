@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 
 export const CreatePostDocs = applyDecorators(
   ApiOperation({
-    summary: 'URL 링크 저장',
+    summary: '피드 링크 저장',
   }),
   ApiResponse({
     type: Types.ObjectId,

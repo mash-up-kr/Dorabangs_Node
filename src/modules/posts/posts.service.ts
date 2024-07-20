@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { parseLinkTitleAndContent } from '@src/common';
+import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
-import { GetPostQueryDto } from './dto/find-in-folder.dto';
 import { FolderRepository } from '../folders/folders.repository';
 import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
-import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
-import { parseLinkTitleAndContent } from '@src/common';
-import { ConfigService } from '@nestjs/config';
-import { PostAiStatus } from '@src/modules/posts/posts.constant';
+import { GetPostQueryDto } from './dto/find-in-folder.dto';
 
 @Injectable()
 export class PostsService {
@@ -99,7 +99,10 @@ export class PostsService {
 
   async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
     // Find if user post exist
-    await this.postRepository.findPostOrThrow(userId, postId);
+    await this.postRepository.findPostOrThrow({
+      id: postId,
+      userId: userId,
+    });
 
     // Update post data
     await this.postRepository.updatePost(userId, postId, dto);
@@ -112,8 +115,16 @@ export class PostsService {
     postId: string,
     dto: UpdatePostFolderDto,
   ) {
+    await this.folderRepository.findOneOrFail({
+      userId: userId,
+      id: dto.folderId,
+    });
+
     // Find if post exist
-    await this.postRepository.findPostOrThrow(userId, postId);
+    await this.postRepository.findPostOrThrow({
+      id: postId,
+      userId: userId,
+    });
 
     // Update post folder id
     await this.postRepository.updatePostFolder(userId, postId, dto.folderId);
@@ -124,7 +135,10 @@ export class PostsService {
 
   async deletePost(userId: string, postId: string) {
     // Find if post is user's post. If it's not throw NotFoundError
-    const post = await this.postRepository.findPostOrThrow(userId, postId);
+    const post = await this.postRepository.findPostOrThrow({
+      id: postId,
+      userId: userId,
+    });
     await this.postRepository.deletePost(
       userId,
       postId,

@@ -1,18 +1,15 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { OrderType } from '@src/common';
+import { AIClassification, Post, PostDocument } from '@src/infrastructure';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AIClassification, Post } from '@src/infrastructure';
 import {
   ClassificationPostList,
   PostListInClassificationFolder,
 } from '../classification/dto/classification.dto';
-import { OrderType } from '@src/common';
+import { P001 } from './error';
 import { PostUpdateableFields } from './type/type';
-import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 @Injectable()
 export class PostsRepository {
@@ -58,15 +55,10 @@ export class PostsRepository {
     return posts;
   }
 
-  async findPostOrThrow(userId: string, postId: string) {
-    const post = await this.postModel
-      .findOne({
-        _id: postId,
-        userId: userId,
-      })
-      .lean();
+  async findPostOrThrow(param: FilterQuery<PostDocument>) {
+    const post = await this.postModel.findOne(param).lean();
     if (!post) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     return post;
   }
@@ -94,20 +86,16 @@ export class PostsRepository {
     thumbnail: string,
     postAIStatus: PostAiStatus,
   ): Promise<string> {
-    try {
-      const postModel = await this.postModel.create({
-        folderId: folderId,
-        url: url,
-        title: title,
-        userId: userId,
-        readAt: null,
-        thumbnailImgUrl: thumbnail,
-        aiStatus: postAIStatus,
-      });
-      return postModel._id.toString();
-    } catch (error) {
-      throw new InternalServerErrorException('create post DB error');
-    }
+    const postModel = await this.postModel.create({
+      folderId: folderId,
+      url: url,
+      title: title,
+      userId: userId,
+      readAt: null,
+      thumbnailImgUrl: thumbnail,
+      aiStatus: postAIStatus,
+    });
+    return postModel._id.toString();
   }
 
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
@@ -335,7 +323,7 @@ export class PostsRepository {
       .exec();
 
     if (!updateResult.modifiedCount) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     return updateResult;
   }
@@ -390,7 +378,7 @@ export class PostsRepository {
       .exec();
     // If deletion faild, deletedCount will return 0
     if (!deleteResult.deletedCount) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     if (aiClassificationId) {
       await this.aiClassificationModel

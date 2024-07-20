@@ -1,12 +1,15 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import {
   FolderListResponse,
   FolderResponse,
   FolderSummaryResponse,
   PostListInFolderResponse,
 } from '../responses';
-import { GetPostQueryDto } from '@src/modules/posts/dto/find-in-folder.dto';
 
 export const CreateFolderDocs = applyDecorators(
   ApiOperation({
@@ -36,6 +39,9 @@ export const FindFolderDocs = applyDecorators(
   ApiResponse({
     type: FolderResponse,
   }),
+  ApiNotFoundResponse({
+    description: ['F002'].join(', '),
+  }),
 );
 
 export const FindLinksInFolderDocs = applyDecorators(
@@ -55,10 +61,16 @@ export const UpdateFolderDocs = applyDecorators(
   ApiResponse({
     type: FolderSummaryResponse,
   }),
+  ApiNotFoundResponse({
+    description: ['F002'].join(', '),
+  }),
 );
 
 export const DeleteFolderDocs = applyDecorators(
   ApiOperation({
     summary: '폴더 삭제 API',
+  }),
+  ApiNotFoundResponse({
+    description: ['F002'].join(', '),
   }),
 );

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
 import { AIClassification } from '@src/infrastructure';
+import { Model, Types } from 'mongoose';
 import { ClassificationFolderWithCount } from './dto/classification.dto';
 
 @Injectable()
@@ -10,6 +10,13 @@ export class ClassficiationRepository {
     @InjectModel(AIClassification.name)
     private readonly aiClassificationModel: Model<AIClassification>,
   ) {}
+
+  async findById(classificationId: string) {
+    const classification = await this.aiClassificationModel
+      .findById(classificationId)
+      .exec();
+    return classification;
+  }
 
   async getClassificationPostCount(
     userId: string,
