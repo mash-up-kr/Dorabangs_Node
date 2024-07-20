@@ -7,7 +7,6 @@ import {
 import { captureException } from '@sentry/node';
 import { DiscordErrorWebhookProvider } from '@src/infrastructure/discord/discord-error-webhook.provider';
 import { Response } from 'express';
-import { IS_LOCAL } from '../constant';
 import { RootException, createException } from '../error';
 import { ExceptionPayload, ICommonResponse } from '../types/type';
 
@@ -80,10 +79,6 @@ export class RootExceptionFilter implements ExceptionFilter {
   }
 
   private async handle(request: Request, error: Error) {
-    if (IS_LOCAL) {
-      return;
-    }
-
     const content = this.parseError(request, error);
     await this.discordErrorWebhookProvider.send(content);
   }
