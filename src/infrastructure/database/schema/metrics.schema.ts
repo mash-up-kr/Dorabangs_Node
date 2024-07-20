@@ -15,12 +15,6 @@ export class Metrics extends BaseDocument {
 
   @Prop({ required: true })
   postId: string; // 굳이 연관관계를 가져야하는 필드는 아니므로 string 처리
-
-  @Prop({ required: true })
-  inputToken: number;
-
-  @Prop({ required: true })
-  outputToken: number;
 }
 
 export type MetricsDocument = HydratedDocument<Metrics>;

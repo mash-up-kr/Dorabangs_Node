@@ -1,30 +1,36 @@
-import { Handler } from 'aws-lambda';
 import { NestFactory } from '@nestjs/core';
-import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AppModule } from '@src/app.module';
+import { AiService } from '@src/infrastructure/ai/ai.service';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
+import { Handler } from 'aws-lambda';
 import { LambdaEventPayload } from './infrastructure/aws-lambda/type';
 import { ClassficiationRepository } from './modules/classification/classification.repository';
+import { MetricsRepository } from './modules/metrics/metrics.repository';
 import { PostsRepository } from './modules/posts/posts.repository';
-import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 export const handler: Handler = async (event: LambdaEventPayload) => {
   const app = await NestFactory.create(AppModule);
   const aiService = app.get(AiService);
   const classificationRepository = app.get(ClassficiationRepository);
   const postRepository = app.get(PostsRepository);
+  const metricsRepository = app.get(MetricsRepository);
 
   // Map - (Folder Name):(Folder ID)
   const folderMapper = {};
-  const folderNames = event.folderList.map((folder) => {
+  // Build foldeMapper
+  event.folderList.forEach((folder) => {
     folderMapper[folder.name] = folder.id;
-    return folder.name;
   });
 
   // NOTE: AI 요약 요청
+  const start = process.hrtime();
   const summarizeUrlContent = await aiService.summarizeLinkContent(
     event.postContent,
-    folderNames,
+    Object.keys(folderMapper), // 중복성 줄이기 위해
   );
+  const end = process.hrtime(start);
+  const timeSecond = end[0] + end[1] / 1e9;
+
   const postId = event.postId;
   let classificationId = null;
   let postAiStatus = PostAiStatus.FAIL;
@@ -38,6 +44,13 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
       summarizeUrlContent.response.summary,
       summarizeUrlContent.response.keywords,
       folderId,
+    );
+    // Save metrics
+    await metricsRepository.createMetrics(
+      summarizeUrlContent.success,
+      timeSecond,
+      post.url,
+      post._id.toString(),
     );
     classificationId = classification._id.toString();
     postAiStatus = PostAiStatus.SUCCESS;

@@ -10,16 +10,12 @@ export class MetricsService {
     time: number,
     postURL: string,
     postId: string,
-    inputToken: number,
-    outputToken: number,
   ) {
     const metric = await this.repository.createMetrics(
       isSuccess,
       time,
       postURL,
       postId,
-      inputToken,
-      outputToken,
     );
     return metric;
   }
