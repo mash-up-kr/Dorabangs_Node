@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { OrderType } from '@src/common';
-import { AIClassification, Post } from '@src/infrastructure';
+import { AIClassification, Post, PostDocument } from '@src/infrastructure';
 import { FilterQuery, Model, Types } from 'mongoose';
 import {
   ClassificationPostList,
@@ -54,13 +54,8 @@ export class PostsRepository {
     return posts;
   }
 
-  async findPostOrThrow(userId: string, postId: string) {
-    const post = await this.postModel
-      .findOne({
-        _id: postId,
-        userId: userId,
-      })
-      .lean();
+  async findPostOrThrow(param: FilterQuery<PostDocument>) {
+    const post = await this.postModel.findOne(param).lean();
     if (!post) {
       throw new NotFoundException(P001);
     }
