@@ -4,10 +4,7 @@ import { OrderType } from '@src/common';
 import { AIClassification, Post, PostDocument } from '@src/infrastructure';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { FilterQuery, Model, Types } from 'mongoose';
-import {
-  ClassificationPostList,
-  PostListInClassificationFolder,
-} from '../classification/dto/classification.dto';
+import { ClassificationPostList } from '../classification/dto/classification.dto';
 import { P001 } from './error';
 import { PostUpdateableFields } from './type/type';
 
@@ -142,7 +139,7 @@ export class PostsRepository {
     suggestedFolderId: Types.ObjectId,
     offset: number,
     limit: number,
-  ): Promise<PostListInClassificationFolder[]> {
+  ): Promise<ClassificationPostList[]> {
     return await this.postModel
       .aggregate([
         {
@@ -186,6 +183,8 @@ export class PostsRepository {
             description: 1,
             createdAt: 1,
             readAt: 1,
+            aiStatus: 1,
+            thumbnailImgUrl: 1,
             keywords: '$aiClassification.keywords',
           },
         },
@@ -303,6 +302,8 @@ export class PostsRepository {
             description: 1,
             createdAt: 1,
             readAt: 1,
+            aiStatus: 1,
+            thumbnailImgUrl: 1,
             keywords: '$aiClassification.keywords',
           },
         },

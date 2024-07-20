@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationMetadata } from '@src/common';
 import { PostResponse } from './post.response';
+import { PaginationMetadata } from '@src/common';
 
 export class FolderPostResponse {
   @ApiProperty({
