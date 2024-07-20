@@ -20,13 +20,18 @@ export class PostsService {
 
   async listPost(userId: string, query: ListPostQueryDto) {
     const [count, posts] = await Promise.all([
-      this.postRepository.getUserPostCount(userId, query.favorite),
+      this.postRepository.getUserPostCount(
+        userId,
+        query.favorite,
+        query.isRead,
+      ),
       this.postRepository.listPost(
         userId,
         query.page,
         query.limit,
         query.favorite,
         query.order,
+        query.isRead,
       ),
     ]);
     return {
@@ -87,11 +92,15 @@ export class PostsService {
     });
 
     const offset = (query.page - 1) * query.limit;
-    const count = await this.postRepository.getCountByFolderId(folderId);
+    const count = await this.postRepository.getCountByFolderId(
+      folderId,
+      query.isRead,
+    );
     const posts = await this.postRepository.findByFolderId(
       folderId,
       offset,
       query.limit,
+      query.isRead,
     );
 
     return { count, posts };
