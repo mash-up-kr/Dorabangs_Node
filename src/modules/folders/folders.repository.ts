@@ -25,7 +25,8 @@ export class FolderRepository {
   async createMany(
     folders: { userId: string; name: string; type: FolderType }[],
   ) {
-    await this.folderModel.insertMany(folders);
+    const createdFolders = await this.folderModel.insertMany(folders);
+    return createdFolders;
   }
 
   async findByUserId(userId: string) {
