@@ -7,6 +7,7 @@ import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
 import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import { parseLinkTitleAndContent } from '@src/common';
 import { ConfigService } from '@nestjs/config';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 @Injectable()
 export class PostsService {
@@ -38,31 +39,35 @@ export class PostsService {
     createPostDto: CreatePostDto,
     userId: string,
   ): Promise<boolean> {
-    const { title, content } = await parseLinkTitleAndContent(
+    // NOTE : URL에서 얻은 정보 가져옴
+    const { title, content, thumbnail } = await parseLinkTitleAndContent(
       createPostDto.url,
     );
 
-    const userFolders = await this.folderRepository.findByUserId(userId);
-    const folders = userFolders.map((folder) => {
+    const userFolderList = await this.folderRepository.findByUserId(userId);
+    const folderList = userFolderList.map((folder) => {
       return {
         id: folder._id.toString(),
         name: folder.name,
       };
     });
-    const aiLambdaFunctionName = this.config.get<string>(
-      'LAMBDA_FUNCTION_NAME',
-    );
     const postId = await this.postRepository.createPost(
       userId,
       createPostDto.folderId,
       createPostDto.url,
       title,
+      thumbnail,
+      PostAiStatus.IN_PROGRES,
     );
     const payload = {
       postContent: content,
-      folderList: folders,
+      folderList: folderList,
       postId: postId,
     };
+
+    const aiLambdaFunctionName = this.config.get<string>(
+      'LAMBDA_FUNCTION_NAME',
+    );
     await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
     return true;
   }
