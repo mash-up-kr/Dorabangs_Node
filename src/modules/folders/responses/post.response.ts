@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FolderResponse } from './folder.response';
 import { PostDocument } from '@src/infrastructure';
 
 /**
@@ -21,9 +20,6 @@ class Keyword {
 export class PostResponse {
   @ApiProperty()
   id: string;
-
-  @ApiProperty()
-  userId: string;
 
   @ApiProperty()
   folderId: string;
@@ -48,7 +44,6 @@ export class PostResponse {
 
   constructor(data: PostDocument) {
     this.id = data._id.toString();
-    this.userId = data.userId.toString();
     this.folderId = data.folderId.toString();
     this.url = data.url;
     this.title = data.title;

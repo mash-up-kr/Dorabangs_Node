@@ -5,6 +5,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { captureException } from '@sentry/node';
+import { DiscordErrorWebhookProvider } from '@src/infrastructure/discord/discord-error-webhook.provider';
 import { Response } from 'express';
 import { RootException, createException } from '../error';
 import { ExceptionPayload, ICommonResponse } from '../types/type';
@@ -13,8 +14,13 @@ import { ExceptionPayload, ICommonResponse } from '../types/type';
 export class RootExceptionFilter implements ExceptionFilter {
   private unknownCode = 'Unknown';
 
-  catch(exception: any, host: ArgumentsHost) {
+  constructor(
+    private readonly discordErrorWebhookProvider: DiscordErrorWebhookProvider,
+  ) {}
+
+  async catch(exception: any, host: ArgumentsHost) {
     const context = host.switchToHttp();
+    const request = context.getRequest<Request>();
     const response: Response = context.getResponse<Response>();
     let targetException = exception;
     let responseStatusCode = 500;
@@ -65,6 +71,30 @@ export class RootExceptionFilter implements ExceptionFilter {
       error: responseErrorPayload,
     };
 
+    await this.handle(request, exception);
+
     return response.status(responseStatusCode).json(exceptionResponse);
+  }
+
+  private async handle(request: Request, error: Error) {
+    const content = this.parseError(request, error);
+
+    this.discordErrorWebhookProvider.send(content);
+  }
+
+  private parseError(request: Request, error: Error): string {
+    return `노드팀 채찍 맞아라~~ 🦹🏿‍♀️👹🦹🏿
+에러 발생 API : ${request.method} ${request.url}
+
+에러 메세지 : ${error.message}
+
+에러 위치 : ${error.stack
+      .split('\n')
+      .slice(0, 2)
+      .map((message) => message.trim())
+      .join('\n')}
+
+당장 고쳐서 올렷!
+    `;
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI, { OpenAIError, RateLimitError } from 'openai';
-import { DiscordWebhookProvider } from '../discord/discord-webhook.provider';
+import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
 import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
 import { summarizeURLContentFunctionFactory } from './functions';
@@ -13,16 +13,17 @@ export class AiService {
 
   constructor(
     private readonly config: ConfigService,
-    private readonly discordProvider: DiscordWebhookProvider,
+    private readonly discordAIWebhookProvider: DiscordAIWebhookProvider,
   ) {
     this.openai = new OpenAI({
-      apiKey: config.get<string>('OPENAI_API_KEY'),
+      apiKey: this.config.get<string>('OPENAI_API_KEY'),
     });
   }
 
   async summarizeLinkContent(
     content: string,
     userFolderList: string[],
+    url: string,
     temperature = 0.5,
   ): Promise<SummarizeURLContentDto> {
     try {
@@ -32,6 +33,7 @@ export class AiService {
       const promptResult = await this.invokeAISummary(
         content,
         folderLists,
+        url,
         temperature,
       );
 
@@ -64,6 +66,7 @@ export class AiService {
   private async invokeAISummary(
     content: string,
     folderList: string[],
+    url: string,
     temperature: number,
   ) {
     let elapsedTime: number = 0;
@@ -102,10 +105,12 @@ ${content}
     );
 
     elapsedTime = new Date().getTime() - startTime.getTime();
-    this.discordProvider.send(
+    this.discordAIWebhookProvider.send(
       [
         `AI 요약 실행 시간: ${elapsedTime}ms`,
-        `Input : ${content} / [${folderList.join(', ')}]`,
+        `Input`,
+        `- URL : ${url}`,
+        `- 인풋 폴더 : [${folderList.join(', ')}]`,
         `Output : ${promptResult} `,
       ].join('\n'),
     );

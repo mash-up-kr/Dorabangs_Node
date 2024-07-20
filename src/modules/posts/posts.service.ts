@@ -59,6 +59,7 @@ export class PostsService {
       title,
     );
     const payload = {
+      url: createPostDto.url,
       postContent: content,
       folderList: folders,
       postId: postId,

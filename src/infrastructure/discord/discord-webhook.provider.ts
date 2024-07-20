@@ -1,14 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-
-@Injectable()
 export class DiscordWebhookProvider {
-  constructor(private readonly configService: ConfigService) {}
+  protected readonly webhookUrl: string;
+  constructor() {}
 
-  public async send(content: string) {
-    const discordWebhook = this.configService.get('DISCORD_WEBHOOK_URL');
-
-    await fetch(discordWebhook, {
+  public async send(url: string, content: string) {
+    await fetch(url, {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),

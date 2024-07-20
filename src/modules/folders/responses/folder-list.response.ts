@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { FolderListServiceDto } from '../dto/folder-list-service.dto';
 import { FolderResponse } from './folder.response';
-import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { FolderListServiceDto } from '../dto/folder-with-count.dto';
 
 export class FolderListResponse {
   @ApiProperty({ isArray: true, type: FolderResponse })

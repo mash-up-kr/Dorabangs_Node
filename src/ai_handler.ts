@@ -57,6 +57,7 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
   const summarizeUrlContent = await aiService.summarizeLinkContent(
     event.postContent,
     folderNames,
+    event.url,
   );
 
   // NOTE : 요약 성공 시 classification 생성, post 업데이트
