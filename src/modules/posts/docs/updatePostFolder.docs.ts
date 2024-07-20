@@ -6,6 +6,6 @@ export const UpdatePostFolderDocs = applyDecorators(
     summary: '피드 폴더 변경',
   }),
   ApiNotFoundResponse({
-    description: 'P001',
+    description: ['P001', 'F002'].join(', '),
   }),
 );
