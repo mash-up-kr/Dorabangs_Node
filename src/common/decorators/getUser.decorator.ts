@@ -1,4 +1,8 @@
-import { ExecutionContext, createParamDecorator } from '@nestjs/common';
+import {
+  ExecutionContext,
+  UnauthorizedException,
+  createParamDecorator,
+} from '@nestjs/common';
 import { ReqUserPayload } from '../types/type';
 import { Request } from 'express';
 
@@ -18,6 +22,9 @@ export const GetUser = createParamDecorator(
     const request = context.switchToHttp().getRequest<Request>();
     // Expect Request, user property as type 'ReqUserPayload'(Refer to defined in common/types/type.d.ts)
     const user: Express.User = request.user;
+    if (!user) {
+      throw new UnauthorizedException('인증에 실패하였습니다.');
+    }
     return user['id'];
   },
 );
