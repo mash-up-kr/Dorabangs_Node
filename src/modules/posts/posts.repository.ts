@@ -1,16 +1,13 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
+import { OrderType } from '@src/common';
 import { AIClassification, Post } from '@src/infrastructure';
+import { FilterQuery, Model, Types } from 'mongoose';
 import {
   ClassificationPostList,
   PostListInClassificationFolder,
 } from '../classification/dto/classification.dto';
-import { OrderType } from '@src/common';
+import { P001 } from './error';
 import { PostUpdateableFields } from './type/type';
 
 @Injectable()
@@ -65,7 +62,7 @@ export class PostsRepository {
       })
       .lean();
     if (!post) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     return post;
   }
@@ -91,18 +88,14 @@ export class PostsRepository {
     url: string,
     title: string,
   ): Promise<string> {
-    try {
-      const postModel = await this.postModel.create({
-        folderId: folderId,
-        url: url,
-        title: title,
-        userId: userId,
-        readAt: null,
-      });
-      return postModel._id.toString();
-    } catch (error) {
-      throw new InternalServerErrorException('create post DB error');
-    }
+    const postModel = await this.postModel.create({
+      folderId: folderId,
+      url: url,
+      title: title,
+      userId: userId,
+      readAt: null,
+    });
+    return postModel._id.toString();
   }
 
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
@@ -316,7 +309,7 @@ export class PostsRepository {
       .exec();
 
     if (!updateResult.modifiedCount) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     return updateResult;
   }
@@ -336,7 +329,7 @@ export class PostsRepository {
       .exec();
     // If deletion faild, deletedCount will return 0
     if (!deleteResult.deletedCount) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     if (aiClassificationId) {
       await this.aiClassificationModel
