@@ -39,13 +39,13 @@ export class ClassificationPostList {
   })
   aiStatus: PostAiStatus;
 
-  @ApiProperty({ required: false, description: '피드 og 이미지', type: String })
+  @ApiProperty({ nullable: true, description: '피드 og 이미지', type: String })
   thumbnailImgUrl: string | null;
 
-  @ApiProperty({ required: false, description: '생성 시간', type: Date })
+  @ApiProperty({ description: '생성 시간', type: Date })
   createdAt: Date;
 
-  @ApiProperty({ required: false, description: '읽은 시간', type: Date })
+  @ApiProperty({ nullable: true, description: '읽은 시간', type: Date })
   readAt: Date | null;
 }
 

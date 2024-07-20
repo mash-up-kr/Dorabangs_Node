@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 export class ListPostItem {
-  @ApiProperty()
+  @ApiProperty({ required: true, description: '피드 id', type: String })
   id: string;
 
   @ApiProperty({ required: true, description: '폴더 id', type: String })
@@ -17,7 +17,11 @@ export class ListPostItem {
   @ApiProperty({ required: true, description: '피드 제목', type: String })
   title: string;
 
-  @ApiProperty({ required: false, description: '요약 정보', type: String })
+  @ApiProperty({
+    nullable: true,
+    description: '요약 정보',
+    type: String,
+  })
   description: string;
 
   @ApiProperty({ required: true, description: '즐겨찾기 여부', type: Boolean })
@@ -26,10 +30,10 @@ export class ListPostItem {
   @ApiProperty({ required: true, description: '생성 시간', type: Date })
   createdAt: Date;
 
-  @ApiProperty({ required: false, description: '읽음 시간' })
+  @ApiProperty({ nullable: true, description: '읽음 시간' })
   readAt: Date | null;
 
-  @ApiProperty({ required: false, description: 'URL og 이미지' })
+  @ApiProperty({ nullable: true, description: 'URL og 이미지' })
   thumbnailImgUrl: string | null;
 
   @ApiProperty({
