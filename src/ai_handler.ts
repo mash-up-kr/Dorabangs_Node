@@ -5,6 +5,7 @@ import { AppModule } from '@src/app.module';
 import { LambdaEventPayload } from './infrastructure/aws-lambda/type';
 import { ClassficiationRepository } from './modules/classification/classification.repository';
 import { PostsRepository } from './modules/posts/posts.repository';
+import { PostAIStatus } from '@src/modules/posts/posts.constant';
 
 export const handler: Handler = async (event: LambdaEventPayload) => {
   const app = await NestFactory.create(AppModule);
@@ -24,10 +25,12 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
     event.postContent,
     folderNames,
   );
+  const postId = event.postId;
+  let classificationId = null;
+  let postAIStatus = PostAIStatus.FAIL;
 
   // NOTE : 요약 성공 시 classification 생성, post 업데이트
   if (summarizeUrlContent.success) {
-    const postId = event.postId;
     const folderId = folderMapper[summarizeUrlContent.response.category];
     const post = await postRepository.findPostByIdForAIClassification(postId);
     const classification = await classificationRepository.createClassification(
@@ -36,12 +39,15 @@ export const handler: Handler = async (event: LambdaEventPayload) => {
       summarizeUrlContent.response.keywords,
       folderId,
     );
-    await postRepository.updatePostClassificationForAIClassification(
-      postId,
-      classification._id.toString(),
-      summarizeUrlContent.response.summary,
-    );
+    classificationId = classification._id.toString();
+    postAIStatus = PostAIStatus.SUCCESS;
   }
+  await postRepository.updatePostClassificationForAIClassification(
+    postAIStatus,
+    postId,
+    classificationId,
+    summarizeUrlContent.response.summary,
+  );
 
   // NOTE: cloud-watch 로그 확인용
   console.log({

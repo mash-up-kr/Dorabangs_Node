@@ -340,9 +340,10 @@ export class PostsRepository {
   }
 
   async updatePostClassificationForAIClassification(
-    postId: string,
-    classificationId: string,
-    description: string,
+    postAIStatus: PostAIStatus,
+    postId: string | null,
+    classificationId: string | null,
+    description: string | null,
   ) {
     const updatedPost = await this.postModel
       .updateOne(
@@ -353,6 +354,7 @@ export class PostsRepository {
           $set: {
             aiClassificationId: classificationId,
             description: description,
+            postAIStatus: postAIStatus,
           },
         },
       )
