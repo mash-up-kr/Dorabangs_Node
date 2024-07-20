@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { OrderType } from '@src/common';
+import { AIClassification, Post, PostDocument } from '@src/infrastructure';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { AIClassification, Post } from '@src/infrastructure';
 import {
   ClassificationPostList,
   PostListInClassificationFolder,
 } from '../classification/dto/classification.dto';
-import { OrderType } from '@src/common';
 import { PostUpdateableFields } from './type/type';
 
 @Injectable()

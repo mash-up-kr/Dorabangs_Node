@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationMetadata } from '@src/common';
-import { Post } from '@src/infrastructure';
+import { Keyword, Post } from '@src/infrastructure';
 import { Types } from 'mongoose';
+import { KeywordItem } from './keyword-list.response';
 
 export class ListPostItem {
   @ApiProperty()
@@ -20,6 +21,9 @@ export class ListPostItem {
   description: string;
 
   @ApiProperty()
+  keywords: KeywordItem[];
+
+  @ApiProperty()
   isFavorite: boolean;
 
   @ApiProperty({
@@ -30,12 +34,18 @@ export class ListPostItem {
   @ApiProperty()
   createdAt: Date;
 
-  constructor(data: Post & { _id: Types.ObjectId }) {
+  constructor(
+    data: Post & {
+      _id: Types.ObjectId;
+      keywords: (Keyword & { _id: Types.ObjectId })[];
+    },
+  ) {
     this.id = data._id.toString();
     this.folderId = data.folderId.toString();
     this.url = data.url;
     this.title = data.title;
     this.description = data.description;
+    this.keywords = data.keywords.map((keyword) => new KeywordItem(keyword));
     this.isFavorite = data.isFavorite;
     this.readAt = data.readAt;
     this.createdAt = data.createdAt;

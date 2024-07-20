@@ -10,12 +10,19 @@ export class PostKeywordsRepository {
     private readonly postKeywordModel: Model<PostKeyword>,
   ) {}
 
-  async createPostKeywords(postId: string, keywords: string[]) {
-    const postKeywords = keywords.map((keyword) => ({
+  async createPostKeywords(postId: string, keywordIds: string[]) {
+    const postKeywords = keywordIds.map((keywordId) => ({
       postId,
-      keyword,
+      keywordId,
     }));
 
     await this.postKeywordModel.insertMany(postKeywords);
+  }
+
+  async findKeywordsByPostIds(postIds: string[]) {
+    return await this.postKeywordModel
+      .find({ postId: { $in: postIds } })
+      .populate({ path: 'keywordId', model: 'Keyword' })
+      .lean();
   }
 }

@@ -1,19 +1,18 @@
 import {
-  Controller,
-  Post,
   Body,
-  UseGuards,
-  Patch,
-  Param,
-  Get,
-  Query,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
-import { PostsService } from '@src/modules/posts/posts.service';
-import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { GetUser, PaginationMetadata } from '@src/common';
+import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
+import { PostsService } from '@src/modules/posts/posts.service';
 import { JwtGuard } from '@src/modules/users/guards';
-import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
 import {
   CreatePostDocs,
   DeletePostDocs,
@@ -21,6 +20,7 @@ import {
   PostControllerDocs,
   UpdatePostFolderDocs,
 } from './docs';
+import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
 import { ListPostItem, ListPostResponse } from './response';
 
 @Controller('posts')
@@ -35,6 +35,7 @@ export class PostsController {
     const { count, posts } = await this.postsService.listPost(userId, query);
     const postResponse = posts.map((post) => new ListPostItem(post));
     const metadata = new PaginationMetadata(query.page, query.limit, count);
+
     return new ListPostResponse(metadata, postResponse);
   }
 

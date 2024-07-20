@@ -37,9 +37,31 @@ export class PostsService {
         query.order,
       ),
     ]);
+
+    const postIds = posts.map((post) => post._id.toString());
+    const postKeywords =
+      await this.postKeywordsRepository.findKeywordsByPostIds(postIds);
+    const postKeywordMap: Record<string, Keyword[]> = {};
+
+    postKeywords.forEach((postKeyword) => {
+      const postId = postKeyword.postId.toString();
+      if (!postKeywordMap[postId]) {
+        postKeywordMap[postId] = [];
+      }
+
+      /**
+       * populate때문에 강제형변환
+       */
+      const keyword = postKeyword.keywordId as any as Keyword;
+      postKeywordMap[postId].push(keyword);
+    });
+
     return {
       count,
-      posts,
+      posts: posts.map((post) => ({
+        ...post,
+        keywords: postKeywordMap[post._id.toString()] ?? [],
+      })),
     };
   }
 
