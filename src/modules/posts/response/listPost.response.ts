@@ -23,10 +23,11 @@ export class ListPostItem {
   @ApiProperty()
   isFavorite: boolean;
 
-  @ApiProperty({
-    required: false,
-  })
-  readAt: Date;
+  @ApiProperty({ required: true, description: '생성 시간', type: Date })
+  createdAt: Date;
+
+  @ApiProperty({ required: false, description: '읽음 시간' })
+  readAt: Date | null;
 
   @ApiProperty({ required: false, description: 'URL og 이미지' })
   thumbnailImgUrl: string;
@@ -45,6 +46,7 @@ export class ListPostItem {
     this.title = data.title;
     this.description = data.description;
     this.isFavorite = data.isFavorite;
+    this.createdAt = data.createdAt;
     this.readAt = data.readAt;
     this.thumbnailImgUrl = data.thumbnailImgUrl;
     this.aiStatus = data.aiStatus;
