@@ -96,12 +96,12 @@ export class PostsService {
       userId,
     });
 
-    const offset = (query.page - 1) * query.limit;
     const count = await this.postRepository.getCountByFolderId(folderId);
     const posts = await this.postRepository.findByFolderId(
       folderId,
-      offset,
+      query.page,
       query.limit,
+      query.order,
     );
 
     const postsWithKeyword = await this.organizeFolderWithKeywords(posts);

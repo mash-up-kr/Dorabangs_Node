@@ -187,10 +187,18 @@ export class PostsRepository {
     return count;
   }
 
-  async findByFolderId(folderId: string, offset: number, limit: number) {
+  async findByFolderId(
+    folderId: string,
+    page: number,
+    limit: number,
+    order: OrderType = OrderType.desc,
+  ) {
+    const offset = (page - 1) * limit;
+
     const folders = await this.postModel
       .find({ folderId })
       .skip(offset)
+      .sort([['createdAt', order === OrderType.desc ? -1 : 1]])
       .limit(limit)
       .lean();
 
