@@ -167,14 +167,8 @@ export class PostsRepository {
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: {
-              $cond: {
-                if: { $eq: ['$readAt', null] },
-                then: false,
-                else: true,
-              },
-            },
-            keywords: '$aiClassification.keywords',
+            readAt: 1,
+            'aiClassification.keywords': 1,
           },
         },
       ])
@@ -266,14 +260,8 @@ export class PostsRepository {
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: {
-              $cond: {
-                if: { $eq: ['$readAt', null] },
-                then: false,
-                else: true,
-              },
-            },
-            keywords: '$aiClassification.keywords',
+            readAt: 1,
+            'aiClassification.keywords': 1,
           },
         },
       ])
