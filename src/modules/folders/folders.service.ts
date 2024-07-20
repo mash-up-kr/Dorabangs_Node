@@ -101,7 +101,8 @@ export class FoldersService {
     });
 
     folder.name = updateFolderDto.name;
-    await folder.save();
+    const response = await folder.save();
+    return response;
   }
 
   async remove(userId: string, folderId: string) {

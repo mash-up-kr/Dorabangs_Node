@@ -7,7 +7,6 @@ import {
 import {
   FolderListResponse,
   FolderResponse,
-  FolderSummaryResponse,
   PostListInFolderResponse,
 } from '../responses';
 
@@ -16,7 +15,8 @@ export const CreateFolderDocs = applyDecorators(
     summary: '폴더 생성 API',
   }),
   ApiResponse({
-    type: FolderSummaryResponse,
+    type: FolderResponse,
+    isArray: true,
   }),
 );
 
@@ -59,7 +59,7 @@ export const UpdateFolderDocs = applyDecorators(
     summary: '폴더 수정 API',
   }),
   ApiResponse({
-    type: FolderSummaryResponse,
+    type: FolderResponse,
   }),
   ApiNotFoundResponse({
     description: ['F002'].join(', '),

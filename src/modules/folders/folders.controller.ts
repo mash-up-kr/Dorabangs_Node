@@ -103,7 +103,12 @@ export class FoldersController {
     @Param('folderId') folderId: string,
     @Body() updateFolderDto: UpdateFolderDto,
   ) {
-    await this.foldersService.update(userId, folderId, updateFolderDto);
+    const updatedFolder = await this.foldersService.update(
+      userId,
+      folderId,
+      updateFolderDto,
+    );
+    return new FolderResponse(updatedFolder);
   }
 
   @DeleteFolderDocs
