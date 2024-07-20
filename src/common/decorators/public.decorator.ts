@@ -7,5 +7,5 @@ import { SetMetadata } from '@nestjs/common';
  * 특정 Route에 대해 Public을 허용할 수 있게 하기 위해 사용합니다.
  */
 
-export const PublicRouteToken = 'public-route';
+export const PublicRouteToken = Symbol('public-route');
 export const Public = () => SetMetadata(PublicRouteToken, true);
