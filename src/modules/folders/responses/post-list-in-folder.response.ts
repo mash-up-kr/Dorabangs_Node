@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PostResponse } from './post.response';
+import { PostDocument } from '@src/infrastructure';
 import { PaginationMetadata } from '@src/common';
 import { PostResponse } from './post.response';
 
