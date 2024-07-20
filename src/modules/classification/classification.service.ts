@@ -1,26 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import {
-  Folder,
-  Post,
-  AIClassification,
-} from '@src/infrastructure/database/schema';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { ClassficiationRepository } from './classification.repository';
+import { PaginationQuery } from '@src/common';
+import { Types } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
+import { ClassficiationRepository } from './classification.repository';
 import {
   ClassificationFolderWithCount,
   PostListInClassificationFolder,
 } from './dto/classification.dto';
-import { PaginationQuery } from '@src/common';
-import { PostListInFolderResponse } from '../folders/responses';
+import { C001 } from './error';
 
 @Injectable()
 export class ClassificationService {
   constructor(
-    @InjectModel(Folder.name) private folderModel: Model<Folder>,
-    @InjectModel(Post.name) private postModel: Model<Post>,
     private readonly classficationRepository: ClassficiationRepository,
     private readonly postRepository: PostsRepository,
   ) {}
@@ -93,9 +85,24 @@ export class ClassificationService {
   }
 
   async abortClassification(userId: string, postId: string) {
-    const post = await this.postModel.findById(postId).exec();
+    const post = await this.postRepository.findPostOrThrow({
+      _id: postId,
+    });
 
-    await this.classficationRepository.delete(
+    console.log(post.aiClassificationId);
+    if (!post.aiClassificationId) {
+      throw new BadRequestException(C001);
+    }
+
+    const classification = await this.classficationRepository.findById(
+      post.aiClassificationId.toString(),
+    );
+    console.log(classification);
+    if (!classification) {
+      throw new BadRequestException(C001);
+    }
+
+    return await this.classficationRepository.delete(
       post.aiClassificationId.toString(),
     );
   }
