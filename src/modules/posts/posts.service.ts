@@ -100,7 +100,7 @@ export class PostsService {
   async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
     // Find if user post exist
     await this.postRepository.findPostOrThrow({
-      id: postId,
+      _id: postId,
       userId: userId,
     });
 
@@ -122,7 +122,7 @@ export class PostsService {
 
     // Find if post exist
     await this.postRepository.findPostOrThrow({
-      id: postId,
+      _id: postId,
       userId: userId,
     });
 
@@ -136,7 +136,7 @@ export class PostsService {
   async deletePost(userId: string, postId: string) {
     // Find if post is user's post. If it's not throw NotFoundError
     const post = await this.postRepository.findPostOrThrow({
-      id: postId,
+      _id: postId,
       userId: userId,
     });
     await this.postRepository.deletePost(
