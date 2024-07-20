@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PostUpdateableFields } from '../type/type';
 import { IsBoolean, IsDateString, IsOptional } from 'class-validator';
+import { PostUpdateableFields } from '../type/type';
 
 export class UpdatePostDto implements PostUpdateableFields {
   // Temporary ignore in MVP level
@@ -15,7 +15,6 @@ export class UpdatePostDto implements PostUpdateableFields {
 
   @ApiProperty({
     required: false,
-    default: false,
   })
   @IsOptional()
   @IsDateString()
