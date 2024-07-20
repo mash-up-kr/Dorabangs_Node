@@ -47,4 +47,13 @@ export class FolderRepository {
       type: FolderType.CUSTOM,
     });
   }
+
+  async getDefaultFolder(userId: string) {
+    const folder = await this.folderModel.findOne({
+      userId,
+      type: FolderType.DEFAULT,
+    });
+
+    return folder;
+  }
 }

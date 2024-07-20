@@ -1,19 +1,28 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { parseLinkTitleAndContent } from '@src/common';
+import { IS_LOCAL } from '@src/common/constant';
+import { Keyword } from '@src/infrastructure';
+import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
+import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
-import { GetPostQueryDto } from './dto/find-in-folder.dto';
+import { AiClassificationService } from '../ai-classification/ai-classification.service';
 import { FolderRepository } from '../folders/folders.repository';
 import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
-import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
-import { parseLinkTitleAndContent } from '@src/common';
-import { ConfigService } from '@nestjs/config';
+import { GetPostQueryDto } from './dto/find-in-folder.dto';
+import { PostKeywordsRepository } from './postKeywords.repository';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly postRepository: PostsRepository,
     private readonly folderRepository: FolderRepository,
+    private readonly postKeywordsRepository: PostKeywordsRepository,
+
     private readonly awsLambdaService: AwsLambdaService,
+    private readonly aiClassificationService: AiClassificationService,
     private readonly config: ConfigService,
   ) {}
 
@@ -49,9 +58,7 @@ export class PostsService {
         name: folder.name,
       };
     });
-    const aiLambdaFunctionName = this.config.get<string>(
-      'LAMBDA_FUNCTION_NAME',
-    );
+
     const postId = await this.postRepository.createPost(
       userId,
       createPostDto.folderId,
@@ -62,9 +69,12 @@ export class PostsService {
       url: createPostDto.url,
       postContent: content,
       folderList: folders,
-      postId: postId,
-    };
-    await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
+      postId,
+      userId,
+    } satisfies AiClassificationPayload;
+
+    await this.executeAiClassification(payload);
+
     return true;
   }
 
@@ -139,5 +149,17 @@ export class PostsService {
       userId,
       folderId: { $in: customFolderIds },
     });
+  }
+
+  private async executeAiClassification(payload: AiClassificationPayload) {
+    if (IS_LOCAL) {
+      return await this.aiClassificationService.execute(payload);
+    }
+
+    const aiLambdaFunctionName = this.config.get<string>(
+      'LAMBDA_FUNCTION_NAME',
+    );
+
+    await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
   }
 }

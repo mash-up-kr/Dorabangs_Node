@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { LambdaEventPayload } from './type';
+import { AiClassificationPayload } from './type';
 
 @Injectable()
 export class AwsLambdaService {
@@ -16,7 +16,7 @@ export class AwsLambdaService {
 
   async invokeLambda(
     lambdaFunctionName: string,
-    payload: LambdaEventPayload,
+    payload: AiClassificationPayload,
   ): Promise<void> {
     const command = new InvokeCommand({
       FunctionName: lambdaFunctionName,

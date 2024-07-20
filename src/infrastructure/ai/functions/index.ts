@@ -1,3 +1,9 @@
+export type AiClassificationFunctionResult = {
+  summary: string;
+  keywords: string[];
+  category: string;
+};
+
 export function summarizeURLContentFunctionFactory(folderList: string[]) {
   return {
     name: 'summarizeURL',

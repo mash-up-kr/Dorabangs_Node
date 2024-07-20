@@ -21,12 +21,12 @@ import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.serv
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema },
       { name: Folder.name, schema: FolderSchema },
-    ]),
-    MongooseModule.forFeature([
       { name: AIClassification.name, schema: AIClassificationSchema },
+      { name: PostKeyword.name, schema: PostKeywordSchema },
     ]),
     UsersModule,
     AwsLambdaModule,
+    AiClassificationModule,
   ],
   controllers: [PostsController],
   providers: [

@@ -4,7 +4,10 @@ import OpenAI, { OpenAIError, RateLimitError } from 'openai';
 import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
 import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
-import { summarizeURLContentFunctionFactory } from './functions';
+import {
+  AiClassificationFunctionResult,
+  summarizeURLContentFunctionFactory,
+} from './functions';
 import { SummarizeURLContent } from './types/types';
 
 @Injectable()
@@ -105,13 +108,24 @@ ${content}
     );
 
     elapsedTime = new Date().getTime() - startTime.getTime();
+
+    const functionResult: AiClassificationFunctionResult = JSON.parse(
+      promptResult.choices[0].message.tool_calls[0].function.arguments,
+    );
     this.discordAIWebhookProvider.send(
       [
-        `AI 요약 실행 시간: ${elapsedTime}ms`,
-        `Input`,
+        `**AI 요약 실행 시간: ${elapsedTime}ms**`,
+        `**Input**`,
         `- URL : ${url}`,
         `- 인풋 폴더 : [${folderList.join(', ')}]`,
-        `Output : ${promptResult} `,
+        `**Output**`,
+        `- 사용 모델 : ${promptResult.model}`,
+        `- 요약 : ${functionResult.summary}`,
+        `- 추출 키워드 : ${functionResult.keywords.join(', ')}`,
+        `- 매칭 폴더명 : ${functionResult.category}`,
+        `- Input Token : ${promptResult.usage.prompt_tokens}`,
+        `- Output Token : ${promptResult.usage.completion_tokens}`,
+        `- Total Token : ${promptResult.usage.total_tokens}`,
       ].join('\n'),
     );
 
