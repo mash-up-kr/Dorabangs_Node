@@ -7,6 +7,8 @@ export interface ClassificationFolderWithCount {
 export interface PostListInClassificationFolder {
   postId: string;
 
+  folderId: string;
+
   title: string;
 
   url: string;
