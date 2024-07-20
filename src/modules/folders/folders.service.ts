@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
-import { Schema as MongooseSchema } from 'mongoose';
-import { FolderRepository } from './folders.repository';
-import { PostsRepository } from '../posts/posts.repository';
-import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { sum } from '@src/common';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { Schema as MongooseSchema } from 'mongoose';
+import { PostsRepository } from '../posts/posts.repository';
 import { FolderListServiceDto } from './dto/folder-with-count.dto';
+import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
+import { FolderRepository } from './folders.repository';
 
 @Injectable()
 export class FoldersService {
@@ -20,8 +20,8 @@ export class FoldersService {
       name,
       type: FolderType.CUSTOM,
     }));
-
-    await this.folderRepository.createMany(folders);
+    const createdFolders = this.folderRepository.createMany(folders);
+    return createdFolders;
   }
 
   async findAll(userId: string): Promise<FolderListServiceDto> {
