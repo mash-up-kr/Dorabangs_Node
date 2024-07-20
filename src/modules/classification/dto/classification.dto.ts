@@ -22,7 +22,7 @@ export interface PostListInClassificationFolder {
 
   createdAt: Date;
 
-  isRead: boolean;
+  readAt: Date;
 }
 
 export interface ClassificationPostList {
@@ -40,7 +40,7 @@ export interface ClassificationPostList {
 
   createdAt: Date;
 
-  isRead: boolean;
+  readAt: Date;
 }
 
 export class UpdateAIClassificationDto {
