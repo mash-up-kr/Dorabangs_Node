@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { parseLinkTitleAndContent } from '@src/common';
+import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
-import { GetPostQueryDto } from './dto/find-in-folder.dto';
 import { FolderRepository } from '../folders/folders.repository';
 import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
-import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
-import { parseLinkTitleAndContent } from '@src/common';
-import { ConfigService } from '@nestjs/config';
+import { GetPostQueryDto } from './dto/find-in-folder.dto';
 
 @Injectable()
 export class PostsService {
@@ -102,6 +102,11 @@ export class PostsService {
     postId: string,
     dto: UpdatePostFolderDto,
   ) {
+    await this.folderRepository.findOneOrFail({
+      userId: userId,
+      id: dto.folderId,
+    });
+
     // Find if post exist
     await this.postRepository.findPostOrThrow(userId, postId);
 
