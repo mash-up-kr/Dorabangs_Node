@@ -6,6 +6,7 @@ import {
   Query,
   Delete,
   Patch,
+  Body,
 } from '@nestjs/common';
 import { ClassificationService } from './classification.service';
 import { GetUser, PaginationMetadata, PaginationQuery } from '@src/common';
@@ -15,10 +16,12 @@ import {
   GetAIPostListDocs,
   DeleteAIClassificationDocs,
   PatchAIPostDocs,
+  PatchAIPostListDocs,
 } from './docs';
 import { JwtGuard } from '../users/guards';
 import { AIFolderNameListResponse } from './response/ai-folder-list.dto';
 import { AIPostListResponse } from './response/ai-post-list.dto';
+import { UpdateAIClassificationDto } from './dto/classification.dto';
 
 @Controller('classification')
 @UseGuards(JwtGuard)
@@ -73,7 +76,7 @@ export class ClassificationController {
     return new AIPostListResponse(metadata, classificationPostList);
   }
   @Patch('/posts')
-  @PatchAIPostDocs
+  @PatchAIPostListDocs
   async moveAllPost(
     @GetUser() userId: string,
     @Query('suggestionFolderId') suggestionFolderId: string,
@@ -81,6 +84,20 @@ export class ClassificationController {
     await this.classificationService.moveAllPostTosuggestionFolder(
       userId,
       suggestionFolderId,
+    );
+  }
+
+  @Patch('/posts/:postId')
+  @PatchAIPostDocs
+  async moveOnePost(
+    @GetUser() userId: string,
+    @Param('postId') postId: string,
+    @Body() dto: UpdateAIClassificationDto,
+  ) {
+    await this.classificationService.moveOnePostTosuggestionFolder(
+      userId,
+      postId,
+      dto.suggestionFolderId,
     );
   }
 
