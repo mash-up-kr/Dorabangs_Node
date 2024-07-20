@@ -12,6 +12,7 @@ import {
 } from '../classification/dto/classification.dto';
 import { OrderType } from '@src/common';
 import { PostUpdateableFields } from './type/type';
+import { PostAIStatus } from '@src/modules/posts/posts.constant';
 
 @Injectable()
 export class PostsRepository {
@@ -90,6 +91,8 @@ export class PostsRepository {
     folderId: string,
     url: string,
     title: string,
+    thumbnail: string,
+    postAIStatus: PostAIStatus,
   ): Promise<string> {
     try {
       const postModel = await this.postModel.create({
@@ -98,6 +101,8 @@ export class PostsRepository {
         title: title,
         userId: userId,
         readAt: null,
+        thumbnailImgUrl: thumbnail,
+        postAIStatus: postAIStatus,
       });
       return postModel._id.toString();
     } catch (error) {
