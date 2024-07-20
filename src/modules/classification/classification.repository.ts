@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { AIClassification } from '@src/infrastructure';
+import { AIClassification, Folder } from '@src/infrastructure';
 import { Model, Types } from 'mongoose';
 import { ClassificationFolderWithCount } from './dto/classification.dto';
 
@@ -9,7 +9,28 @@ export class ClassficiationRepository {
   constructor(
     @InjectModel(AIClassification.name)
     private readonly aiClassificationModel: Model<AIClassification>,
+    @InjectModel(Folder.name)
+    private readonly folderModel: Model<Folder>,
   ) {}
+
+  async countClassifiedPostByUserId(userId: string) {
+    // Get folder list with '_id' projection
+    const userFolders = await this.folderModel.find(
+      {
+        userId: userId,
+      },
+      {
+        _id: true,
+      },
+    );
+    const folderIds = userFolders.map((folder) => folder._id);
+    const classifiedCount = await this.aiClassificationModel.countDocuments({
+      suggestedFolderId: {
+        $in: folderIds,
+      },
+    });
+    return classifiedCount;
+  }
 
   async findById(classificationId: string) {
     const classification = await this.aiClassificationModel

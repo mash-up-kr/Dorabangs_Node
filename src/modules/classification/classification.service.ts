@@ -14,6 +14,12 @@ export class ClassificationService {
     private readonly postRepository: PostsRepository,
   ) {}
 
+  async countClassifiedPost(userId: string) {
+    const count =
+      await this.classficationRepository.countClassifiedPostByUserId(userId);
+    return count;
+  }
+
   async getFolderNameList(
     userId: string,
   ): Promise<ClassificationFolderWithCount[]> {
