@@ -93,6 +93,21 @@ export class ClassificationService {
     );
   }
 
+  async moveOnePostTosuggestionFolder(
+    userId: string,
+    postId: string,
+    suggestedFolderId: string,
+  ) {
+    const post = await this.postRepository.findAndupdateFolderId(
+      userId,
+      postId,
+      suggestedFolderId,
+    );
+    await this.classficationRepository.delete(
+      post.aiClassificationId.toString(),
+    );
+  }
+
   async abortClassification(userId: string, postId: string) {
     const post = await this.postRepository.findPostOrThrow({
       _id: postId,

@@ -98,6 +98,7 @@ export class ClassficiationRepository {
         {
           $match: {
             'folder.userId': userId,
+            'folder.type': { $ne: 'default' },
           },
         },
         {

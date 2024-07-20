@@ -302,6 +302,18 @@ export class PostsRepository {
       .updateOne({ _id: postId }, { $set: { folderId: suggestedFolderId } })
       .exec();
   }
+  async findAndupdateFolderId(
+    userId: string,
+    postId: string,
+    suggestedFolderId: string,
+  ) {
+    return await this.postModel
+      .findOneAndUpdate(
+        { _id: postId, userId },
+        { $set: { folderId: suggestedFolderId } },
+      )
+      .exec();
+  }
 
   async updatePost(
     userId: string,
