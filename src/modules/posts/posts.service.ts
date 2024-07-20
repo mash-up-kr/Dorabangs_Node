@@ -88,6 +88,7 @@ export class PostsService {
     folderId: string,
     query: GetPostQueryDto,
   ) {
+    // NOTE: 폴더 존재 여부조회
     await this.folderRepository.findOneOrFail({
       _id: folderId,
       userId,
@@ -98,6 +99,7 @@ export class PostsService {
       folderId,
       query.isRead,
     );
+    // NOTE: 폴더 id에 속하는 post 리스트 조회
     const posts = await this.postRepository.findByFolderId(
       folderId,
       offset,
