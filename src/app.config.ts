@@ -1,11 +1,16 @@
 import {
+  BadRequestException,
   ClassSerializerInterceptor,
   INestApplication,
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import { CommonResponseInterceptor, RootExceptionFilter } from './common';
+import {
+  CommonResponseInterceptor,
+  RootExceptionFilter,
+  createErrorObject,
+} from './common';
 import { DiscordErrorWebhookProvider } from './infrastructure/discord/discord-error-webhook.provider';
 
 export async function nestAppConfig<
@@ -17,6 +22,19 @@ export async function nestAppConfig<
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      exceptionFactory: (error) => {
+        const validationErrorObject = error[0];
+        // Validation Error Property
+        const targetProperty = validationErrorObject.property;
+        // Validation Error Description
+        const validationErrorDetail =
+          validationErrorObject.constraints[
+            Object.keys(validationErrorObject.constraints)[0]
+          ];
+        const errorMessage = `'${targetProperty}' 필드의 검증 오류가 발생했습니다: ${validationErrorDetail}`;
+        return new BadRequestException(createErrorObject('V000', errorMessage));
+      },
+      stopAtFirstError: true,
     }),
   );
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));

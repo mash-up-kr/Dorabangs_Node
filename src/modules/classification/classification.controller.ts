@@ -1,22 +1,26 @@
 import {
+  Body,
   Controller,
-  Get,
-  UseGuards,
-  Param,
-  Query,
   Delete,
+  Get,
+  Param,
   Patch,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
+import { GetUser, PaginationMetadata, PaginationQuery } from '@src/common';
+import { JwtGuard } from '../users/guards';
 import { ClassificationService } from './classification.service';
-import { GetUser, PaginationQuery } from '@src/common';
 import {
   ClassificationControllerDocs,
+  DeleteAIClassificationDocs,
   GetAIFolderNameListDocs,
   GetAIPostListDocs,
-  DeleteAIClassificationDocs,
   PatchAIPostDocs,
+  PatchAIPostListDocs,
 } from './docs';
-import { JwtGuard } from '../users/guards';
+import { CountClassificationDocs } from './docs/countClassification.docs';
+import { UpdateAIClassificationDto } from './dto/classification.dto';
 import { AIFolderNameListResponse } from './response/ai-folder-list.dto';
 import { AIPostListResponse } from './response/ai-post-list.dto';
 
@@ -25,6 +29,13 @@ import { AIPostListResponse } from './response/ai-post-list.dto';
 @ClassificationControllerDocs
 export class ClassificationController {
   constructor(private readonly classificationService: ClassificationService) {}
+
+  @Get('/count')
+  @CountClassificationDocs
+  async countClassifiedPost(@GetUser() userId: string) {
+    const count = await this.classificationService.countClassifiedPost(userId);
+    return count;
+  }
 
   @Get('/folders')
   @GetAIFolderNameListDocs
@@ -37,32 +48,43 @@ export class ClassificationController {
   @GetAIPostListDocs
   async getSuggestedPostList(
     @GetUser() userId: string,
-    @Query() paingQuery: PaginationQuery,
+    @Query() pagingQuery: PaginationQuery,
   ) {
-    const posts = await this.classificationService.getPostList(
-      userId,
-      paingQuery,
+    const { count, classificationPostList } =
+      await this.classificationService.getPostList(userId, pagingQuery);
+
+    const metadata = new PaginationMetadata(
+      pagingQuery.page,
+      pagingQuery.limit,
+      count,
     );
 
-    return new AIPostListResponse(posts);
+    return new AIPostListResponse(metadata, classificationPostList);
   }
   @Get('/posts/:folderId')
   @GetAIPostListDocs
   async getSuggestedPostListInFolder(
     @GetUser() userId: string,
     @Param('folderId') folderId: string,
-    @Query() paingQuery: PaginationQuery,
+    @Query() pagingQuery: PaginationQuery,
   ) {
-    const posts = await this.classificationService.getPostListInFolder(
-      userId,
-      folderId,
-      paingQuery,
+    const { count, classificationPostList } =
+      await this.classificationService.getPostListInFolder(
+        userId,
+        folderId,
+        pagingQuery,
+      );
+
+    const metadata = new PaginationMetadata(
+      pagingQuery.page,
+      pagingQuery.limit,
+      count,
     );
 
-    return new AIPostListResponse(posts);
+    return new AIPostListResponse(metadata, classificationPostList);
   }
   @Patch('/posts')
-  @PatchAIPostDocs
+  @PatchAIPostListDocs
   async moveAllPost(
     @GetUser() userId: string,
     @Query('suggestionFolderId') suggestionFolderId: string,
@@ -73,11 +95,25 @@ export class ClassificationController {
     );
   }
 
+  @Patch('/posts/:postId')
+  @PatchAIPostDocs
+  async moveOnePost(
+    @GetUser() userId: string,
+    @Param('postId') postId: string,
+    @Body() dto: UpdateAIClassificationDto,
+  ) {
+    await this.classificationService.moveOnePostTosuggestionFolder(
+      userId,
+      postId,
+      dto.suggestionFolderId,
+    );
+  }
+
   @Delete('/posts/:postId')
   @DeleteAIClassificationDocs
   async abortClassification(
     @GetUser() userId: string,
-    @Query('postId') postId: string,
+    @Param('postId') postId: string,
   ) {
     await this.classificationService.abortClassification(userId, postId);
   }

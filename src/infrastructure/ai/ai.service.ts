@@ -112,7 +112,8 @@ ${content}
     const functionResult: AiClassificationFunctionResult = JSON.parse(
       promptResult.choices[0].message.tool_calls[0].function.arguments,
     );
-    this.discordAIWebhookProvider.send(
+
+    await this.discordAIWebhookProvider.send(
       [
         `**AI 요약 실행 시간: ${elapsedTime}ms**`,
         `**Input**`,

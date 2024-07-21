@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationQuery } from '@src/common';
-import { IsBoolean, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { IsBoolean, IsOptional } from 'class-validator';
 
-export class GetPostQueryDto extends PaginationQuery {
+export class CountPostQueryDto {
   @ApiProperty({
     required: false,
-    description: '읽음 필터링 여부',
+    description:
+      '피드를 읽었는지 여부. 해당 QS 주어지지 않으면 전체 피드 개수 반환.',
   })
   @Transform(({ value }) => (value === 'true' ? true : false))
   @IsBoolean()

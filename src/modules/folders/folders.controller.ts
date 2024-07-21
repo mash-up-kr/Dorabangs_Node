@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { GetUser } from '@src/common';
+import { GetUser, PaginationMetadata } from '@src/common';
 import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
 import { PostsService } from '../posts/posts.service';
 import { JwtGuard } from '../users/guards';
@@ -26,9 +26,11 @@ import { CreateFolderDto, DeleteCustomFolderDto, UpdateFolderDto } from './dto';
 import { FoldersService } from './folders.service';
 import {
   FolderListResponse,
+  FolderPostResponse,
+  FolderResponse,
   FolderSummaryResponse,
-  PostListInFolderResponse,
 } from './responses';
+import { PostResponse } from './responses/post.response';
 
 @FolderControllerDocs
 @UseGuards(JwtGuard)
@@ -45,7 +47,16 @@ export class FoldersController {
     @GetUser('id') userId: string,
     @Body() createFolderDto: CreateFolderDto,
   ) {
-    await this.foldersService.createMany(userId, createFolderDto);
+    const folders = await this.foldersService.createMany(
+      userId,
+      createFolderDto,
+    );
+    const folderSerializer = folders.map(
+      (folder) => new FolderResponse(folder),
+    );
+    return {
+      list: folderSerializer,
+    };
   }
 
   @FindAFolderListDocs
@@ -78,12 +89,13 @@ export class FoldersController {
       query,
     );
 
-    return new PostListInFolderResponse(
+    const metadata = new PaginationMetadata(
       query.page,
       query.limit,
       result.count,
-      result.posts,
     );
+    const posts = result.posts.map((post) => new PostResponse(post));
+    return new FolderPostResponse(metadata, posts);
   }
 
   @UpdateFolderDocs
@@ -93,7 +105,12 @@ export class FoldersController {
     @Param('folderId') folderId: string,
     @Body() updateFolderDto: UpdateFolderDto,
   ) {
-    await this.foldersService.update(userId, folderId, updateFolderDto);
+    const updatedFolder = await this.foldersService.update(
+      userId,
+      folderId,
+      updateFolderDto,
+    );
+    return new FolderResponse(updatedFolder);
   }
 
   @Delete('/all')

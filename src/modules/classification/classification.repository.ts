@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { AIClassification, Folder } from '@src/infrastructure';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { Model, Types } from 'mongoose';
-import { AIClassification } from '@src/infrastructure';
 import { ClassificationFolderWithCount } from './dto/classification.dto';
 
 @Injectable()
@@ -9,7 +10,79 @@ export class ClassficiationRepository {
   constructor(
     @InjectModel(AIClassification.name)
     private readonly aiClassificationModel: Model<AIClassification>,
+    @InjectModel(Folder.name)
+    private readonly folderModel: Model<Folder>,
   ) {}
+
+  async countClassifiedPostByUserId(userId: string) {
+    // Get folder list with '_id' projection
+    const userFolders = await this.folderModel.find(
+      {
+        userId: userId,
+        type: {
+          $ne: FolderType.DEFAULT,
+        },
+      },
+      {
+        _id: true,
+      },
+    );
+    const folderIds = userFolders.map((folder) => folder._id);
+    const classifiedCount = await this.aiClassificationModel.countDocuments({
+      suggestedFolderId: {
+        $in: folderIds,
+      },
+      deletedAt: null,
+    });
+    return classifiedCount;
+  }
+
+  async findById(classificationId: string) {
+    const classification = await this.aiClassificationModel
+      .findById(classificationId)
+      .exec();
+    return classification;
+  }
+
+  async getClassificationPostCount(
+    userId: string,
+    suggestedFolderId?: string,
+  ): Promise<number> {
+    const result = await this.aiClassificationModel
+      .aggregate([
+        {
+          $match: {
+            deletedAt: null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'posts',
+            localField: '_id',
+            foreignField: 'aiClassificationId',
+            as: 'post',
+          },
+        },
+        {
+          $unwind: '$post',
+        },
+        {
+          $match: {
+            'post.userId': new Types.ObjectId(userId),
+            ...(suggestedFolderId && {
+              suggestedFolderId: new Types.ObjectId(suggestedFolderId),
+            }),
+          },
+        },
+        {
+          $count: 'count',
+        },
+      ])
+      .exec();
+
+    const count = result[0]?.count || 0;
+    return count;
+  }
 
   async createClassification(
     url: string,
@@ -51,6 +124,7 @@ export class ClassficiationRepository {
         {
           $match: {
             'folder.userId': userId,
+            'folder.type': { $ne: 'default' },
           },
         },
         {

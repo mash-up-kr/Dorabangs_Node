@@ -7,11 +7,17 @@ import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.serv
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
 import { FlattenMaps, Types } from 'mongoose';
 import { AiClassificationService } from '../ai-classification/ai-classification.service';
 import { FolderRepository } from '../folders/folders.repository';
-import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
+import {
+  CountPostQueryDto,
+  ListPostQueryDto,
+  UpdatePostDto,
+  UpdatePostFolderDto,
+} from './dto';
 import { GetPostQueryDto } from './dto/find-in-folder.dto';
 import { PostKeywordsRepository } from './postKeywords.repository';
 
@@ -29,13 +35,18 @@ export class PostsService {
 
   async listPost(userId: string, query: ListPostQueryDto) {
     const [count, posts] = await Promise.all([
-      this.postRepository.getUserPostCount(userId, query.favorite),
+      this.postRepository.getUserPostCount(
+        userId,
+        query.favorite,
+        query.isRead,
+      ),
       this.postRepository.listPost(
         userId,
         query.page,
         query.limit,
         query.favorite,
         query.order,
+        query.isRead,
       ),
     ]);
 
@@ -47,39 +58,50 @@ export class PostsService {
     };
   }
 
+  async countPost(userId: string, query: CountPostQueryDto) {
+    const count = await this.postRepository.getUserPostCount(
+      userId,
+      false,
+      query.isRead,
+    );
+    return count;
+  }
+
   async createPost(
     createPostDto: CreatePostDto,
     userId: string,
-  ): Promise<boolean> {
-    const { title, content } = await parseLinkTitleAndContent(
+  ): Promise<Post & { _id: Types.ObjectId }> {
+    // NOTE : URL에서 얻은 정보 가져옴
+    const { title, content, thumbnail } = await parseLinkTitleAndContent(
       createPostDto.url,
     );
 
-    const userFolders = await this.folderRepository.findByUserId(userId);
-    const folders = userFolders.map((folder) => {
+    const userFolderList = await this.folderRepository.findByUserId(userId);
+    const folderList = userFolderList.map((folder) => {
       return {
         id: folder._id.toString(),
         name: folder.name,
       };
     });
-
-    const postId = await this.postRepository.createPost(
+    const post = await this.postRepository.createPost(
       userId,
       createPostDto.folderId,
       createPostDto.url,
       title,
+      thumbnail,
+      PostAiStatus.IN_PROGRES,
     );
     const payload = {
       url: createPostDto.url,
       postContent: content,
-      folderList: folders,
-      postId,
+      folderList: folderList,
+      postId: post._id.toString(),
       userId,
     } satisfies AiClassificationPayload;
 
     await this.executeAiClassification(payload);
 
-    return true;
+    return post;
   }
 
   /**
@@ -91,17 +113,23 @@ export class PostsService {
     folderId: string,
     query: GetPostQueryDto,
   ) {
+    // NOTE: 폴더 존재 여부조회
     await this.folderRepository.findOneOrFail({
       _id: folderId,
       userId,
     });
 
-    const count = await this.postRepository.getCountByFolderId(folderId);
+    const count = await this.postRepository.getCountByFolderId(
+      folderId,
+      query.isRead,
+    );
+    // NOTE: 폴더 id에 속하는 post 리스트 조회
     const posts = await this.postRepository.findByFolderId(
       folderId,
       query.page,
       query.limit,
       query.order,
+      query.isRead,
     );
 
     const postsWithKeyword = await this.organizeFolderWithKeywords(posts);
@@ -114,12 +142,17 @@ export class PostsService {
 
   async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
     // Find if user post exist
-    await this.postRepository.findPostOrThrow(userId, postId);
+    await this.postRepository.findPostOrThrow({
+      _id: postId,
+      userId: userId,
+    });
 
     // Update post data
     await this.postRepository.updatePost(userId, postId, dto);
-
-    return true;
+    const post = await this.postRepository.findPostOrThrow({
+      _id: postId,
+    });
+    return post;
   }
 
   async updatePostFolder(
@@ -127,8 +160,16 @@ export class PostsService {
     postId: string,
     dto: UpdatePostFolderDto,
   ) {
+    await this.folderRepository.findOneOrFail({
+      userId: userId,
+      id: dto.folderId,
+    });
+
     // Find if post exist
-    await this.postRepository.findPostOrThrow(userId, postId);
+    await this.postRepository.findPostOrThrow({
+      _id: postId,
+      userId: userId,
+    });
 
     // Update post folder id
     await this.postRepository.updatePostFolder(userId, postId, dto.folderId);
@@ -139,7 +180,10 @@ export class PostsService {
 
   async deletePost(userId: string, postId: string) {
     // Find if post is user's post. If it's not throw NotFoundError
-    const post = await this.postRepository.findPostOrThrow(userId, postId);
+    const post = await this.postRepository.findPostOrThrow({
+      _id: postId,
+      userId: userId,
+    });
     await this.postRepository.deletePost(
       userId,
       postId,

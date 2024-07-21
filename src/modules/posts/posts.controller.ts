@@ -14,13 +14,20 @@ import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsService } from '@src/modules/posts/posts.service';
 import { JwtGuard } from '@src/modules/users/guards';
 import {
+  CountPostDocs,
   CreatePostDocs,
   DeletePostDocs,
   ListPostDocs,
   PostControllerDocs,
   UpdatePostFolderDocs,
 } from './docs';
-import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
+import { UpdatePostDocs } from './docs/updatePost.docs';
+import {
+  CountPostQueryDto,
+  ListPostQueryDto,
+  UpdatePostDto,
+  UpdatePostFolderDto,
+} from './dto';
 import { ListPostItem, ListPostResponse } from './response';
 
 @Controller('posts')
@@ -39,22 +46,37 @@ export class PostsController {
     return new ListPostResponse(metadata, postResponse);
   }
 
+  @Get('count')
+  @CountPostDocs
+  async countPost(
+    @GetUser() userId: string,
+    @Query() query: CountPostQueryDto,
+  ) {
+    const count = await this.postsService.countPost(userId, query);
+    return count;
+  }
+
   @Post()
   @CreatePostDocs
   async createPost(
     @Body() createPostDto: CreatePostDto,
     @GetUser('id') userId: string,
-  ): Promise<boolean> {
-    return await this.postsService.createPost(createPostDto, userId);
+  ) {
+    const post = await this.postsService.createPost(createPostDto, userId);
+    const postSerialize = new ListPostItem(post);
+    return postSerialize;
   }
 
   @Patch(':postId')
-  async updateFolder(
+  @UpdatePostDocs
+  async updatePost(
     @GetUser() userId: string,
     @Param('postId') postId: string,
     @Body() dto: UpdatePostDto,
   ) {
-    return await this.postsService.updatePost(userId, postId, dto);
+    const post = await this.postsService.updatePost(userId, postId, dto);
+    const postSerialize = new ListPostItem(post);
+    return postSerialize;
   }
 
   @Patch(':postId/move')

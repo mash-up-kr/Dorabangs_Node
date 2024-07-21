@@ -1,17 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import {
-  ClassificationPostList,
-  PostListInClassificationFolder,
-} from '../dto/classification.dto';
+import { ClassificationPostList } from '../dto/classification.dto';
+import { PaginationMetadata } from '@src/common';
 
 export class AIPostListResponse {
-  @ApiProperty()
-  list: PostListInClassificationFolder[] | ClassificationPostList[];
+  @ApiProperty({
+    type: PaginationMetadata,
+  })
+  metadata: PaginationMetadata;
+
+  @ApiProperty({
+    type: ClassificationPostList,
+    isArray: true,
+  })
+  list: ClassificationPostList[];
 
   constructor(
-    data: PostListInClassificationFolder[] | ClassificationPostList[],
+    metaData: PaginationMetadata,
+    classificationPostList: ClassificationPostList[],
   ) {
-    this.list = data;
+    this.metadata = metaData;
+    this.list = classificationPostList;
   }
 }

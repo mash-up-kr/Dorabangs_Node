@@ -1,10 +1,13 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import {
   FolderListResponse,
+  FolderPostResponse,
   FolderResponse,
-  FolderSummaryResponse,
-  PostListInFolderResponse,
 } from '../responses';
 
 export const CreateFolderDocs = applyDecorators(
@@ -12,7 +15,8 @@ export const CreateFolderDocs = applyDecorators(
     summary: '폴더 생성 API',
   }),
   ApiResponse({
-    type: FolderSummaryResponse,
+    type: FolderResponse,
+    isArray: true,
   }),
 );
 
@@ -35,6 +39,9 @@ export const FindFolderDocs = applyDecorators(
   ApiResponse({
     type: FolderResponse,
   }),
+  ApiNotFoundResponse({
+    description: ['F002'].join(', '),
+  }),
 );
 
 export const FindLinksInFolderDocs = applyDecorators(
@@ -43,7 +50,7 @@ export const FindLinksInFolderDocs = applyDecorators(
     description: '',
   }),
   ApiResponse({
-    type: PostListInFolderResponse,
+    type: FolderPostResponse,
   }),
 );
 
@@ -52,12 +59,18 @@ export const UpdateFolderDocs = applyDecorators(
     summary: '폴더 수정 API',
   }),
   ApiResponse({
-    type: FolderSummaryResponse,
+    type: FolderResponse,
+  }),
+  ApiNotFoundResponse({
+    description: ['F002'].join(', '),
   }),
 );
 
 export const DeleteFolderDocs = applyDecorators(
   ApiOperation({
     summary: '폴더 삭제 API',
+  }),
+  ApiNotFoundResponse({
+    description: ['F002'].join(', '),
   }),
 );

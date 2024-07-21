@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { sum } from '@src/common';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { Schema as MongooseSchema } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
 import { FolderListServiceDto } from './dto/folder-list-service.dto';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
+import { F001 } from './error';
 import { FolderRepository } from './folders.repository';
 
 @Injectable()
@@ -15,13 +16,22 @@ export class FoldersService {
   ) {}
 
   async createMany(userId: string, createFolderDto: CreateFolderDto) {
+    for (const folderName of createFolderDto.names) {
+      const isExist = await this.folderRepository.checkUserHasFolder(
+        userId,
+        folderName,
+      );
+      if (isExist) {
+        throw new BadRequestException(F001(folderName));
+      }
+    }
     const folders = createFolderDto.names.map((name) => ({
       userId: userId,
       name,
       type: FolderType.CUSTOM,
     }));
-
-    await this.folderRepository.createMany(folders);
+    const createdFolders = this.folderRepository.createMany(folders);
+    return createdFolders;
   }
 
   async findAll(userId: string): Promise<FolderListServiceDto> {
@@ -101,7 +111,8 @@ export class FoldersService {
     });
 
     folder.name = updateFolderDto.name;
-    await folder.save();
+    const response = await folder.save();
+    return response;
   }
 
   async remove(userId: string, folderId: string) {

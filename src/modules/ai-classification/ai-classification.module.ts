@@ -7,6 +7,8 @@ import {
   FolderSchema,
   Keyword,
   KeywordSchema,
+  Metrics,
+  MetricsSchema,
   Post,
   PostSchema,
 } from '@src/infrastructure';
@@ -18,6 +20,7 @@ import {
 import { ClassficiationRepository } from '../classification/classification.repository';
 import { FolderRepository } from '../folders/folders.repository';
 import { KeywordsRepository } from '../keywords/keyword.repository';
+import { MetricsRepository } from '../metrics/metrics.repository';
 import { PostKeywordsRepository } from '../posts/postKeywords.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { AiClassificationService } from './ai-classification.service';
@@ -30,6 +33,7 @@ import { AiClassificationService } from './ai-classification.service';
       { name: Keyword.name, schema: KeywordSchema },
       { name: PostKeyword.name, schema: PostKeywordSchema },
       { name: AIClassification.name, schema: AIClassificationSchema },
+      { name: Metrics.name, schema: MetricsSchema },
     ]),
     AiModule,
   ],
@@ -40,6 +44,7 @@ import { AiClassificationService } from './ai-classification.service';
     PostsRepository,
     KeywordsRepository,
     PostKeywordsRepository,
+    MetricsRepository,
   ],
   exports: [AiClassificationService],
 })

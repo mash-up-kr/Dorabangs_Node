@@ -1,16 +1,11 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { OrderType } from '@src/common';
 import { AIClassification, Post, PostDocument } from '@src/infrastructure';
+import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { FilterQuery, Model, Types } from 'mongoose';
-import {
-  ClassificationPostList,
-  PostListInClassificationFolder,
-} from '../classification/dto/classification.dto';
+import { ClassificationPostList } from '../classification/dto/classification.dto';
+import { P001 } from './error';
 import { PostUpdateableFields } from './type/type';
 
 @Injectable()
@@ -21,13 +16,24 @@ export class PostsRepository {
     private readonly aiClassificationModel: Model<AIClassification>,
   ) {}
 
-  async getUserPostCount(userId: string, isFavorite?: boolean) {
+  async getUserPostCount(
+    userId: string,
+    isFavorite?: boolean,
+    isRead?: boolean,
+  ) {
     const queryFilter: FilterQuery<Post> = {
       userId: userId,
     };
     if (isFavorite) {
       queryFilter['isFavorite'] = true;
     }
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
+    }
+
     const userPostCount = await this.postModel.countDocuments(queryFilter);
     return userPostCount;
   }
@@ -38,6 +44,7 @@ export class PostsRepository {
     limit: number,
     isFavorite?: boolean,
     order = OrderType.desc,
+    isRead?: boolean,
   ) {
     // Skip Query
     const skipQuery = (page - 1) * limit;
@@ -48,6 +55,12 @@ export class PostsRepository {
     if (isFavorite) {
       queryFilter['isFavorite'] = true;
     }
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
+    }
     const posts = await this.postModel
       .find(queryFilter)
       .sort([['createdAt', order === OrderType.desc ? -1 : 1]])
@@ -57,15 +70,10 @@ export class PostsRepository {
     return posts;
   }
 
-  async findPostOrThrow(userId: string, postId: string) {
-    const post = await this.postModel
-      .findOne({
-        _id: postId,
-        userId: userId,
-      })
-      .lean();
+  async findPostOrThrow(param: FilterQuery<PostDocument>) {
+    const post = await this.postModel.findOne(param).lean();
     if (!post) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     return post;
   }
@@ -90,19 +98,19 @@ export class PostsRepository {
     folderId: string,
     url: string,
     title: string,
-  ): Promise<string> {
-    try {
-      const postModel = await this.postModel.create({
-        folderId: folderId,
-        url: url,
-        title: title,
-        userId: userId,
-        readAt: null,
-      });
-      return postModel._id.toString();
-    } catch (error) {
-      throw new InternalServerErrorException('create post DB error');
-    }
+    thumbnail: string,
+    postAIStatus: PostAiStatus,
+  ): Promise<Post & { _id: Types.ObjectId }> {
+    const postModel = await this.postModel.create({
+      folderId: folderId,
+      url: url,
+      title: title,
+      userId: userId,
+      readAt: null,
+      thumbnailImgUrl: thumbnail,
+      aiStatus: postAIStatus,
+    });
+    return postModel;
   }
 
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
@@ -131,7 +139,7 @@ export class PostsRepository {
     suggestedFolderId: Types.ObjectId,
     offset: number,
     limit: number,
-  ): Promise<PostListInClassificationFolder[]> {
+  ): Promise<ClassificationPostList[]> {
     return await this.postModel
       .aggregate([
         {
@@ -168,21 +176,33 @@ export class PostsRepository {
         {
           $project: {
             _id: 0,
+            folderId: { $toString: '$aiClassification.suggestedFolderId' },
             postId: { $toString: '$_id' },
             title: 1,
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: 1,
-            'aiClassification.keywords': 1,
+            readAt: 1,
+            aiStatus: 1,
+            thumbnailImgUrl: 1,
+            keywords: '$aiClassification.keywords',
           },
         },
       ])
       .exec();
   }
 
-  async getCountByFolderId(folderId: string) {
-    const count = await this.postModel.countDocuments({ folderId });
+  async getCountByFolderId(folderId: string, isRead?: boolean) {
+    const queryFilter: FilterQuery<Post> = {
+      folderId: folderId,
+    };
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
+    }
+    const count = await this.postModel.countDocuments(queryFilter);
 
     return count;
   }
@@ -192,11 +212,21 @@ export class PostsRepository {
     page: number,
     limit: number,
     order: OrderType = OrderType.desc,
+    isRead?: boolean,
   ) {
     const offset = (page - 1) * limit;
+    const queryFilter: FilterQuery<Post> = {
+      folderId: folderId,
+    };
+
+    if (isRead) {
+      queryFilter['readAt'] = { $ne: null };
+    } else if (isRead === false) {
+      queryFilter['readAt'] = null;
+    }
 
     const folders = await this.postModel
-      .find({ folderId })
+      .find(queryFilter)
       .skip(offset)
       .sort([['createdAt', order === OrderType.desc ? -1 : 1]])
       .limit(limit)
@@ -275,8 +305,10 @@ export class PostsRepository {
             url: 1,
             description: 1,
             createdAt: 1,
-            isRead: 1,
-            'aiClassification.keywords': 1,
+            readAt: 1,
+            aiStatus: 1,
+            thumbnailImgUrl: 1,
+            keywords: '$aiClassification.keywords',
           },
         },
       ])
@@ -305,6 +337,18 @@ export class PostsRepository {
       .updateOne({ _id: postId }, { $set: { folderId: suggestedFolderId } })
       .exec();
   }
+  async findAndupdateFolderId(
+    userId: string,
+    postId: string,
+    suggestedFolderId: string,
+  ) {
+    return await this.postModel
+      .findOneAndUpdate(
+        { _id: postId, userId },
+        { $set: { folderId: suggestedFolderId } },
+      )
+      .exec();
+  }
 
   async updatePost(
     userId: string,
@@ -326,7 +370,7 @@ export class PostsRepository {
       .exec();
 
     if (!updateResult.modifiedCount) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     return updateResult;
   }
@@ -344,9 +388,10 @@ export class PostsRepository {
   }
 
   async updatePostClassificationForAIClassification(
-    postId: string,
-    classificationId: string,
-    description: string,
+    postAiStatus: PostAiStatus,
+    postId: string | null,
+    classificationId: string | null,
+    description: string | null,
   ) {
     const updatedPost = await this.postModel
       .updateOne(
@@ -357,6 +402,7 @@ export class PostsRepository {
           $set: {
             aiClassificationId: classificationId,
             description: description,
+            aiStatus: postAiStatus,
           },
         },
       )
@@ -379,7 +425,7 @@ export class PostsRepository {
       .exec();
     // If deletion faild, deletedCount will return 0
     if (!deleteResult.deletedCount) {
-      throw new NotFoundException('Post를 찾을 수 없습니다.');
+      throw new NotFoundException(P001);
     }
     if (aiClassificationId) {
       await this.aiClassificationModel

@@ -37,10 +37,7 @@ export class RootExceptionFilter implements ExceptionFilter {
       const response = targetException.getResponse();
       // Response Status Code
       responseStatusCode = targetException.getStatus();
-      responseErrorPayload = {
-        code: this.unknownCode,
-        message: response,
-      };
+      responseErrorPayload = response as ExceptionPayload;
     }
     // Custom Exception
     else if (targetException instanceof RootException) {

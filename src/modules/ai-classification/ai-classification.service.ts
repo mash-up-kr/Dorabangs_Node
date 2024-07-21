@@ -4,7 +4,9 @@ import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
 import { ClassficiationRepository } from '../classification/classification.repository';
 import { FolderRepository } from '../folders/folders.repository';
 import { KeywordsRepository } from '../keywords/keyword.repository';
+import { MetricsRepository } from '../metrics/metrics.repository';
 import { PostKeywordsRepository } from '../posts/postKeywords.repository';
+import { PostAiStatus } from '../posts/posts.constant';
 import { PostsRepository } from '../posts/posts.repository';
 
 @Injectable()
@@ -16,6 +18,7 @@ export class AiClassificationService {
     private readonly postRepository: PostsRepository,
     private readonly keywordsRepository: KeywordsRepository,
     private readonly postKeywordsRepository: PostKeywordsRepository,
+    private readonly metricsRepository: MetricsRepository,
   ) {}
 
   async execute(payload: AiClassificationPayload) {
@@ -29,15 +32,23 @@ export class AiClassificationService {
       });
 
       // NOTE: AI 요약 요청
+      const start = process.hrtime();
       const summarizeUrlContent = await this.aiService.summarizeLinkContent(
         payload.postContent,
         folderNames,
         payload.url,
       );
 
+      const end = process.hrtime(start);
+      const timeSecond = end[0] + end[1] / 1e9;
+
+      const postId = payload.postId;
+      let post = null;
+      let classificationId = null;
+      let postAiStatus = PostAiStatus.FAIL;
+
       // NOTE : 요약 성공 시 classification 생성, post 업데이트
       if (summarizeUrlContent.success) {
-        const postId = payload.postId;
         let folderId = folderMapper[summarizeUrlContent.response.category];
 
         if (!folderId) {
@@ -46,7 +57,7 @@ export class AiClassificationService {
           );
         }
 
-        const post =
+        post =
           await this.postRepository.findPostByIdForAIClassification(postId);
         const classification =
           await this.classificationRepository.createClassification(
@@ -55,11 +66,9 @@ export class AiClassificationService {
             summarizeUrlContent.response.keywords,
             folderId,
           );
-        await this.postRepository.updatePostClassificationForAIClassification(
-          postId,
-          classification._id.toString(),
-          summarizeUrlContent.response.summary,
-        );
+
+        classificationId = classification._id.toString();
+        postAiStatus = PostAiStatus.SUCCESS;
 
         const keywords = await this.keywordsRepository.createMany(
           summarizeUrlContent.response.keywords,
@@ -71,6 +80,21 @@ export class AiClassificationService {
           keywordIds,
         );
       }
+
+      // Save metrics
+      await this.metricsRepository.createMetrics(
+        summarizeUrlContent.success,
+        timeSecond,
+        post.url,
+        post._id.toString(),
+      );
+
+      await this.postRepository.updatePostClassificationForAIClassification(
+        postAiStatus,
+        postId,
+        classificationId,
+        summarizeUrlContent.response.summary,
+      );
 
       return summarizeUrlContent;
     } catch (error: unknown) {

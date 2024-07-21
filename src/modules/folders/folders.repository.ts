@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Folder, FolderDocument } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { FilterQuery, Model } from 'mongoose';
+import { F002 } from './error';
 
 @Injectable()
 export class FolderRepository {
@@ -24,7 +25,8 @@ export class FolderRepository {
   async createMany(
     folders: { userId: string; name: string; type: FolderType }[],
   ) {
-    await this.folderModel.insertMany(folders);
+    const createdFolders = await this.folderModel.insertMany(folders);
+    return createdFolders;
   }
 
   async findByUserId(userId: string) {
@@ -32,10 +34,20 @@ export class FolderRepository {
     return folders;
   }
 
+  async checkUserHasFolder(userId: string, name: string) {
+    const checkFolder = await this.folderModel
+      .findOne({
+        userId: userId,
+        name: name,
+      })
+      .exec();
+    return checkFolder ? true : false;
+  }
+
   async findOneOrFail(param: FilterQuery<FolderDocument>) {
     const folder = await this.folderModel.findOne(param).exec();
     if (!folder) {
-      throw new NotFoundException('folder not found');
+      throw new NotFoundException(F002);
     }
 
     return folder;

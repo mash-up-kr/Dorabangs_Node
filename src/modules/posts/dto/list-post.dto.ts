@@ -12,4 +12,13 @@ export class ListPostQueryDto extends PaginationQuery {
   @IsBoolean()
   @IsOptional()
   favorite: boolean;
+
+  @ApiProperty({
+    required: false,
+    description: '읽음 필터링 여부',
+  })
+  @Transform(({ value }) => (value === 'true' ? true : false))
+  @IsBoolean()
+  @IsOptional()
+  isRead: boolean;
 }
