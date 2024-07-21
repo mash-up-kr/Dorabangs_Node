@@ -8,7 +8,12 @@ import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
 import { Types } from 'mongoose';
 import { FolderRepository } from '../folders/folders.repository';
-import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
+import {
+  CountPostQueryDto,
+  ListPostQueryDto,
+  UpdatePostDto,
+  UpdatePostFolderDto,
+} from './dto';
 import { GetPostQueryDto } from './dto/find-in-folder.dto';
 
 @Injectable()
@@ -40,6 +45,15 @@ export class PostsService {
       count,
       posts,
     };
+  }
+
+  async countPost(userId: string, query: CountPostQueryDto) {
+    const count = await this.postRepository.getUserPostCount(
+      userId,
+      false,
+      query.isRead,
+    );
+    return count;
   }
 
   async createPost(

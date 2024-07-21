@@ -14,6 +14,7 @@ import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsService } from '@src/modules/posts/posts.service';
 import { JwtGuard } from '@src/modules/users/guards';
 import {
+  CountPostDocs,
   CreatePostDocs,
   DeletePostDocs,
   ListPostDocs,
@@ -21,7 +22,12 @@ import {
   UpdatePostFolderDocs,
 } from './docs';
 import { UpdatePostDocs } from './docs/updatePost.docs';
-import { ListPostQueryDto, UpdatePostDto, UpdatePostFolderDto } from './dto';
+import {
+  CountPostQueryDto,
+  ListPostQueryDto,
+  UpdatePostDto,
+  UpdatePostFolderDto,
+} from './dto';
 import { ListPostItem, ListPostResponse } from './response';
 
 @Controller('posts')
@@ -37,6 +43,16 @@ export class PostsController {
     const postResponse = posts.map((post) => new ListPostItem(post));
     const metadata = new PaginationMetadata(query.page, query.limit, count);
     return new ListPostResponse(metadata, postResponse);
+  }
+
+  @Get('count')
+  @CountPostDocs
+  async countPost(
+    @GetUser() userId: string,
+    @Query() query: CountPostQueryDto,
+  ) {
+    const count = await this.postsService.countPost(userId, query);
+    return count;
   }
 
   @Post()
