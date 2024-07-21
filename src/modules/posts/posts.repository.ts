@@ -100,7 +100,7 @@ export class PostsRepository {
     title: string,
     thumbnail: string,
     postAIStatus: PostAiStatus,
-  ): Promise<Post & { _id: Types.ObjectId }> {
+  ) {
     const postModel = await this.postModel.create({
       folderId: folderId,
       url: url,
@@ -110,7 +110,7 @@ export class PostsRepository {
       thumbnailImgUrl: thumbnail,
       aiStatus: postAIStatus,
     });
-    return postModel;
+    return postModel.toObject();
   }
 
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {

@@ -5,6 +5,11 @@ import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { Types } from 'mongoose';
 import { KeywordItem } from './keyword-list.response';
 
+export type PostItemDto = Post & {
+  _id: Types.ObjectId;
+  keywords: (Keyword & { _id: Types.ObjectId })[];
+};
+
 export class ListPostItem {
   @ApiProperty({ required: true, description: '피드 id', type: String })
   id: string;
@@ -47,12 +52,7 @@ export class ListPostItem {
   })
   aiStatus: PostAiStatus;
 
-  constructor(
-    data: Post & {
-      _id: Types.ObjectId;
-      keywords: (Keyword & { _id: Types.ObjectId })[];
-    },
-  ) {
+  constructor(data: PostItemDto) {
     this.id = data._id.toString();
     this.folderId = data.folderId.toString();
     this.url = data.url;

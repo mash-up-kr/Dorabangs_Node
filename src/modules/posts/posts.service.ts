@@ -20,6 +20,7 @@ import {
 } from './dto';
 import { GetPostQueryDto } from './dto/find-in-folder.dto';
 import { PostKeywordsRepository } from './postKeywords.repository';
+import { PostItemDto } from './response';
 
 @Injectable()
 export class PostsService {
@@ -70,7 +71,7 @@ export class PostsService {
   async createPost(
     createPostDto: CreatePostDto,
     userId: string,
-  ): Promise<Post & { _id: Types.ObjectId }> {
+  ): Promise<PostItemDto> {
     // NOTE : URL에서 얻은 정보 가져옴
     const { title, content, thumbnail } = await parseLinkTitleAndContent(
       createPostDto.url,
@@ -101,7 +102,7 @@ export class PostsService {
 
     await this.executeAiClassification(payload);
 
-    return post;
+    return { ...post, keywords: [] } satisfies PostItemDto;
   }
 
   /**
@@ -152,7 +153,9 @@ export class PostsService {
     const post = await this.postRepository.findPostOrThrow({
       _id: postId,
     });
-    return post;
+
+    const [postsWithKeyword] = await this.organizeFolderWithKeywords([post]);
+    return postsWithKeyword;
   }
 
   async updatePostFolder(
