@@ -202,7 +202,7 @@ export class PostsService {
     });
   }
 
-  async removeAllPostsInCustomFolders(userId: string) {
+  async removeAllPostsInCustomFolders(userId: string): Promise<string[]> {
     const customFolders = await this.folderRepository.findByUserId(userId);
     const customFolderIds = customFolders
       .filter((folder) => folder.type === FolderType.CUSTOM)
@@ -212,6 +212,7 @@ export class PostsService {
       userId,
       folderId: { $in: customFolderIds },
     });
+    return customFolderIds.map((folder) => folder.toString());
   }
 
   private async organizeFolderWithKeywords(
