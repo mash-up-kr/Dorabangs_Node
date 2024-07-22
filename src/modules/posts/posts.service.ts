@@ -195,6 +195,13 @@ export class PostsService {
     return true;
   }
 
+  async removePostListByFolderId(userId: string, folderId: string) {
+    await this.postRepository.deleteMany({
+      userId,
+      folderId,
+    });
+  }
+
   async removeAllPostsInCustomFolders(userId: string) {
     const customFolders = await this.folderRepository.findByUserId(userId);
     const customFolderIds = customFolders

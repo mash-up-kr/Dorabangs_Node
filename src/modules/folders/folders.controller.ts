@@ -127,5 +127,6 @@ export class FoldersController {
   @Delete(':folderId')
   async remove(@GetUser() userId: string, @Param('folderId') folderId: string) {
     await this.foldersService.remove(userId, folderId);
+    await this.postsService.removePostListByFolderId(userId, folderId);
   }
 }
