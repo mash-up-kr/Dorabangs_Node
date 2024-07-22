@@ -1,5 +1,9 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { Types } from 'mongoose';
 
 export const CreatePostDocs = applyDecorators(
@@ -8,5 +12,8 @@ export const CreatePostDocs = applyDecorators(
   }),
   ApiResponse({
     type: Types.ObjectId,
+  }),
+  ApiNotFoundResponse({
+    description: ['F002'].join(', '),
   }),
 );

@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
@@ -17,6 +18,9 @@ export const CreateFolderDocs = applyDecorators(
   ApiResponse({
     type: FolderResponse,
     isArray: true,
+  }),
+  ApiBadRequestResponse({
+    description: ['F001'].join(','),
   }),
 );
 

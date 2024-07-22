@@ -60,6 +60,12 @@ export class PostsService {
     createPostDto: CreatePostDto,
     userId: string,
   ): Promise<Post & { _id: Types.ObjectId }> {
+    // Validate folder is user's folder
+    await this.folderRepository.findOneOrFail({
+      userId: userId,
+      _id: createPostDto.folderId,
+    });
+
     // NOTE : URL에서 얻은 정보 가져옴
     const { title, content, thumbnail } = await parseLinkTitleAndContent(
       createPostDto.url,
