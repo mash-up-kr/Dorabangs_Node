@@ -167,4 +167,18 @@ export class ClassficiationRepository {
       )
       .exec();
   }
+
+  async deleteManyBySuggestedFolderIdList(
+    suggestedFolderId: string[] | string,
+  ): Promise<boolean> {
+    await this.aiClassificationModel
+      .updateMany(
+        { suggestedFolderId: { $in: suggestedFolderId } },
+        {
+          deletedAt: new Date(),
+        },
+      )
+      .exec();
+    return true;
+  }
 }

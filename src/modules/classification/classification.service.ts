@@ -137,4 +137,12 @@ export class ClassificationService {
       post.aiClassificationId.toString(),
     );
   }
+
+  async deleteClassificationBySuggestedFolderId(
+    suggestedFolderId: string[] | string,
+  ): Promise<boolean> {
+    return await this.classficationRepository.deleteManyBySuggestedFolderIdList(
+      suggestedFolderId,
+    );
+  }
 }
