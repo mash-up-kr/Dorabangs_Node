@@ -3,7 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Handler } from 'aws-lambda';
 import { DatabaseModule } from './infrastructure';
+import { AiModule } from './infrastructure/ai/ai.module';
 import { AiClassificationPayload } from './infrastructure/aws-lambda/type';
+import { DiscordModule } from './infrastructure/discord/discord.module';
 import { AiClassificationModule } from './modules/ai-classification/ai-classification.module';
 import { AiClassificationService } from './modules/ai-classification/ai-classification.service';
 
@@ -15,11 +17,12 @@ import { AiClassificationService } from './modules/ai-classification/ai-classifi
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
     DatabaseModule,
+    DiscordModule,
+    AiModule,
     AiClassificationModule,
   ],
-  providers: [AiClassificationService],
 })
-class WorkerModule {}
+export class WorkerModule {}
 
 export const handler: Handler = async (event: AiClassificationPayload) => {
   const app = await NestFactory.create(WorkerModule);
