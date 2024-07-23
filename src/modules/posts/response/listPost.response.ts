@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationMetadata } from '@src/common';
-import { Post } from '@src/infrastructure';
-import { Types } from 'mongoose';
+import { Keyword, Post } from '@src/infrastructure';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
+import { Types } from 'mongoose';
+import { KeywordItem } from './keyword-list.response';
+
+export type PostItemDto = Post & {
+  _id: Types.ObjectId;
+  keywords: (Keyword & { _id: Types.ObjectId })[];
+};
 
 export class ListPostItem {
   @ApiProperty({ required: true, description: '피드 id', type: String })
@@ -24,6 +30,9 @@ export class ListPostItem {
   })
   description: string;
 
+  @ApiProperty()
+  keywords: KeywordItem[];
+
   @ApiProperty({ required: true, description: '즐겨찾기 여부', type: Boolean })
   isFavorite: boolean;
 
@@ -43,15 +52,17 @@ export class ListPostItem {
   })
   aiStatus: PostAiStatus;
 
-  constructor(data: Post & { _id: Types.ObjectId }) {
+  constructor(data: PostItemDto) {
     this.id = data._id.toString();
     this.folderId = data.folderId.toString();
     this.url = data.url;
     this.title = data.title;
     this.description = data.description;
+    this.keywords = data.keywords.map((keyword) => new KeywordItem(keyword));
     this.isFavorite = data.isFavorite;
     this.createdAt = data.createdAt;
     this.readAt = data.readAt;
+    this.createdAt = data.createdAt;
     this.thumbnailImgUrl = data.thumbnailImgUrl;
     this.aiStatus = data.aiStatus;
   }

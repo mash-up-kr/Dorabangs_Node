@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { PaginationQuery, sum } from '@src/common';
+import { BadRequestException } from '@nestjs/common';
+import { PaginationQuery } from '@src/common';
 import { Types } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
 import { ClassficiationRepository } from './classification.repository';
 import { ClassificationFolderWithCount } from './dto/classification.dto';
+
+import { sum } from '@src/common';
 import { C001 } from './error';
 
 @Injectable()
@@ -132,6 +135,14 @@ export class ClassificationService {
 
     return await this.classficationRepository.delete(
       post.aiClassificationId.toString(),
+    );
+  }
+
+  async deleteClassificationBySuggestedFolderId(
+    suggestedFolderId: string[] | string,
+  ): Promise<boolean> {
+    return await this.classficationRepository.deleteManyBySuggestedFolderIdList(
+      suggestedFolderId,
     );
   }
 }

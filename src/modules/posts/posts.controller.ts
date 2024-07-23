@@ -42,6 +42,7 @@ export class PostsController {
     const { count, posts } = await this.postsService.listPost(userId, query);
     const postResponse = posts.map((post) => new ListPostItem(post));
     const metadata = new PaginationMetadata(query.page, query.limit, count);
+
     return new ListPostResponse(metadata, postResponse);
   }
 

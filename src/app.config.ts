@@ -4,12 +4,14 @@ import {
   INestApplication,
   ValidationPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import {
   CommonResponseInterceptor,
-  createErrorObject,
   RootExceptionFilter,
+  createErrorObject,
 } from './common';
+import { DiscordErrorWebhookProvider } from './infrastructure/discord/discord-error-webhook.provider';
 
 export async function nestAppConfig<
   T extends INestApplication = INestApplication,
@@ -51,7 +53,11 @@ export function nestResponseConfig<
 function configFilterStandAlone<T extends INestApplication = INestApplication>(
   app: T,
 ) {
-  app.useGlobalFilters(new RootExceptionFilter());
+  app.useGlobalFilters(
+    new RootExceptionFilter(
+      new DiscordErrorWebhookProvider(new ConfigService()),
+    ),
+  );
 }
 
 // Enalbe Exception Filter with Sentry Connection

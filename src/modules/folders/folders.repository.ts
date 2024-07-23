@@ -52,4 +52,20 @@ export class FolderRepository {
 
     return folder;
   }
+
+  async deleteAllCustomFolder(userId: string) {
+    await this.folderModel.deleteMany({
+      userId,
+      type: FolderType.CUSTOM,
+    });
+  }
+
+  async getDefaultFolder(userId: string) {
+    const folder = await this.folderModel.findOne({
+      userId,
+      type: FolderType.DEFAULT,
+    });
+
+    return folder;
+  }
 }

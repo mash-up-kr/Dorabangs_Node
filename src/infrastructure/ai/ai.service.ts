@@ -1,24 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI, { OpenAIError, RateLimitError } from 'openai';
+import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
 import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
-import { summarizeURLContentFunctionFactory } from './functions';
+import {
+  AiClassificationFunctionResult,
+  summarizeURLContentFunctionFactory,
+} from './functions';
 import { SummarizeURLContent } from './types/types';
 
 @Injectable()
 export class AiService {
   private openai: OpenAI;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly discordAIWebhookProvider: DiscordAIWebhookProvider,
+  ) {
     this.openai = new OpenAI({
-      apiKey: config.get<string>('OPENAI_API_KEY'),
+      apiKey: this.config.get<string>('OPENAI_API_KEY'),
     });
   }
 
   async summarizeLinkContent(
     content: string,
     userFolderList: string[],
+    url: string,
     temperature = 0.5,
   ): Promise<SummarizeURLContentDto> {
     try {
@@ -28,8 +36,10 @@ export class AiService {
       const promptResult = await this.invokeAISummary(
         content,
         folderLists,
+        url,
         temperature,
       );
+
       // Function Call 결과
       const summaryResult: SummarizeURLContent = JSON.parse(
         promptResult.choices[0].message.tool_calls[0].function.arguments,
@@ -59,8 +69,11 @@ export class AiService {
   private async invokeAISummary(
     content: string,
     folderList: string[],
+    url: string,
     temperature: number,
   ) {
+    let elapsedTime: number = 0;
+    const startTime = new Date();
     const promptResult = await this.openai.chat.completions.create(
       {
         model: gptVersion,
@@ -93,6 +106,30 @@ ${content}
         maxRetries: 5,
       },
     );
+
+    elapsedTime = new Date().getTime() - startTime.getTime();
+
+    const functionResult: AiClassificationFunctionResult = JSON.parse(
+      promptResult.choices[0].message.tool_calls[0].function.arguments,
+    );
+
+    await this.discordAIWebhookProvider.send(
+      [
+        `**AI 요약 실행 시간: ${elapsedTime}ms**`,
+        `**Input**`,
+        `- URL : ${url}`,
+        `- 인풋 폴더 : [${folderList.join(', ')}]`,
+        `**Output**`,
+        `- 사용 모델 : ${promptResult.model}`,
+        `- 요약 : ${functionResult.summary}`,
+        `- 추출 키워드 : ${functionResult.keywords.join(', ')}`,
+        `- 매칭 폴더명 : ${functionResult.category}`,
+        `- Input Token : ${promptResult.usage.prompt_tokens}`,
+        `- Output Token : ${promptResult.usage.completion_tokens}`,
+        `- Total Token : ${promptResult.usage.total_tokens}`,
+      ].join('\n'),
+    );
+
     return promptResult;
   }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FolderListServiceDto } from '../dto/folder-with-count.dto';
+import { FolderListServiceDto } from '../dto/folder-list-service.dto';
 import { FolderResponse } from './folder.response';
 
 export class FolderListResponse {

@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AiModule } from './infrastructure/ai/ai.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
+import { DiscordModule } from './infrastructure/discord/discord.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ClassificationModule } from './modules/classification/classification.module';
 import { FoldersModule } from './modules/folders/folders.module';
@@ -25,6 +26,7 @@ import { UsersModule } from './modules/users/users.module';
       envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
     }),
     DatabaseModule,
+    DiscordModule,
     AiModule,
     UsersModule,
     ClassificationModule,

@@ -100,7 +100,7 @@ export class PostsRepository {
     title: string,
     thumbnail: string,
     postAIStatus: PostAiStatus,
-  ): Promise<Post & { _id: Types.ObjectId }> {
+  ) {
     const postModel = await this.postModel.create({
       folderId: folderId,
       url: url,
@@ -110,7 +110,7 @@ export class PostsRepository {
       thumbnailImgUrl: thumbnail,
       aiStatus: postAIStatus,
     });
-    return postModel;
+    return postModel.toObject();
   }
 
   async getPostCountByFolderIds(folderIds: Types.ObjectId[]) {
@@ -209,10 +209,12 @@ export class PostsRepository {
 
   async findByFolderId(
     folderId: string,
-    offset: number,
+    page: number,
     limit: number,
+    order: OrderType = OrderType.desc,
     isRead?: boolean,
   ) {
+    const offset = (page - 1) * limit;
     const queryFilter: FilterQuery<Post> = {
       folderId: folderId,
     };
@@ -226,7 +228,9 @@ export class PostsRepository {
     const folders = await this.postModel
       .find(queryFilter)
       .skip(offset)
-      .limit(limit);
+      .sort([['createdAt', order === OrderType.desc ? -1 : 1]])
+      .limit(limit)
+      .lean();
 
     return folders;
   }
@@ -431,5 +435,10 @@ export class PostsRepository {
         .exec();
     }
     return deleteResult;
+  }
+
+  async deleteMany(param: FilterQuery<PostDocument>) {
+    await this.postModel.deleteMany(param);
+    1;
   }
 }

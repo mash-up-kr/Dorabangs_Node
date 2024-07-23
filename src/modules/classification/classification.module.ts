@@ -26,5 +26,6 @@ import { ClassficiationRepository } from './classification.repository';
   ],
   controllers: [ClassificationController],
   providers: [ClassificationService, ClassficiationRepository, PostsRepository],
+  exports: [ClassificationService],
 })
 export class ClassificationModule {}

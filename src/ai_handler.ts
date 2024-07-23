@@ -1,71 +1,36 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '@src/app.module';
-import { AiService } from '@src/infrastructure/ai/ai.service';
-import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { Handler } from 'aws-lambda';
-import { LambdaEventPayload } from './infrastructure/aws-lambda/type';
-import { ClassficiationRepository } from './modules/classification/classification.repository';
-import { MetricsRepository } from './modules/metrics/metrics.repository';
-import { PostsRepository } from './modules/posts/posts.repository';
+import { DatabaseModule } from './infrastructure';
+import { AiClassificationPayload } from './infrastructure/aws-lambda/type';
+import { AiClassificationModule } from './modules/ai-classification/ai-classification.module';
+import { AiClassificationService } from './modules/ai-classification/ai-classification.service';
 
-export const handler: Handler = async (event: LambdaEventPayload) => {
-  const app = await NestFactory.create(AppModule);
-  const aiService = app.get(AiService);
-  const classificationRepository = app.get(ClassficiationRepository);
-  const postRepository = app.get(PostsRepository);
-  const metricsRepository = app.get(MetricsRepository);
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
+    }),
+    DatabaseModule,
+    AiClassificationModule,
+  ],
+  providers: [AiClassificationService],
+})
+class WorkerModule {}
 
-  // Map - (Folder Name):(Folder ID)
-  const folderMapper = {};
-  // Build foldeMapper
-  event.folderList.forEach((folder) => {
-    folderMapper[folder.name] = folder.id;
-  });
+export const handler: Handler = async (event: AiClassificationPayload) => {
+  const app = await NestFactory.create(WorkerModule);
+  const aiClassificationService = app.get(AiClassificationService);
 
-  // NOTE: AI 요약 요청
-  const start = process.hrtime();
-  const summarizeUrlContent = await aiService.summarizeLinkContent(
-    event.postContent,
-    Object.keys(folderMapper), // 중복성 줄이기 위해
-  );
-  const end = process.hrtime(start);
-  const timeSecond = end[0] + end[1] / 1e9;
-
-  const postId = event.postId;
-  let classificationId = null;
-  let postAiStatus = PostAiStatus.FAIL;
-
-  // NOTE : 요약 성공 시 classification 생성, post 업데이트
-  if (summarizeUrlContent.success) {
-    const folderId = folderMapper[summarizeUrlContent.response.category];
-    const post = await postRepository.findPostByIdForAIClassification(postId);
-    const classification = await classificationRepository.createClassification(
-      post.url,
-      summarizeUrlContent.response.summary,
-      summarizeUrlContent.response.keywords,
-      folderId,
-    );
-    // Save metrics
-    await metricsRepository.createMetrics(
-      summarizeUrlContent.success,
-      timeSecond,
-      post.url,
-      post._id.toString(),
-    );
-    classificationId = classification._id.toString();
-    postAiStatus = PostAiStatus.SUCCESS;
-  }
-  await postRepository.updatePostClassificationForAIClassification(
-    postAiStatus,
-    postId,
-    classificationId,
-    summarizeUrlContent.response.summary,
-  );
+  const result = await aiClassificationService.execute(event);
 
   // NOTE: cloud-watch 로그 확인용
   console.log({
-    result: summarizeUrlContent.success ? 'success' : 'fail',
+    result: result.success ? 'success' : 'fail',
     event: JSON.stringify(event, null, 2),
-    summarizeUrlContent: summarizeUrlContent,
+    summarizeUrlContent: result,
   });
 };

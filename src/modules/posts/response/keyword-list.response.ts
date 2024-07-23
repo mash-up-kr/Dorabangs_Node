@@ -1,0 +1,16 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Keyword } from '@src/infrastructure';
+import { Types } from 'mongoose';
+
+export class KeywordItem {
+  @ApiProperty({ description: '키워드 id' })
+  id: string;
+
+  @ApiProperty({ description: '키워드 이름' })
+  name: string;
+
+  constructor(keyword: Keyword & { _id: Types.ObjectId }) {
+    this.id = keyword._id.toString();
+    this.name = keyword.name;
+  }
+}

@@ -16,6 +16,7 @@ export class FolderSummaryResponse {
   createdAt: Date;
 
   constructor(data: FolderDocument) {
+    /** @todo postgres로 바꾸면서 수정하기 */
     this.id = data._id ? data._id.toString() : data.id;
     this.name = data.name;
     this.type = data.type;

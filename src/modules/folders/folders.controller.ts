@@ -22,7 +22,7 @@ import {
   FolderControllerDocs,
   UpdateFolderDocs,
 } from './docs';
-import { CreateFolderDto, UpdateFolderDto } from './dto';
+import { CreateFolderDto, DeleteCustomFolderDto, UpdateFolderDto } from './dto';
 import { FoldersService } from './folders.service';
 import {
   FolderListResponse,
@@ -31,6 +31,7 @@ import {
   FolderSummaryResponse,
 } from './responses';
 import { PostResponse } from './responses/post.response';
+import { ClassificationService } from '@src/modules/classification/classification.service';
 
 @FolderControllerDocs
 @UseGuards(JwtGuard)
@@ -39,6 +40,7 @@ export class FoldersController {
   constructor(
     private readonly foldersService: FoldersService,
     private readonly postsService: PostsService,
+    private readonly classificationService: ClassificationService,
   ) {}
 
   @CreateFolderDocs
@@ -113,9 +115,26 @@ export class FoldersController {
     return new FolderResponse(updatedFolder);
   }
 
+  @Delete('/all')
+  async removeAll(@Query() deleteCustomFolderDto: DeleteCustomFolderDto) {
+    const folderIdList = await this.postsService.removeAllPostsInCustomFolders(
+      deleteCustomFolderDto.userId,
+    );
+    await this.foldersService.removeAllCustomFolders(
+      deleteCustomFolderDto.userId,
+    );
+    await this.classificationService.deleteClassificationBySuggestedFolderId(
+      folderIdList,
+    );
+  }
+
   @DeleteFolderDocs
   @Delete(':folderId')
   async remove(@GetUser() userId: string, @Param('folderId') folderId: string) {
+    await this.classificationService.deleteClassificationBySuggestedFolderId(
+      folderId,
+    );
     await this.foldersService.remove(userId, folderId);
+    await this.postsService.removePostListByFolderId(userId, folderId);
   }
 }

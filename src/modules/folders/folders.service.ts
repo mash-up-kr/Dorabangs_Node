@@ -3,7 +3,7 @@ import { sum } from '@src/common';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { Schema as MongooseSchema } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
-import { FolderListServiceDto } from './dto/folder-with-count.dto';
+import { FolderListServiceDto } from './dto/folder-list-service.dto';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
 import { F001 } from './error';
 import { FolderRepository } from './folders.repository';
@@ -77,7 +77,7 @@ export class FoldersService {
       userId: new MongooseSchema.Types.ObjectId(userId),
       postCount: favoritePostCount,
     };
-    const defaultFolderTmp = {
+    const readLater = {
       id: defaultFolder.id,
       name: defaultFolder.name,
       type: FolderType.DEFAULT,
@@ -85,7 +85,7 @@ export class FoldersService {
       postCount: allPostCount - customFoldersPostCount,
     };
 
-    const defaultFolders = [all, favorite, defaultFolderTmp].filter(
+    const defaultFolders = [all, favorite, readLater].filter(
       (folder) => !!folder,
     );
     return { defaultFolders, customFolders };
@@ -122,5 +122,9 @@ export class FoldersService {
     });
 
     await folder.deleteOne().exec();
+  }
+
+  async removeAllCustomFolders(userId: string) {
+    await this.folderRepository.deleteAllCustomFolder(userId);
   }
 }

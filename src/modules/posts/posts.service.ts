@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { parseLinkTitleAndContent } from '@src/common';
-import { Post } from '@src/infrastructure';
+import { IS_LOCAL } from '@src/common/constant';
+import { Keyword, Post } from '@src/infrastructure';
 import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
+import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
-import { Types } from 'mongoose';
+import { FlattenMaps, Types } from 'mongoose';
+import { AiClassificationService } from '../ai-classification/ai-classification.service';
 import { FolderRepository } from '../folders/folders.repository';
 import {
   CountPostQueryDto,
@@ -15,13 +19,18 @@ import {
   UpdatePostFolderDto,
 } from './dto';
 import { GetPostQueryDto } from './dto/find-in-folder.dto';
+import { PostKeywordsRepository } from './postKeywords.repository';
+import { PostItemDto } from './response';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly postRepository: PostsRepository,
     private readonly folderRepository: FolderRepository,
+    private readonly postKeywordsRepository: PostKeywordsRepository,
+
     private readonly awsLambdaService: AwsLambdaService,
+    private readonly aiClassificationService: AiClassificationService,
     private readonly config: ConfigService,
   ) {}
 
@@ -41,9 +50,12 @@ export class PostsService {
         query.isRead,
       ),
     ]);
+
+    const postsWithKeyword = await this.organizeFolderWithKeywords(posts);
+
     return {
       count,
-      posts,
+      posts: postsWithKeyword,
     };
   }
 
@@ -59,7 +71,7 @@ export class PostsService {
   async createPost(
     createPostDto: CreatePostDto,
     userId: string,
-  ): Promise<Post & { _id: Types.ObjectId }> {
+  ): Promise<PostItemDto> {
     // Validate folder is user's folder
     await this.folderRepository.findOneOrFail({
       userId: userId,
@@ -87,16 +99,16 @@ export class PostsService {
       PostAiStatus.IN_PROGRES,
     );
     const payload = {
+      url: createPostDto.url,
       postContent: content,
       folderList: folderList,
       postId: post._id.toString(),
-    };
+      userId,
+    } satisfies AiClassificationPayload;
 
-    const aiLambdaFunctionName = this.config.get<string>(
-      'LAMBDA_FUNCTION_NAME',
-    );
-    await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
-    return post;
+    await this.executeAiClassification(payload);
+
+    return { ...post, keywords: [] } satisfies PostItemDto;
   }
 
   /**
@@ -114,7 +126,6 @@ export class PostsService {
       userId,
     });
 
-    const offset = (query.page - 1) * query.limit;
     const count = await this.postRepository.getCountByFolderId(
       folderId,
       query.isRead,
@@ -122,12 +133,18 @@ export class PostsService {
     // NOTE: 폴더 id에 속하는 post 리스트 조회
     const posts = await this.postRepository.findByFolderId(
       folderId,
-      offset,
+      query.page,
       query.limit,
+      query.order,
       query.isRead,
     );
 
-    return { count, posts };
+    const postsWithKeyword = await this.organizeFolderWithKeywords(posts);
+
+    return {
+      count,
+      posts: postsWithKeyword,
+    };
   }
 
   async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
@@ -142,7 +159,9 @@ export class PostsService {
     const post = await this.postRepository.findPostOrThrow({
       _id: postId,
     });
-    return post;
+
+    const [postsWithKeyword] = await this.organizeFolderWithKeywords([post]);
+    return postsWithKeyword;
   }
 
   async updatePostFolder(
@@ -180,5 +199,71 @@ export class PostsService {
       post.aiClassificationId?.toString(),
     );
     return true;
+  }
+
+  async removePostListByFolderId(userId: string, folderId: string) {
+    await this.postRepository.deleteMany({
+      userId,
+      folderId,
+    });
+  }
+
+  async removeAllPostsInCustomFolders(userId: string): Promise<string[]> {
+    const customFolders = await this.folderRepository.findByUserId(userId);
+    const customFolderIds = customFolders
+      .filter((folder) => folder.type === FolderType.CUSTOM)
+      .map((folder) => folder._id);
+
+    await this.postRepository.deleteMany({
+      userId,
+      folderId: { $in: customFolderIds },
+    });
+    return customFolderIds.map((folder) => folder.toString());
+  }
+
+  private async organizeFolderWithKeywords(
+    posts: (FlattenMaps<Post> & { _id: Types.ObjectId })[],
+  ) {
+    const postIds = posts.map((post) => post._id.toString());
+    const postKeywords =
+      await this.postKeywordsRepository.findKeywordsByPostIds(postIds);
+    const postKeywordMap: Record<
+      string,
+      (Keyword & { _id: Types.ObjectId })[]
+    > = {};
+
+    postKeywords.forEach((postKeyword) => {
+      const postId = postKeyword.postId.toString();
+      if (!postKeywordMap[postId]) {
+        postKeywordMap[postId] = [];
+      }
+
+      /**
+       * populate때문에 강제형변환
+       */
+      const keyword = postKeyword.keywordId as any as Keyword & {
+        _id: Types.ObjectId;
+      };
+      postKeywordMap[postId].push(keyword);
+    });
+
+    const postsWithKeyword = posts.map((post) => ({
+      ...post,
+      keywords: postKeywordMap[post._id.toString()] ?? [],
+    }));
+
+    return postsWithKeyword;
+  }
+
+  private async executeAiClassification(payload: AiClassificationPayload) {
+    if (IS_LOCAL) {
+      return await this.aiClassificationService.execute(payload);
+    }
+
+    const aiLambdaFunctionName = this.config.get<string>(
+      'LAMBDA_FUNCTION_NAME',
+    );
+
+    await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
   }
 }

@@ -1,7 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { PostsController } from './posts.controller';
-import { PostsRepository } from '@src/modules/posts/posts.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   AIClassification,
@@ -11,22 +8,31 @@ import {
   Post,
   PostSchema,
 } from '@src/infrastructure';
-import { UsersModule } from '@src/modules/users/users.module';
-import { FolderRepository } from '../folders/folders.repository';
 import { AwsLambdaModule } from '@src/infrastructure/aws-lambda/aws-lambda.module';
 import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
+import {
+  PostKeyword,
+  PostKeywordSchema,
+} from '@src/infrastructure/database/schema/postKeyword.schema';
+import { PostsRepository } from '@src/modules/posts/posts.repository';
+import { UsersModule } from '@src/modules/users/users.module';
+import { AiClassificationModule } from '../ai-classification/ai-classification.module';
+import { FolderRepository } from '../folders/folders.repository';
+import { PostKeywordsRepository } from './postKeywords.repository';
+import { PostsController } from './posts.controller';
+import { PostsService } from './posts.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema },
       { name: Folder.name, schema: FolderSchema },
-    ]),
-    MongooseModule.forFeature([
       { name: AIClassification.name, schema: AIClassificationSchema },
+      { name: PostKeyword.name, schema: PostKeywordSchema },
     ]),
     UsersModule,
     AwsLambdaModule,
+    AiClassificationModule,
   ],
   controllers: [PostsController],
   providers: [
@@ -34,6 +40,7 @@ import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.serv
     PostsRepository,
     FolderRepository,
     AwsLambdaService,
+    PostKeywordsRepository,
   ],
   exports: [PostsService, PostsRepository],
 })
