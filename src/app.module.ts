@@ -1,11 +1,12 @@
 // Nest Packages
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 // Custom Packages
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@src/infrastructure';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LoggerMiddleware } from './common/interceptor/logging.interceptor';
 import { AiModule } from './infrastructure/ai/ai.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
 import { DiscordModule } from './infrastructure/discord/discord.module';
@@ -41,4 +42,8 @@ import { UsersModule } from './modules/users/users.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('/*');
+  }
+}
