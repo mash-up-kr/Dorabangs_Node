@@ -171,7 +171,7 @@ export class PostsService {
   ) {
     await this.folderRepository.findOneOrFail({
       userId: userId,
-      id: dto.folderId,
+      _id: dto.folderId,
     });
 
     // Find if post exist
