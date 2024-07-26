@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { sum } from '@src/common';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { Schema as MongooseSchema } from 'mongoose';
+import { Types } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
 import { FolderListServiceDto } from './dto/folder-list-service.dto';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
@@ -67,21 +67,21 @@ export class FoldersService {
       id: null,
       name: '모든 링크',
       type: FolderType.ALL,
-      userId: new MongooseSchema.Types.ObjectId(userId),
+      userId: new Types.ObjectId(userId),
       postCount: allPostCount,
     };
     const favorite = {
       id: null,
       name: '즐겨찾기',
       type: FolderType.FAVORITE,
-      userId: new MongooseSchema.Types.ObjectId(userId),
+      userId: new Types.ObjectId(userId),
       postCount: favoritePostCount,
     };
     const readLater = {
       id: defaultFolder.id,
       name: defaultFolder.name,
       type: FolderType.DEFAULT,
-      userId: new MongooseSchema.Types.ObjectId(userId),
+      userId: new Types.ObjectId(userId),
       postCount: allPostCount - customFoldersPostCount,
     };
 
