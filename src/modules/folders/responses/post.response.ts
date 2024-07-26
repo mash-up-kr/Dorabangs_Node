@@ -45,9 +45,6 @@ export class PostResponse {
   @ApiProperty({ description: '생성 시간' })
   createdAt: Date;
 
-  @ApiProperty({ type: Keyword, isArray: true })
-  keywords: KeywordItem[];
-
   @ApiProperty({ nullable: true, description: 'URL og 이미지' })
   thumbnailImgUrl: string | null;
 
@@ -58,6 +55,12 @@ export class PostResponse {
   })
   aiStatus: PostAiStatus;
 
+  @ApiProperty({
+    type: KeywordItem,
+    isArray: true,
+    description: 'ai 키워드 리스트',
+  })
+  keywords: KeywordItem[];
   constructor(
     data: Post & {
       _id: Types.ObjectId;
@@ -75,5 +78,6 @@ export class PostResponse {
     this.createdAt = data.createdAt;
     this.thumbnailImgUrl = data.thumbnailImgUrl;
     this.aiStatus = data.aiStatus;
+    this.keywords = data.keywords.map((keyword) => new KeywordItem(keyword));
   }
 }
