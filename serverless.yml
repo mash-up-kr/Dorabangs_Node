@@ -18,6 +18,7 @@ custom:
 functions:
   server:
     handler: dist/index.handler
+    timeout: 30
     events:
       - http:
           method: any
@@ -31,6 +32,7 @@ functions:
             origin: '*'
   aiWorker:
     handler: worker-dist/index.handler
+    timeout: 30
 
 package:
   exclude:
