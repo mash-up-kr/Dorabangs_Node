@@ -14,10 +14,11 @@ export class LoggerMiddleware implements NestMiddleware {
       const { statusCode } = response;
       const end = Date.now();
       const duration = end - start;
+      const userId = request.user ? request.user['id'] : '-';
 
       const logMessage = [
         `${method} ${originalUrl} ${statusCode} ${ip} - ${duration}ms`,
-        `User Id : ${request.user['id']}`,
+        `User Id : ${userId}`,
         `Query ${JSON.stringify(request.query)}`,
         `Body ${JSON.stringify(request.body)}`,
       ].join('\n');
