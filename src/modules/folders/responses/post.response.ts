@@ -68,11 +68,11 @@ export class PostResponse {
     },
   ) {
     this.id = data._id.toString();
+    this.userId = data.userId.toString();
     this.folderId = data.folderId.toString();
     this.url = data.url;
     this.title = data.title;
     this.description = data.description;
-    this.keywords = data.keywords.map((keyword) => new KeywordItem(keyword));
     this.isFavorite = data.isFavorite;
     this.readAt = data.readAt;
     this.createdAt = data.createdAt;
