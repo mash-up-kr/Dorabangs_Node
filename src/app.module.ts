@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@src/infrastructure';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LoggerMiddleware } from './common/interceptor/logging.interceptor';
+import { LoggerMiddleware } from './common/middlewares';
 import { AiModule } from './infrastructure/ai/ai.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
 import { DiscordModule } from './infrastructure/discord/discord.module';
