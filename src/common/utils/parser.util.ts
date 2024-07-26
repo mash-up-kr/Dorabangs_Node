@@ -31,6 +31,18 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   return {
     title: title ?? '',
     content,
-    thumbnail: thumbnail ?? '',
+    thumbnail: sanitizeThumbnail(thumbnail),
   };
+}
+
+function sanitizeThumbnail(thumbnail: string) {
+  if (!thumbnail) {
+    return '';
+  }
+
+  if (thumbnail.startsWith('//')) {
+    return thumbnail.substring(2);
+  }
+
+  return thumbnail;
 }
