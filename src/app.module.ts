@@ -17,7 +17,7 @@ import { LinksModule } from './modules/links/links.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { OnboardModule } from './modules/onboard/onboard.module';
 import { PostsModule } from './modules/posts/posts.module';
-import { PrismaService } from './modules/prisma/prisma.service';
+import { PrismaModule } from './modules/prisma/prisma.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -39,7 +39,7 @@ import { UsersModule } from './modules/users/users.module';
     AwsLambdaModule,
     OnboardModule,
     MetricsModule,
-    PrismaService,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
