@@ -92,12 +92,13 @@ export class FoldersService {
   }
 
   async findOne(userId: string, folderId: string) {
+    const postCount = await this.postRepository.getCountByFolderId(folderId);
     const folder = await this.folderRepository.findOneOrFail({
       _id: folderId,
       userId,
     });
 
-    return folder;
+    return { ...folder.toJSON(), postCount };
   }
 
   async update(

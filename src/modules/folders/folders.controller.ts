@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { GetUser, PaginationMetadata } from '@src/common';
+import { ClassificationService } from '@src/modules/classification/classification.service';
 import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
 import { PostsService } from '../posts/posts.service';
 import { JwtGuard } from '../users/guards';
@@ -28,10 +29,8 @@ import {
   FolderListResponse,
   FolderPostResponse,
   FolderResponse,
-  FolderSummaryResponse,
 } from './responses';
 import { PostResponse } from './responses/post.response';
-import { ClassificationService } from '@src/modules/classification/classification.service';
 
 @FolderControllerDocs
 @UseGuards(JwtGuard)
@@ -75,7 +74,7 @@ export class FoldersController {
     @Param('folderId') folderId: string,
   ) {
     const folder = await this.foldersService.findOne(userId, folderId);
-    return new FolderSummaryResponse(folder);
+    return new FolderResponse(folder);
   }
 
   @FindLinksInFolderDocs
