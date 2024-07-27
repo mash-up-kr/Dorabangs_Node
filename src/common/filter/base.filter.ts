@@ -70,7 +70,9 @@ export class RootExceptionFilter implements ExceptionFilter {
       error: responseErrorPayload,
     };
 
-    await this.handle(request, exception);
+    if (responseStatusCode >= 500) {
+      await this.handle(request, exception);
+    }
 
     return response.status(responseStatusCode).json(exceptionResponse);
   }
