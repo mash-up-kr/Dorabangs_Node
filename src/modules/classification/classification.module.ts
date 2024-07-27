@@ -10,7 +10,6 @@ import {
 } from '@src/infrastructure/database/schema';
 import { ClassificationService } from './classification.service';
 
-import { FoldersModule } from '../folders/folders.module';
 import { PostsRepository } from '../posts/posts.repository';
 import { ClassificationController } from './classification.controller';
 import { ClassficiationRepository } from './classification.repository';
@@ -22,7 +21,6 @@ import { ClassficiationRepository } from './classification.repository';
       { name: AIClassification.name, schema: AIClassificationSchema },
       { name: Post.name, schema: PostSchema },
     ]),
-    FoldersModule,
   ],
   controllers: [ClassificationController],
   providers: [ClassificationService, ClassficiationRepository, PostsRepository],
