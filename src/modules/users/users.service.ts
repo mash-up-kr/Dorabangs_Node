@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { JwtPayload } from 'src/common/types/type';
-import { UsersRepository } from './users.repository';
 import { AuthService } from '../auth/auth.service';
 import { FolderRepository } from '../folders/folders.repository';
-import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { CreateUserDto } from './dto';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
@@ -15,20 +15,23 @@ export class UsersService {
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<string> {
-    // 새로운 user의 ID
-    const user = await this.userRepository.findOrCreate(dto.deviceToken);
+    let user = await this.userRepository.findUserByDeviceToken(dto.deviceToken);
+    if (!user) {
+      // 새로운 user의 ID
+      user = await this.userRepository.findOrCreate(dto.deviceToken);
+      await this.folderRepository.create(
+        user._id.toString(),
+        '나중에 읽을 링크',
+        FolderType.DEFAULT,
+      );
+    }
+
     // JWT Token Payload
     const tokenPayload: JwtPayload = {
       id: user._id.toString(),
     };
     // JWT Token 발급
     const token = await this.authService.issueAccessToken(tokenPayload);
-
-    await this.folderRepository.create(
-      user._id.toString(),
-      '나중에 읽을 링크',
-      FolderType.DEFAULT,
-    );
 
     return token;
   }
