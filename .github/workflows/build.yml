@@ -2,8 +2,7 @@ name: Application Build Test
 on:
   pull_request:
     branches:
-      - main
-      - development
+      - develop
     paths:
       - 'src/**'
       - '.github/workflows/**'
