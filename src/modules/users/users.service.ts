@@ -14,7 +14,9 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  async createUser(dto: CreateUserDto): Promise<string> {
+  async createUser(
+    dto: CreateUserDto,
+  ): Promise<{ userId: string; token: string }> {
     let user = await this.userRepository.findUserByDeviceToken(dto.deviceToken);
     if (!user) {
       // 새로운 user의 ID
@@ -26,13 +28,17 @@ export class UsersService {
       );
     }
 
+    const userId = user._id.toString();
     // JWT Token Payload
     const tokenPayload: JwtPayload = {
-      id: user._id.toString(),
+      id: userId,
     };
     // JWT Token 발급
     const token = await this.authService.issueAccessToken(tokenPayload);
 
-    return token;
+    return {
+      userId: userId,
+      token: token,
+    };
   }
 }
