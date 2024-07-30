@@ -23,6 +23,7 @@ export function nestSwaggerConfig<
     explorer: true,
     swaggerOptions: {
       persistAuthorization: true, // https://github.com/scottie1984/swagger-ui-express/issues/44#issuecomment-974749930
+      displayRequestDuration: true,
     },
   });
 }

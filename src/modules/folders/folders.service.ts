@@ -65,7 +65,7 @@ export class FoldersService {
     );
     const all = {
       id: null,
-      name: '모든 링크',
+      name: '전체',
       type: FolderType.ALL,
       userId: new Types.ObjectId(userId),
       postCount: allPostCount,
