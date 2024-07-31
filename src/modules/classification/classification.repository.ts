@@ -124,7 +124,7 @@ export class ClassficiationRepository {
         {
           $match: {
             'folder.userId': userId,
-            'folder.type': 'default',
+            'folder.type': { $ne: 'default' },
           },
         },
         {
