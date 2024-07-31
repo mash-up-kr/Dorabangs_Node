@@ -68,4 +68,12 @@ export class FolderRepository {
 
     return folder;
   }
+
+  async getDefaultFolders(userId: string) {
+    const folders = await this.folderModel.find({
+      userId: userId,
+      type: FolderType.DEFAULT,
+    });
+    return folders;
+  }
 }
