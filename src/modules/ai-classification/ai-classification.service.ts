@@ -26,16 +26,15 @@ export class AiClassificationService {
       // Map - (Folder Name):(Folder ID)
 
       const folderMapper = {};
-      const folderNames = payload.folderList.map((folder) => {
+      payload.folderList.forEach((folder) => {
         folderMapper[folder.name] = folder.id;
-        return folder.name;
       });
 
       // NOTE: AI 요약 요청
       const start = process.hrtime();
       const summarizeUrlContent = await this.aiService.summarizeLinkContent(
         payload.postContent,
-        folderNames,
+        Object.keys(folderMapper),
         payload.url,
       );
 
@@ -59,17 +58,33 @@ export class AiClassificationService {
 
         post =
           await this.postRepository.findPostByIdForAIClassification(postId);
-        const classification =
-          await this.classificationRepository.createClassification(
-            post.url,
-            summarizeUrlContent.response.summary,
-            summarizeUrlContent.response.keywords,
-            folderId,
-          );
 
-        classificationId = classification._id.toString();
+        // 기존에 디폴트 폴더 안막은것들이 있어서... 우선은 다 불러와서 필터링 하는 방식으로 했어용
+        const defaultFolders = await this.folderRepository.getDefaultFolders(
+          post.userId.toString(),
+        );
+        const defaultFolderIds = defaultFolders.map((folder) =>
+          folder._id.toString(),
+        );
+        const isDefaultFolder = defaultFolderIds.includes(
+          post.folderId.toString(),
+        );
         postAiStatus = PostAiStatus.SUCCESS;
+        // 디폴트 폴더인 경우에만 classification 생성
+        if (isDefaultFolder) {
+          const classification =
+            await this.classificationRepository.createClassification(
+              post.url,
+              summarizeUrlContent.response.summary,
+              summarizeUrlContent.response.keywords,
+              folderId,
+            );
 
+          // Post에 추가하기 위한 classificaiton ID
+          classificationId = classification._id.toString();
+        }
+
+        // Keyword는 성공여부 상관없이 생성
         const keywords = await this.keywordsRepository.createMany(
           summarizeUrlContent.response.keywords,
         );
@@ -95,10 +110,9 @@ export class AiClassificationService {
         classificationId,
         summarizeUrlContent.response.summary,
       );
-
       return summarizeUrlContent;
     } catch (error: unknown) {
-      return { success: fail, error };
+      return { success: false, error };
     }
   }
 }
