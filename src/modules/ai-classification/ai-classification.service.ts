@@ -71,7 +71,7 @@ export class AiClassificationService {
         );
         postAiStatus = PostAiStatus.SUCCESS;
         // 디폴트 폴더인 경우에만 classification 생성
-        if (!isDefaultFolder) {
+        if (isDefaultFolder) {
           const classification =
             await this.classificationRepository.createClassification(
               post.url,
