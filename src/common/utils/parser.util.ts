@@ -12,12 +12,7 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   thumbnail: string;
 }> {
   // HTML Parsing
-  const fetchTest = await fetch(url, {
-    headers: {
-      'user-agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
-    },
-  });
+  const fetchTest = await fetch(url);
   const fetchHTML = await fetchTest.text();
   // HTML Cheerio Instance로 변환
   const $ = cheerio.load(fetchHTML);
