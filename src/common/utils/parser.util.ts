@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import iconv from 'iconv-lite';
 
 /**
  *
@@ -13,9 +14,18 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
 }> {
   // HTML Parsing
   const fetchTest = await fetch(url);
-  const fetchHTML = await fetchTest.text();
+  const fetchArrayBuffer = await fetchTest.arrayBuffer();
+  const contentType = fetchTest.headers.get('Content-Type');
+  let charset = 'utf-8';
+  if (contentType) {
+    const match = contentType.match(/charset=([^;]+)/);
+    if (match) {
+      charset = match[1].toLowerCase().trim();
+    }
+  }
+  const HTML = iconv.decode(Buffer.from(fetchArrayBuffer), charset).toString();
   // HTML Cheerio Instance로 변환
-  const $ = cheerio.load(fetchHTML);
+  const $ = cheerio.load(HTML);
   // HTML Element의 title
   const title = $('title').text();
   // Page Thumbnail Parsing
