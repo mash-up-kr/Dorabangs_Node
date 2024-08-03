@@ -15,7 +15,15 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   // HTML Parsing
   const fetchTest = await fetch(url);
   const fetchArrayBuffer = await fetchTest.arrayBuffer();
-  const HTML = iconv.decode(Buffer.from(fetchArrayBuffer), 'euc-kr').toString();
+  const contentType = fetchTest.headers.get('Content-Type');
+  let charset = 'utf-8';
+  if (contentType) {
+    const match = contentType.match(/charset=([^;]+)/);
+    if (match) {
+      charset = match[1].toLowerCase().trim();
+    }
+  }
+  const HTML = iconv.decode(Buffer.from(fetchArrayBuffer), charset).toString();
   // HTML Cheerio Instance로 변환
   const $ = cheerio.load(HTML);
   // HTML Element의 title
