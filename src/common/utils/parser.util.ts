@@ -1,4 +1,6 @@
 import * as cheerio from 'cheerio';
+import iconv from 'iconv-lite';
+import axios from 'axios';
 
 /**
  *
@@ -12,10 +14,13 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   thumbnail: string;
 }> {
   // HTML Parsing
-  const fetchTest = await fetch(url);
-  const fetchHTML = await fetchTest.text();
+  const fetchTest = await axios.get(url, {
+    responseEncoding: 'binary',
+    responseType: 'arraybuffer',
+  });
+  const HTML = iconv.decode(fetchTest.data, 'euc-kr').toString();
   // HTML Cheerio Instance로 변환
-  const $ = cheerio.load(fetchHTML);
+  const $ = cheerio.load(HTML);
   // HTML Element의 title
   const title = $('title').text();
   // Page Thumbnail Parsing
