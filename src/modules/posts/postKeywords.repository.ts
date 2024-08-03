@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PostKeyword } from '@src/infrastructure/database/schema/postKeyword.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class PostKeywordsRepository {
@@ -17,6 +17,22 @@ export class PostKeywordsRepository {
     }));
 
     await this.postKeywordModel.insertMany(postKeywords);
+  }
+
+  async findKeywordsByPostId(
+    postId: string,
+  ): Promise<
+    (PostKeyword & { keywordId: { _id: Types.ObjectId; name: string } })[]
+  > {
+    return await this.postKeywordModel
+      .find({
+        postId: postId,
+      })
+      .populate({
+        path: 'keywordId',
+        model: 'Keyword',
+      })
+      .lean();
   }
 
   async findKeywordsByPostIds(postIds: string[]) {

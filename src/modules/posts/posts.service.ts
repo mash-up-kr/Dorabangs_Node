@@ -147,6 +147,16 @@ export class PostsService {
     };
   }
 
+  async readPost(userId: string, postId: string) {
+    const post = await this.postRepository.findPostOrThrow({
+      _id: postId,
+      userId: userId,
+    });
+    const keywords =
+      await this.postKeywordsRepository.findKeywordsByPostId(postId);
+    return { post, keywords };
+  }
+
   async updatePost(userId: string, postId: string, dto: UpdatePostDto) {
     // Find if user post exist
     await this.postRepository.findPostOrThrow({

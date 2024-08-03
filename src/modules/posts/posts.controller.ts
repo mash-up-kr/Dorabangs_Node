@@ -19,6 +19,7 @@ import {
   DeletePostDocs,
   ListPostDocs,
   PostControllerDocs,
+  RetrievePostDocs,
   UpdatePostFolderDocs,
 } from './docs';
 import { UpdatePostDocs } from './docs/updatePost.docs';
@@ -28,7 +29,12 @@ import {
   UpdatePostDto,
   UpdatePostFolderDto,
 } from './dto';
-import { ListPostItem, ListPostResponse } from './response';
+import {
+  ListPostItem,
+  ListPostResponse,
+  RetrievePostResponse,
+} from './response';
+import { KeywordItem } from './response/keyword-list.response';
 
 @Controller('posts')
 @PostControllerDocs
@@ -65,6 +71,20 @@ export class PostsController {
     const post = await this.postsService.createPost(createPostDto, userId);
     const postSerialize = new ListPostItem(post);
     return postSerialize;
+  }
+
+  @Get(':postId')
+  @RetrievePostDocs
+  async getPost(@GetUser() userId: string, @Param('postId') postId: string) {
+    const { post, keywords } = await this.postsService.readPost(userId, postId);
+    const postKeywords = keywords.map(
+      (keyword) => new KeywordItem(keyword.keywordId),
+    );
+    const response = new RetrievePostResponse({
+      ...post,
+      keywords: postKeywords,
+    });
+    return response;
   }
 
   @Patch(':postId')
