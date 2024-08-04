@@ -13,7 +13,10 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   thumbnail: string;
 }> {
   // HTML Parsing
-  const fetchTest = await fetch(url);
+  const fetchTest = await fetch(url, {
+    method: 'GET',
+    redirect: 'manual',
+  });
   const fetchArrayBuffer = await fetchTest.arrayBuffer();
   const contentType = fetchTest.headers.get('Content-Type');
   let charset = 'utf-8';
