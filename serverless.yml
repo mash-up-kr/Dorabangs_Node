@@ -8,6 +8,13 @@ provider:
   runtime: nodejs20.x
   region: ap-northeast-2
   architecture: arm64
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'sqs:ReceiveMessage'
+        - 'sqs:SendMessage'
+        - 'sqs:DeleteMessage'
+      Resource: '*'
 
 custom:
   dotenv:
@@ -32,7 +39,13 @@ functions:
             origin: '*'
   aiWorker:
     handler: worker-dist/index.handler
-    timeout: 30
+    timeout: 600
+    description: AI Classification Async Worker
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [AIEventQueue, Arn]
+          maximumConcurrency: 5
 
 package:
   exclude:
@@ -40,3 +53,24 @@ package:
   include:
     - 'dist/**'
     - 'worker-dist/**'
+
+resources:
+  Resources:
+    AIEventQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: 'ai-event-queue.fifo'
+        FifoQueue: true
+        ContentBasedDeduplication: true
+        VisibilityTimeout: 600
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+              - 'AIEventDeadQueue'
+              - 'Arn'
+          maxReceiveCount: 1
+    AIEventDeadQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        FifoQueue: true
+        QueueName: 'ai-event-dead-queue.fifo'
