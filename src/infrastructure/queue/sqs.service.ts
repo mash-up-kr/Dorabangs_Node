@@ -17,7 +17,7 @@ export class SQSService implements IQeueuService {
     const queueUrl = this.config.get('AIEventQueue');
     const payload: SendMessageRequest = {
       QueueUrl: queueUrl,
-      DelaySeconds: 0,
+      DelaySeconds: 1,
       MessageBody: JSON.stringify(data),
       MessageGroupId: 'AI_CLASSIFICATION_EVENT',
     };
