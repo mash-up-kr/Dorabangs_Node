@@ -84,18 +84,18 @@ export class ClassificationService {
     userId: string,
     suggestedFolderId: string,
   ) {
-    const postIdList =
+    const postIdList = (
       await this.postRepository.findFolderIdsBySuggestedFolderId(
         userId,
         suggestedFolderId,
-      );
+      )
+    ).map((post) => post._id.toString());
 
-    for (const post of postIdList) {
-      await this.postRepository.updateFolderId(
-        post._id.toString(),
-        suggestedFolderId,
-      );
-    }
+    await this.postRepository.updatePostListFolder(
+      userId,
+      postIdList,
+      suggestedFolderId,
+    );
 
     await this.classficationRepository.deleteBySuggestedFolderId(
       suggestedFolderId,

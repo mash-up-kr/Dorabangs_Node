@@ -93,6 +93,17 @@ export class PostsRepository {
     return updatedPost;
   }
 
+  async updatePostListFolder(
+    userId: string,
+    postIdList: string[],
+    suggestedFolderId: string,
+  ) {
+    await this.postModel.updateMany(
+      { _id: { $in: postIdList }, userId: userId },
+      { folderId: suggestedFolderId },
+    );
+  }
+
   async createPost(
     userId: string,
     folderId: string,
