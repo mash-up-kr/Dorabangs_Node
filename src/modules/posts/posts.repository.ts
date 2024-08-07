@@ -98,10 +98,15 @@ export class PostsRepository {
     postIdList: string[],
     suggestedFolderId: string,
   ) {
-    await this.postModel.updateMany(
-      { _id: { $in: postIdList }, userId: userId },
-      { folderId: suggestedFolderId },
-    );
+    const operations = postIdList.map((postId) => ({
+      updateOne: {
+        filter: { _id: postId, userId: userId },
+        update: { $set: { folderId: suggestedFolderId } },
+        upsert: false,
+      },
+    }));
+
+    await this.postModel.bulkWrite(operations);
   }
 
   async createPost(
