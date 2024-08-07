@@ -319,17 +319,36 @@ export class PostsRepository {
     userId: string,
     suggestedFolderId: string,
   ) {
-    return await this.postModel
-      .find({ userId: userId })
-      .populate<{
-        aiClassificationId: AIClassification;
-      }>({
-        path: 'aiClassificationId',
-        match: { deletedAt: null, suggestedFolderId: suggestedFolderId },
-      })
-      .sort({ createdAt: -1 })
-      .select('_id')
-      .exec();
+    const results = await this.postModel.aggregate([
+      {
+        $match: { userId: userId }, // 기본 매칭 조건
+      },
+      {
+        $lookup: {
+          from: 'aiclassifications',
+          localField: 'aiClassificationId',
+          foreignField: '_id',
+          as: 'aiClassification',
+        },
+      },
+      {
+        $unwind: '$aiClassification',
+      },
+      {
+        $match: {
+          'aiClassification.deletedAt': null,
+          'aiClassification.suggestedFolderId': suggestedFolderId,
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $project: { _id: 1 },
+      },
+    ]);
+
+    return results;
   }
 
   async updateFolderId(postId: string, suggestedFolderId: string) {
