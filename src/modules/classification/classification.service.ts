@@ -80,6 +80,7 @@ export class ClassificationService {
 
     return { count, classificationPostList };
   }
+
   async moveAllPostTosuggestionFolder(
     userId: string,
     suggestedFolderId: string,
@@ -100,6 +101,30 @@ export class ClassificationService {
     await this.classficationRepository.deleteBySuggestedFolderId(
       suggestedFolderId,
     );
+  }
+
+  async moveAllPostTosuggestionFolderV2(
+    userId: string,
+    suggestedFolderId: string,
+  ) {
+    const targetClassificationIds =
+      await this.classficationRepository.getClassificationBySuggestedFolderId(
+        suggestedFolderId,
+      );
+    const targetPostIds =
+      await this.postRepository.findPostsBySuggestedFolderIds(
+        userId,
+        targetClassificationIds,
+      );
+    await this.postRepository.updatePostListFolder(
+      userId,
+      targetPostIds,
+      suggestedFolderId,
+    );
+    await this.classficationRepository.deleteBySuggestedFolderId(
+      suggestedFolderId,
+    );
+    return true;
   }
 
   async moveOnePostTosuggestionFolder(

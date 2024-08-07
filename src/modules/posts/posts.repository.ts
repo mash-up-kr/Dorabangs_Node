@@ -348,6 +348,25 @@ export class PostsRepository {
       .exec();
   }
 
+  async findPostsBySuggestedFolderIds(
+    userId: string,
+    classificationIds: string[],
+  ) {
+    const targetPosts = await this.postModel
+      .find({
+        userId: userId,
+        aiClassificationId: {
+          $in: classificationIds,
+        },
+      })
+      .select({
+        _id: 1,
+      })
+      .exec();
+    const targetPostsIds = targetPosts.map((post) => post._id.toString());
+    return targetPostsIds;
+  }
+
   async updateFolderId(postId: string, suggestedFolderId: string) {
     await this.postModel
       .updateOne({ _id: postId }, { $set: { folderId: suggestedFolderId } })
