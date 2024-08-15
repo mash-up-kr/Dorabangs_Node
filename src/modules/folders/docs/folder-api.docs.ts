@@ -66,7 +66,7 @@ export const UpdateFolderDocs = applyDecorators(
     type: FolderResponse,
   }),
   ApiNotFoundResponse({
-    description: ['F002'].join(', '),
+    description: ['F002', 'F003'].join(', '),
   }),
 );
 
