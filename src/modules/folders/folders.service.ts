@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
 import { FolderListServiceDto } from './dto/folder-list-service.dto';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';
-import { F001 } from './error';
+import { F001, F003 } from './error';
 import { FolderRepository } from './folders.repository';
 
 @Injectable()
@@ -110,6 +110,10 @@ export class FoldersService {
       _id: folderId,
       userId,
     });
+
+    if (folder.name === updateFolderDto.name) {
+      throw new BadRequestException(F003(folder.name));
+    }
 
     folder.name = updateFolderDto.name;
     const response = await folder.save();

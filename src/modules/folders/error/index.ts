@@ -8,3 +8,7 @@ export const F001 = (folderName: string) => {
 };
 
 export const F002 = createErrorObject('F002', '폴더가 존재하지 않습니다!');
+
+export const F003 = (folderName: string) => {
+  return createErrorObject('F003', `동일한 폴더이름 입니다: ${folderName}`);
+};
