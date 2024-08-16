@@ -93,6 +93,22 @@ export class PostsRepository {
     return updatedPost;
   }
 
+  async updatePostListFolder(
+    userId: string,
+    postIdList: string[],
+    suggestedFolderId: string,
+  ) {
+    const operations = postIdList.map((postId) => ({
+      updateOne: {
+        filter: { _id: postId, userId: userId },
+        update: { $set: { folderId: suggestedFolderId } },
+        upsert: false,
+      },
+    }));
+
+    await this.postModel.bulkWrite(operations);
+  }
+
   async createPost(
     userId: string,
     folderId: string,
@@ -330,6 +346,25 @@ export class PostsRepository {
       .sort({ createdAt: -1 })
       .select('_id')
       .exec();
+  }
+
+  async findPostsBySuggestedFolderIds(
+    userId: string,
+    classificationIds: string[],
+  ) {
+    const targetPosts = await this.postModel
+      .find({
+        userId: userId,
+        aiClassificationId: {
+          $in: classificationIds,
+        },
+      })
+      .select({
+        _id: 1,
+      })
+      .exec();
+    const targetPostsIds = targetPosts.map((post) => post._id.toString());
+    return targetPostsIds;
   }
 
   async updateFolderId(postId: string, suggestedFolderId: string) {

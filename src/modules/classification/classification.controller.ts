@@ -89,7 +89,7 @@ export class ClassificationController {
     @GetUser() userId: string,
     @Query('suggestionFolderId') suggestionFolderId: string,
   ) {
-    await this.classificationService.moveAllPostTosuggestionFolder(
+    return await this.classificationService.moveAllPostTosuggestionFolderV2(
       userId,
       suggestionFolderId,
     );

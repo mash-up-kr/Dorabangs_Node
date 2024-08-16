@@ -80,26 +80,51 @@ export class ClassificationService {
 
     return { count, classificationPostList };
   }
+
   async moveAllPostTosuggestionFolder(
     userId: string,
     suggestedFolderId: string,
   ) {
-    const postIdList =
+    const postIdList = (
       await this.postRepository.findFolderIdsBySuggestedFolderId(
         userId,
         suggestedFolderId,
-      );
+      )
+    ).map((post) => post._id.toString());
 
-    for (const post of postIdList) {
-      await this.postRepository.updateFolderId(
-        post._id.toString(),
-        suggestedFolderId,
-      );
-    }
+    await this.postRepository.updatePostListFolder(
+      userId,
+      postIdList,
+      suggestedFolderId,
+    );
 
     await this.classficationRepository.deleteBySuggestedFolderId(
       suggestedFolderId,
     );
+  }
+
+  async moveAllPostTosuggestionFolderV2(
+    userId: string,
+    suggestedFolderId: string,
+  ) {
+    const targetClassificationIds =
+      await this.classficationRepository.getClassificationBySuggestedFolderId(
+        suggestedFolderId,
+      );
+    const targetPostIds =
+      await this.postRepository.findPostsBySuggestedFolderIds(
+        userId,
+        targetClassificationIds,
+      );
+    await this.postRepository.updatePostListFolder(
+      userId,
+      targetPostIds,
+      suggestedFolderId,
+    );
+    await this.classficationRepository.deleteBySuggestedFolderId(
+      suggestedFolderId,
+    );
+    return true;
   }
 
   async moveOnePostTosuggestionFolder(

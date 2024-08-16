@@ -181,4 +181,18 @@ export class ClassficiationRepository {
       .exec();
     return true;
   }
+
+  async getClassificationBySuggestedFolderId(suggestedFolderId: string) {
+    const classifications = await this.aiClassificationModel
+      .find({
+        suggestedFolderId: suggestedFolderId,
+        deletedAt: null,
+      })
+      .select({ _id: 1 })
+      .exec();
+    const classificationIds = classifications.map((classification) =>
+      classification._id.toString(),
+    );
+    return classificationIds;
+  }
 }
