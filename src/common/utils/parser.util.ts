@@ -12,18 +12,37 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   content: string;
   thumbnail: string;
 }> {
-  // HTML Parsing
-  const fetchTest = await fetch(url);
-  const fetchArrayBuffer = await fetchTest.arrayBuffer();
-  const contentType = fetchTest.headers.get('Content-Type');
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+
   let charset = 'utf-8';
-  if (contentType) {
-    const match = contentType.match(/charset=([^;]+)/);
-    if (match) {
-      charset = match[1].toLowerCase().trim();
+  const htmlText = new TextDecoder(charset).decode(arrayBuffer);
+
+  /**
+   * Parse <meta charset as default
+   *
+   */
+  const metaCharsetMatch = htmlText.match(
+    /<meta\s+charset=["']?([^"'>]+)["']?/i,
+  );
+  if (metaCharsetMatch) {
+    charset = metaCharsetMatch[1].toLowerCase().trim();
+  } else {
+    const metaContentTypeMatch = htmlText.match(
+      /<meta\s+http-equiv=["']Content-Type["']\s+content=["'][^"']*charset=([^"';\s]+)["']/i,
+    );
+    if (metaContentTypeMatch) {
+      charset = metaContentTypeMatch[1].toLowerCase().trim();
     }
   }
-  const HTML = iconv.decode(Buffer.from(fetchArrayBuffer), charset).toString();
+
+  let HTML;
+  if (charset !== 'utf-8') {
+    HTML = iconv.decode(Buffer.from(arrayBuffer), charset);
+  } else {
+    HTML = htmlText;
+  }
+
   // HTML Cheerio Instance로 변환
   const $ = cheerio.load(HTML);
   // HTML Element의 title
