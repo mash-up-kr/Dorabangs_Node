@@ -106,7 +106,7 @@ export class PostsService {
       userId,
     } satisfies AiClassificationPayload;
 
-    await this.executeAiClassification(payload);
+    this.executeAiClassification(payload);
 
     return { ...post, keywords: [] } satisfies PostItemDto;
   }
