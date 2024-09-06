@@ -28,3 +28,22 @@ export function summarizeURLContentFunctionFactory(folderList: string[]) {
     },
   };
 }
+
+export const getKeywordsFromURLContentFunction = {
+  name: 'summarizeURL',
+  parameters: {
+    type: 'object',
+    properties: {
+      summary: {
+        type: 'string',
+      },
+      keywords: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
+    required: ['summary', 'keywords', 'category'],
+  },
+};

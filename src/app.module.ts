@@ -18,6 +18,7 @@ import { MetricsModule } from './modules/metrics/metrics.module';
 import { OnboardModule } from './modules/onboard/onboard.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { UsersModule } from './modules/users/users.module';
+import { LaunchingEventsModule } from './modules/launching-events/launching-events.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { UsersModule } from './modules/users/users.module';
     AwsLambdaModule,
     OnboardModule,
     MetricsModule,
+    LaunchingEventsModule,
     // PrismaModule,
   ],
   controllers: [AppController],

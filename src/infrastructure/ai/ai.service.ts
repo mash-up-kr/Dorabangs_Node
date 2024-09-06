@@ -6,6 +6,7 @@ import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
 import {
   AiClassificationFunctionResult,
+  getKeywordsFromURLContentFunction,
   summarizeURLContentFunctionFactory,
 } from './functions';
 import { SummarizeURLContent } from './types/types';
@@ -63,6 +64,70 @@ export class AiService {
               ? err.message
               : '요약에 실패하였습니다.',
       });
+    }
+  }
+
+  public async getKeywords(content: string) {
+    const promptResult = await this.openai.chat.completions.create(
+      {
+        model: gptVersion,
+        messages: [
+          {
+            role: 'system',
+            content: '한글로 답변 부탁해',
+          },
+          {
+            role: 'user',
+            content: `주어진 글에 대해 요약하고 키워드 추출, 분류 부탁해
+
+${content}
+            `,
+          },
+        ],
+        tools: [
+          {
+            type: 'function',
+            function: getKeywordsFromURLContentFunction,
+          },
+        ],
+        tool_choice: {
+          type: 'function',
+          function: { name: 'summarizeURL' },
+        },
+        temperature: 0.5,
+      },
+      {
+        maxRetries: 5,
+      },
+    );
+
+    const functionResult: AiClassificationFunctionResult = JSON.parse(
+      promptResult.choices[0].message.tool_calls[0].function.arguments,
+    );
+
+    return functionResult;
+  }
+
+  public async getKeywordEmbeddings(content: string) {
+    try {
+      const promptResult = await this.openai.embeddings.create(
+        {
+          model: 'text-embedding-3-large',
+          input: content,
+        },
+        {
+          maxRetries: 5,
+        },
+      );
+
+      const result = promptResult.data.map((embedding) => embedding.embedding);
+      return result[0];
+    } catch (err) {
+      throw new Error(
+        err instanceof OpenAIError
+          ? err.message
+          : '키워드 벡터 임베딩 생성에 실패하였습니다.',
+      );
     }
   }
 
