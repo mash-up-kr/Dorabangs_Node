@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
 import { parseLinkTitleAndContent } from '@src/common';
 import { IS_LOCAL } from '@src/common/constant';
 import { Keyword, Post } from '@src/infrastructure';
-import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { IQeueuService } from '@src/infrastructure/queue/queue.service';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
@@ -29,9 +28,8 @@ export class PostsService {
     private readonly folderRepository: FolderRepository,
     private readonly postKeywordsRepository: PostKeywordsRepository,
 
-    private readonly awsLambdaService: AwsLambdaService,
     private readonly aiClassificationService: AiClassificationService,
-    private readonly config: ConfigService,
+    @Inject('IQeueuService') private readonly queueService: IQeueuService,
   ) {}
 
   async listPost(userId: string, query: ListPostQueryDto) {
@@ -98,6 +96,7 @@ export class PostsService {
       thumbnail,
       PostAiStatus.IN_PROGRES,
     );
+
     const payload = {
       url: createPostDto.url,
       postContent: content,
@@ -270,10 +269,6 @@ export class PostsService {
       return await this.aiClassificationService.execute(payload);
     }
 
-    const aiLambdaFunctionName = this.config.get<string>(
-      'LAMBDA_FUNCTION_NAME',
-    );
-
-    await this.awsLambdaService.invokeLambda(aiLambdaFunctionName, payload);
+    await this.queueService.send(payload);
   }
 }

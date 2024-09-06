@@ -8,12 +8,11 @@ import {
   Post,
   PostSchema,
 } from '@src/infrastructure';
-import { AwsLambdaModule } from '@src/infrastructure/aws-lambda/aws-lambda.module';
-import { AwsLambdaService } from '@src/infrastructure/aws-lambda/aws-lambda.service';
 import {
   PostKeyword,
   PostKeywordSchema,
 } from '@src/infrastructure/database/schema/postKeyword.schema';
+import { QueueModule } from '@src/infrastructure/queue/queue.module';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
 import { UsersModule } from '@src/modules/users/users.module';
 import { AiClassificationModule } from '../ai-classification/ai-classification.module';
@@ -31,15 +30,14 @@ import { PostsService } from './posts.service';
       { name: PostKeyword.name, schema: PostKeywordSchema },
     ]),
     UsersModule,
-    AwsLambdaModule,
     AiClassificationModule,
+    QueueModule,
   ],
   controllers: [PostsController],
   providers: [
     PostsService,
     PostsRepository,
     FolderRepository,
-    AwsLambdaService,
     PostKeywordsRepository,
   ],
   exports: [PostsService, PostsRepository],
