@@ -8,7 +8,7 @@ const encoder = encodingForModel(gptVersion);
 
 // Reference: https://platform.openai.com/docs/advanced-usage/managing-tokens
 // 주의: 실제 Open AI랑 약간의 오차 존재
-function tokenizerCalculator(content: string, folderList: string[]) {
+export function promptTokenCalculator(content: string, folderList: string[]) {
   let tokenCount = 0;
 
   // Prompt Calculation

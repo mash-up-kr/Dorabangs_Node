@@ -13,12 +13,12 @@ import { DiscordModule } from './infrastructure/discord/discord.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ClassificationModule } from './modules/classification/classification.module';
 import { FoldersModule } from './modules/folders/folders.module';
+import { LaunchingEventsModule } from './modules/launching-events/launching-events.module';
 import { LinksModule } from './modules/links/links.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { OnboardModule } from './modules/onboard/onboard.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { UsersModule } from './modules/users/users.module';
-import { LaunchingEventsModule } from './modules/launching-events/launching-events.module';
 
 @Module({
   imports: [

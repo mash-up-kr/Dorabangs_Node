@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DEFAULT_FOLDER_NAME } from '@src/common/constant';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { JwtPayload } from 'src/common/types/type';
 import { AuthService } from '../auth/auth.service';
@@ -23,7 +24,7 @@ export class UsersService {
       user = await this.userRepository.findOrCreate(dto.deviceToken);
       await this.folderRepository.create(
         user._id.toString(),
-        '나중에 읽을 링크',
+        DEFAULT_FOLDER_NAME,
         FolderType.DEFAULT,
       );
     }
