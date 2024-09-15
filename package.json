@@ -51,6 +51,7 @@
     "cross-env": "^7.0.3",
     "express": "^4.19.2",
     "iconv-lite": "^0.6.3",
+    "js-tiktoken": "^1.0.14",
     "lodash": "^4.17.21",
     "mongoose": "^8.4.1",
     "openai": "^4.52.2",

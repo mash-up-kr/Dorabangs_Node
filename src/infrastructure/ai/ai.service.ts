@@ -104,7 +104,6 @@ ${content}
     const functionResult: AiClassificationFunctionResult = JSON.parse(
       promptResult.choices[0].message.tool_calls[0].function.arguments,
     );
-
     return functionResult;
   }
 
