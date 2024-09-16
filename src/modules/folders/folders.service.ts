@@ -1,5 +1,5 @@
-import { Types } from 'mongoose';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { sum } from '@src/common';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { PostsRepository } from '../posts/posts.repository';

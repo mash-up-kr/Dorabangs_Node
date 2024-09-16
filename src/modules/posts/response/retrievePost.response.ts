@@ -1,5 +1,5 @@
-import { Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { Post } from '@src/infrastructure';
 import { PostAiStatus } from '../posts.constant';
 import { KeywordItem } from './keyword-list.response';

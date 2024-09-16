@@ -1,6 +1,6 @@
-import { FilterQuery, Model, Types } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { OrderType } from '@src/common';
 import { AIClassification, Post, PostDocument } from '@src/infrastructure';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';

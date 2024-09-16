@@ -1,5 +1,5 @@
-import { Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { Keyword } from '@src/infrastructure';
 
 export class KeywordItem {

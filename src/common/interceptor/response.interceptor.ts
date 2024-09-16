@@ -1,5 +1,5 @@
-import { Observable, map } from 'rxjs';
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+import { Observable, map } from 'rxjs';
 import { ICommonResponse } from '../types/type';
 
 export class CommonResponseInterceptor implements NestInterceptor {

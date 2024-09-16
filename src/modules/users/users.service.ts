@@ -1,5 +1,5 @@
-import { JwtPayload } from 'src/common/types/type';
 import { Injectable } from '@nestjs/common';
+import { JwtPayload } from 'src/common/types/type';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { AuthService } from '../auth/auth.service';
 import { FolderRepository } from '../folders/folders.repository';

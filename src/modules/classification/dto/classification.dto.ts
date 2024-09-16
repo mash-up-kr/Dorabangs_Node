@@ -1,5 +1,5 @@
-import { IsMongoId, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsMongoId, IsNotEmpty } from 'class-validator';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
 
 export interface ClassificationFolderWithCount {

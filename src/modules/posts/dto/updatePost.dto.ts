@@ -1,5 +1,5 @@
-import { IsBoolean, IsDateString, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsDateString, IsOptional } from 'class-validator';
 import { PostUpdateableFields } from '../type/type';
 
 export class UpdatePostDto implements PostUpdateableFields {
