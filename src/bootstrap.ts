@@ -1,9 +1,11 @@
+import express from 'express';
+
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
+
+import { nestAppConfig, nestResponseConfig } from './app.config';
 import { AppModule } from './app.module';
 import { nestSwaggerConfig } from './app.swagger';
-import { nestAppConfig, nestResponseConfig } from './app.config';
 
 export async function bootstrap() {
   const expressInstance: express.Express = express();

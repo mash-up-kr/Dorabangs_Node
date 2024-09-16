@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+
 import { ValidateLinkResponse } from '../responses';
 
 export const ValidateLinkDocs = applyDecorators(

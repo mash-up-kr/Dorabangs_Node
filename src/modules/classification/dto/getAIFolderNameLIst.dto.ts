@@ -1,6 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { FolderDocument } from '@src/infrastructure';
 import { IsNotEmpty, IsString } from 'class-validator';
+
+import { ApiProperty } from '@nestjs/swagger';
+
+import { FolderDocument } from '@src/infrastructure';
 
 export class AIFolderNameServiceDto {
   id: string;

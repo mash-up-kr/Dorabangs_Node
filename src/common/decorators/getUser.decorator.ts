@@ -1,10 +1,12 @@
+import { Request } from 'express';
+
 import {
   ExecutionContext,
   UnauthorizedException,
   createParamDecorator,
 } from '@nestjs/common';
+
 import { ReqUserPayload } from '../types/type';
-import { Request } from 'express';
 
 /**
  * @GetUser
