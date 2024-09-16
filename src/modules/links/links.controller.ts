@@ -1,5 +1,4 @@
 import { Controller, Get, Query } from '@nestjs/common';
-
 import { LinksControllerDocs, ValidateLinkDocs } from './docs';
 import { LinksService } from './links.service';
 import { ValidateLinkResponse } from './responses';

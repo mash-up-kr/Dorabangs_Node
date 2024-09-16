@@ -1,6 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-
 import { CreateUserResponse } from '../response';
 
 export const CreateUserDocs = applyDecorators(

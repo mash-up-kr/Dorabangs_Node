@@ -1,5 +1,4 @@
 import { Body, Controller, Post } from '@nestjs/common';
-
 import { CreateUserDocs, UserControllerDocs } from './docs';
 import { CreateUserDto } from './dto';
 import { CreateUserResponse } from './response';

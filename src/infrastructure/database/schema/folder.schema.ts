@@ -1,9 +1,6 @@
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-
 import { BaseDocument } from './base.schema';
 
 @Schema({ collection: 'folders', timestamps: true, versionKey: false })

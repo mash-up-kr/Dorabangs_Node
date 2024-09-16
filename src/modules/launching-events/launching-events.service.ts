@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
 import { parseLinkTitleAndContent } from '@src/common';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 

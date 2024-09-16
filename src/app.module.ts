@@ -2,9 +2,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 // Custom Packages
 import { ConfigModule } from '@nestjs/config';
-
 import { DatabaseModule } from '@src/infrastructure';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './common/middlewares';

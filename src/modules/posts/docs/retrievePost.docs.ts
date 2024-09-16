@@ -4,7 +4,6 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-
 import { RetrievePostResponse } from '../response';
 
 export const RetrievePostDocs = applyDecorators(

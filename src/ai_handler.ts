@@ -1,9 +1,7 @@
 import { Handler } from 'aws-lambda';
-
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-
 import { DatabaseModule } from './infrastructure';
 import { AiModule } from './infrastructure/ai/ai.module';
 import { AiClassificationPayload } from './infrastructure/aws-lambda/type';

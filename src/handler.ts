@@ -1,7 +1,6 @@
 import { Context, Handler } from 'aws-lambda';
 import { createServer, proxy } from 'aws-serverless-express';
 import { Server } from 'http';
-
 import { bootstrap, runServer } from './bootstrap';
 
 let cachedServer: Server;

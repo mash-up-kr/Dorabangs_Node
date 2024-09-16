@@ -1,6 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-
 import { AIPostListResponse } from '../response/ai-post-list.dto';
 
 export const PatchAIPostDocs = applyDecorators(

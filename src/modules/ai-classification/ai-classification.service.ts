@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-
 import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
-
 import { ClassficiationRepository } from '../classification/classification.repository';
 import { FolderRepository } from '../folders/folders.repository';
 import { KeywordsRepository } from '../keywords/keyword.repository';

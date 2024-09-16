@@ -1,7 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-
 import { PublicRouteToken } from '@src/common';
 import { JWT_STRATEGY_TOKEN } from '@src/modules/users/guards/strategy/strategy.token';
 

@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import { Folder, FolderSchema, Post, PostSchema } from '@src/infrastructure';
 import { ClassificationModule } from '@src/modules/classification/classification.module';
-
 import { PostsModule } from '../posts/posts.module';
 import { FoldersController } from './folders.controller';
 import { FolderRepository } from './folders.repository';

@@ -1,5 +1,4 @@
 import { Controller, Get, Query } from '@nestjs/common';
-
 import { ListOnBoardKeywordsDocs, OnBoardControllerDocs } from './docs';
 import { OnBoardQuery } from './dto';
 import { OnboardService } from './onboard.service';

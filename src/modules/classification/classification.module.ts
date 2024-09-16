@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import {
   AIClassification,
   AIClassificationSchema,
@@ -9,7 +8,6 @@ import {
   Post,
   PostSchema,
 } from '@src/infrastructure/database/schema';
-
 import { PostsRepository } from '../posts/posts.repository';
 import { ClassificationController } from './classification.controller';
 import { ClassficiationRepository } from './classification.repository';

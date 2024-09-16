@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import { Folder, FolderSchema, User, UserSchema } from '@src/infrastructure';
-
 import { AuthModule } from '../auth/auth.module';
 import { FolderRepository } from '../folders/folders.repository';
 import { JwtStrategy } from './guards/strategy';

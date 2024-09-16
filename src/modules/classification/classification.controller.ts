@@ -8,9 +8,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-
 import { GetUser, PaginationMetadata, PaginationQuery } from '@src/common';
-
 import { JwtGuard } from '../users/guards';
 import { ClassificationService } from './classification.service';
 import {

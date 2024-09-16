@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { Injectable } from '@nestjs/common';
-
 import { OnBoardQuery } from './dto';
 import { onBoardCategoryList } from './onboard.const';
 

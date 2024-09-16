@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
 import { DiscordWebhookProvider } from './discord-webhook.provider';
 
 @Injectable()

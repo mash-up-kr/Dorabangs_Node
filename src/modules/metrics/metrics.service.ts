@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
 import { MetricsRepository } from './metrics.repository';
 
 @Injectable()

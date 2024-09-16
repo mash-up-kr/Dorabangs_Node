@@ -1,8 +1,6 @@
 import OpenAI, { OpenAIError, RateLimitError } from 'openai';
-
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
 import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
 import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';

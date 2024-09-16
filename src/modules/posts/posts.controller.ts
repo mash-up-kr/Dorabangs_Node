@@ -9,12 +9,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-
 import { GetUser, PaginationMetadata } from '@src/common';
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostsService } from '@src/modules/posts/posts.service';
 import { JwtGuard } from '@src/modules/users/guards';
-
 import {
   CountPostDocs,
   CreatePostDocs,

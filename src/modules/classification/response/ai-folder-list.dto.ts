@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-
 import { ClassificationFolderWithCount } from '../dto/classification.dto';
 
 export class AIFolderNameListResponse {

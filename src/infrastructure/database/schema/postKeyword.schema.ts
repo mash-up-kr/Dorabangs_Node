@@ -1,5 +1,4 @@
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ collection: 'post_keywords', versionKey: false })

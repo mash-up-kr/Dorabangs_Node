@@ -1,8 +1,6 @@
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
-
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
 import { AiClassificationPayload } from './type';
 
 @Injectable()

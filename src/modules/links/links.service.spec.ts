@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
 import { LinksService } from './links.service';
 
 describe('LinksService', () => {

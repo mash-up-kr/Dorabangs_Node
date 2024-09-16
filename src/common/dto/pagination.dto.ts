@@ -1,6 +1,5 @@
 import { Exclude, Expose, Type } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, Min } from 'class-validator';
-
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum OrderType {

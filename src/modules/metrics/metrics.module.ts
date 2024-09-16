@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import { Metrics, MetricsSchema } from '@src/infrastructure';
-
 import { MetricsRepository } from './metrics.repository';
 import { MetricsService } from './metrics.service';
 
