@@ -1,7 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { PaginationQuery } from '@src/common';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsOptional } from 'class-validator';
+
+import { ApiProperty } from '@nestjs/swagger';
+
+import { PaginationQuery } from '@src/common';
 
 export class ListPostQueryDto extends PaginationQuery {
   @ApiProperty({

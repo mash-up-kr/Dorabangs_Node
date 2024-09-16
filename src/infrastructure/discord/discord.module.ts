@@ -1,4 +1,5 @@
 import { Global, Module } from '@nestjs/common';
+
 import { DiscordAIWebhookProvider } from './discord-ai-webhook.provider';
 import { DiscordErrorWebhookProvider } from './discord-error-webhook.provider';
 

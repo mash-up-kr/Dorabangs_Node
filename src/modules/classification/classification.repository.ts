@@ -1,8 +1,11 @@
+import { Model, Types } from 'mongoose';
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
 import { AIClassification, Folder } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { Model, Types } from 'mongoose';
+
 import { ClassificationFolderWithCount } from './dto/classification.dto';
 
 @Injectable()

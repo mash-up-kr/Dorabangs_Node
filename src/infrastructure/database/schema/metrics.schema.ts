@@ -1,5 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
 import { BaseDocument } from './base.schema';
 
 @Schema({ collection: 'metrics', timestamps: true, versionKey: false })

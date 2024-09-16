@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { FolderSummaryResponse } from './folder-summary.response';
 
 export class FolderResponse extends FolderSummaryResponse {

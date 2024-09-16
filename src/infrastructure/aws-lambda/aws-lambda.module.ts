@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { AwsLambdaService } from './aws-lambda.service';
 
 @Module({

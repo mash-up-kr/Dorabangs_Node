@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { FolderDocument } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 

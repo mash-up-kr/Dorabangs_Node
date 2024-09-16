@@ -1,8 +1,11 @@
+import { FilterQuery, Model } from 'mongoose';
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
 import { Folder, FolderDocument } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { FilterQuery, Model } from 'mongoose';
+
 import { F002 } from './error';
 
 @Injectable()

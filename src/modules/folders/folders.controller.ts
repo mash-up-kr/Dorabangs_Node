@@ -9,8 +9,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+
 import { GetUser, PaginationMetadata } from '@src/common';
 import { ClassificationService } from '@src/modules/classification/classification.service';
+
 import { GetPostQueryDto } from '../posts/dto/find-in-folder.dto';
 import { PostsService } from '../posts/posts.service';
 import { JwtGuard } from '../users/guards';

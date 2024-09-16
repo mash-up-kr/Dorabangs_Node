@@ -1,4 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
+
 import { LaunchingEventsService } from './launching-events.service';
 
 @Controller('launching-events')
