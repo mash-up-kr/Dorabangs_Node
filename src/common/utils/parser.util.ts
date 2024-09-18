@@ -63,7 +63,7 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
     .replace(/<\/?[^>]+(>|$)/g, '')
     .trim();
   return {
-    title: title ?? '',
+    title: title ? title : 'Page Title',
     content,
     thumbnail: sanitizeThumbnail(thumbnail),
     thumbnailDescription,
