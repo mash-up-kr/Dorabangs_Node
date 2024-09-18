@@ -82,7 +82,6 @@ export class PostsService {
     const { title, content, thumbnail } = await parseLinkTitleAndContent(
       createPostDto.url,
     );
-
     const userFolderList = await this.folderRepository.findByUserId(userId);
     const folderList = userFolderList.map((folder) => {
       return {
