@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Keyword } from '@src/infrastructure';
 import { Types } from 'mongoose';
+import { Keyword } from '@src/infrastructure';
 
 export class KeywordItem {
   @ApiProperty({ description: '키워드 id' })

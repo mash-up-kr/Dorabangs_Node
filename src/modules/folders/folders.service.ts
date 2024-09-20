@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { sum } from '@src/common';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { Types } from 'mongoose';
 import { PostsRepository } from '../posts/posts.repository';
 import { FolderListServiceDto } from './dto/folder-list-service.dto';
 import { CreateFolderDto, UpdateFolderDto } from './dto/mutate-folder.dto';

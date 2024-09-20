@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { PostKeyword } from '@src/infrastructure/database/schema/postKeyword.schema';
 import { Model, Types } from 'mongoose';
+import { PostKeyword } from '@src/infrastructure/database/schema/postKeyword.schema';
 
 @Injectable()
 export class PostKeywordsRepository {

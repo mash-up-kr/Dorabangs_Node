@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { OrderType } from '@src/common';
 import { AIClassification, Post, PostDocument } from '@src/infrastructure';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
-import { FilterQuery, Model, Types } from 'mongoose';
 import { ClassificationPostList } from '../classification/dto/classification.dto';
 import { P001 } from './error';
 import { PostUpdateableFields } from './type/type';

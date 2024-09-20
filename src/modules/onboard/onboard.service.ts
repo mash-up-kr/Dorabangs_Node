@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { onBoardCategoryList } from './onboard.const';
-import { OnBoardQuery } from './dto';
 import * as _ from 'lodash';
+import { OnBoardQuery } from './dto';
+import { onBoardCategoryList } from './onboard.const';
 
 @Injectable()
 export class OnboardService {

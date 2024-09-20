@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtStrategy } from './guards/strategy';
 import { Folder, FolderSchema, User, UserSchema } from '@src/infrastructure';
-import { UsersRepository } from './users.repository';
 import { AuthModule } from '../auth/auth.module';
 import { FolderRepository } from '../folders/folders.repository';
+import { JwtStrategy } from './guards/strategy';
+import { UsersController } from './users.controller';
+import { UsersRepository } from './users.repository';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [

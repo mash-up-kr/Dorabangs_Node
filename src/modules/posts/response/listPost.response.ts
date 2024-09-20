@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { PaginationMetadata } from '@src/common';
 import { Keyword, Post } from '@src/infrastructure';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
-import { Types } from 'mongoose';
 import { KeywordItem } from './keyword-list.response';
 
 export type PostItemDto = Post & {

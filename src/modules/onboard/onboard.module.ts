@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { OnboardService } from './onboard.service';
 import { OnboardController } from './onboard.controller';
+import { OnboardService } from './onboard.service';
 
 @Module({
   providers: [OnboardService],
