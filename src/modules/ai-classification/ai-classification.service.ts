@@ -39,10 +39,15 @@ export class AiClassificationService {
         Object.keys(folderMapper),
         payload.url,
       );
-      
+
       // If summarize result is success and is not user category, create new foler
-      if(summarizeUrlContent.success && !summarizeUrlContent.isUserCategory){
-        await this.folderRepository.create(payload.userId,summarizeUrlContent.response.category,FolderType.CUSTOM,false)
+      if (summarizeUrlContent.success && !summarizeUrlContent.isUserCategory) {
+        await this.folderRepository.create(
+          payload.userId,
+          summarizeUrlContent.response.category,
+          FolderType.CUSTOM,
+          false,
+        );
       }
 
       const end = process.hrtime(start);

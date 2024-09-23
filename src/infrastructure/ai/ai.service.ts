@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import OpenAI, { OpenAIError, RateLimitError } from 'openai';
 import { promptTokenCalculator } from '@src/common/utils/tokenizer';
 import { onBoardCategoryList } from '@src/modules/onboard/onboard.const';
-import OpenAI, { OpenAIError, RateLimitError } from 'openai';
 import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
 import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
@@ -36,7 +36,9 @@ export class AiService {
     try {
       // 사용자 폴더 + 서버에서 임의로 붙여주는 폴더 리스트
       // Should prevent redundancy
-      const folderLists = Array.from(new Set([...userFolderList, ...onBoardCategoryList]));
+      const folderLists = Array.from(
+        new Set([...userFolderList, ...onBoardCategoryList]),
+      );
       // Calculate post content
       const tokenCount = promptTokenCalculator(content, folderLists);
       if (tokenCount <= 300) {

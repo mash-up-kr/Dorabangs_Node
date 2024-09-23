@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { Folder, FolderDocument } from '@src/infrastructure';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { FilterQuery, Model } from 'mongoose';
 import { F002 } from './error';
 
 @Injectable()
@@ -12,12 +12,12 @@ export class FolderRepository {
     private readonly folderModel: Model<Folder>,
   ) {}
 
-  async create(userId: string, name: string, type: FolderType,visible = true) {
+  async create(userId: string, name: string, type: FolderType, visible = true) {
     const folder = await this.folderModel.create({
       userId,
       name,
       type,
-      visible
+      visible,
     });
 
     return folder;
