@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ClassificationPostList } from '../dto/classification.dto';
 import { PaginationMetadata } from '@src/common';
+import { ClassificationPostList } from '../dto/classification.dto';
 
 export class AIPostListResponse {
   @ApiProperty({

@@ -1,5 +1,5 @@
-import { IsMongoId, IsNotEmpty, IsUrl } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsMongoId, IsNotEmpty, IsUrl } from 'class-validator';
 
 export class CreatePostDto {
   @IsMongoId()

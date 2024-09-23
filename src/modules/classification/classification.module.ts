@@ -8,11 +8,10 @@ import {
   Post,
   PostSchema,
 } from '@src/infrastructure/database/schema';
-import { ClassificationService } from './classification.service';
-
 import { PostsRepository } from '../posts/posts.repository';
 import { ClassificationController } from './classification.controller';
 import { ClassficiationRepository } from './classification.repository';
+import { ClassificationService } from './classification.service';
 
 @Module({
   imports: [

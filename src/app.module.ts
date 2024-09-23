@@ -1,6 +1,5 @@
 // Nest Packages
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-
 // Custom Packages
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '@src/infrastructure';
