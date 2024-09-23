@@ -38,7 +38,7 @@ export class AiClassificationService {
         payload.postThumbnailContent,
         Object.keys(folderMapper),
         payload.url,
-      )
+      );
 
       // If summarize result is success and is not user category, create new foler
       if (summarizeUrlContent.success && !summarizeUrlContent.isUserCategory) {

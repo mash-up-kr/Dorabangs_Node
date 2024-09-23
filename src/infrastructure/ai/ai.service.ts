@@ -42,26 +42,25 @@ export class AiService {
       // Calculate post content
       const tokenCount = promptTokenCalculator(content, folderLists);
       if (tokenCount <= 500) {
-        try{
-          const puppeteerURL = this.config.get<string>('PUPPETEER_POOL_URL')
-          console.log(puppeteerURL)
+        try {
+          const puppeteerURL = this.config.get<string>('PUPPETEER_POOL_URL');
           const response = await fetch(puppeteerURL, {
             method: 'POST', // HTTP 메소드를 POST로 설정
             headers: {
               'Content-Type': 'application/json', // 요청 본문이 JSON 형식임을 명시
             },
             body: JSON.stringify({
-              url
-            }) // JSON 데이터를 문자열로 변환
-          })
-          if(response.ok){
-            const responseData = await response.json();   
-            content = responseData["result"]["body"]
-          }else{
-            console.log("Fail to request puppeteer pool")
-            throw new Error()
+              url,
+            }), // JSON 데이터를 문자열로 변환
+          });
+          if (response.ok) {
+            const responseData = await response.json();
+            content = responseData['result']['body'];
+          } else {
+            console.log('Fail to request puppeteer pool');
+            throw new Error();
           }
-        }catch(err){
+        } catch (err) {
           return new SummarizeURLContentDto({
             success: false,
             message: 'Too low input token count',
