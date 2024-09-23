@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { JwtPayload } from 'src/common/types/type';
 import { DEFAULT_FOLDER_NAME } from '@src/common/constant';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
-import { JwtPayload } from 'src/common/types/type';
 import { AuthService } from '../auth/auth.service';
 import { FolderRepository } from '../folders/folders.repository';
 import { CreateUserDto } from './dto';

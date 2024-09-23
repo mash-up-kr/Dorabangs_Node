@@ -1,8 +1,7 @@
 // Do not import 'tiktoken'
-
+import { encodingForModel } from 'js-tiktoken';
 import { gptVersion } from '@src/infrastructure/ai/ai.constant';
 import { summarizeURLContentFunctionFactory } from '@src/infrastructure/ai/functions';
-import { encodingForModel } from 'js-tiktoken';
 
 const encoder = encodingForModel(gptVersion);
 

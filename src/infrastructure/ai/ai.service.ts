@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { promptTokenCalculator } from '@src/common/utils/tokenizer';
 import OpenAI, { OpenAIError, RateLimitError } from 'openai';
+import { promptTokenCalculator } from '@src/common/utils/tokenizer';
 import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
 import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
