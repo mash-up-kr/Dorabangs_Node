@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
 import { ClassficiationRepository } from '../classification/classification.repository';
 import { FolderRepository } from '../folders/folders.repository';
 import { KeywordsRepository } from '../keywords/keyword.repository';
@@ -38,6 +39,11 @@ export class AiClassificationService {
         Object.keys(folderMapper),
         payload.url,
       );
+      
+      // If summarize result is success and is not user category, create new foler
+      if(summarizeUrlContent.success && !summarizeUrlContent.isUserCategory){
+        await this.folderRepository.create(payload.userId,summarizeUrlContent.response.category,FolderType.CUSTOM,false)
+      }
 
       const end = process.hrtime(start);
       const timeSecond = end[0] + end[1] / 1e9;

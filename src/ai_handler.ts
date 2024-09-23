@@ -8,6 +8,7 @@ import { AiClassificationPayload } from './infrastructure/aws-lambda/type';
 import { DiscordModule } from './infrastructure/discord/discord.module';
 import { AiClassificationModule } from './modules/ai-classification/ai-classification.module';
 import { AiClassificationService } from './modules/ai-classification/ai-classification.service';
+import { FoldersModule } from './modules/folders/folders.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AiClassificationService } from './modules/ai-classification/ai-classifi
     DatabaseModule,
     DiscordModule,
     AiModule,
+    FoldersModule,
     AiClassificationModule,
   ],
 })
