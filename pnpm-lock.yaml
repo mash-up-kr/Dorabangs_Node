@@ -65,6 +65,9 @@ importers:
       iconv-lite:
         specifier: ^0.6.3
         version: 0.6.3
+      js-tiktoken:
+        specifier: ^1.0.14
+        version: 1.0.14
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -3624,6 +3627,9 @@ packages:
   js-string-escape@1.0.1:
     resolution: {integrity: sha512-Smw4xcfIQ5LVjAOuJCvN/zIodzA/BBSsluuoSykP+lUvScIi4U6RJLfwHet5cxFnCswUjISV8oAXaqaJDY3chg==}
     engines: {node: '>= 0.8'}
+
+  js-tiktoken@1.0.14:
+    resolution: {integrity: sha512-Pk3l3WOgM9joguZY2k52+jH82RtABRgB5RdGFZNUGbOKGMVlNmafcPA3b0ITcCZPu1L9UclP1tne6aw7ZI4Myg==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -10553,6 +10559,10 @@ snapshots:
   jose@5.5.0: {}
 
   js-string-escape@1.0.1: {}
+
+  js-tiktoken@1.0.14:
+    dependencies:
+      base64-js: 1.5.1
 
   js-tokens@4.0.0: {}
 

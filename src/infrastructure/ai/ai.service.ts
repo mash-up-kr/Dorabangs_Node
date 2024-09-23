@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI, { OpenAIError, RateLimitError } from 'openai';
+import { promptTokenCalculator } from '@src/common/utils/tokenizer';
 import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
 import { gptVersion } from './ai.constant';
 import { SummarizeURLContentDto } from './dto';
@@ -26,6 +27,7 @@ export class AiService {
 
   async summarizeLinkContent(
     content: string,
+    baseThumbnailContent: string,
     userFolderList: string[],
     url: string,
     temperature = 0.5,
@@ -33,6 +35,15 @@ export class AiService {
     try {
       // 사용자 폴더 + 서버에서 임의로 붙여주는 폴더 리스트
       const folderLists = [...userFolderList];
+      // Calculate post content
+      const tokenCount = promptTokenCalculator(content, folderLists);
+      if (tokenCount <= 300) {
+        return new SummarizeURLContentDto({
+          success: false,
+          message: 'Too low input token count',
+          thumbnailContent: baseThumbnailContent,
+        });
+      }
       // AI Summary 호출
       const promptResult = await this.invokeAISummary(
         content,
@@ -63,7 +74,18 @@ export class AiService {
             : err instanceof OpenAIError
               ? err.message
               : '요약에 실패하였습니다.',
+        thumbnailContent: baseThumbnailContent,
       });
+
+      // return new SummarizeURLContentDto({
+      //   success: false,
+      //   message:
+      //     err instanceof RateLimitError
+      //       ? '크레딧을 모두 소진하였습니다.'
+      //       : err instanceof OpenAIError
+      //         ? err.message
+      //         : '요약에 실패하였습니다.',
+      // });
     }
   }
 
@@ -104,7 +126,6 @@ ${content}
     const functionResult: AiClassificationFunctionResult = JSON.parse(
       promptResult.choices[0].message.tool_calls[0].function.arguments,
     );
-
     return functionResult;
   }
 

@@ -11,6 +11,7 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   title: string;
   content: string;
   thumbnail: string;
+  thumbnailDescription: string;
 }> {
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
@@ -49,6 +50,10 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
   const title = $('title').text();
   // Page Thumbnail Parsing
   const thumbnail = $('meta[property="og:image"]').attr('content');
+  // Page Thumbnail Description Parsing
+  const thumbnailDescription = $('meta[property="og:description"]').attr(
+    'content',
+  );
   // HTML Body내에 있는 script태그랑 css style태그 제거
   $('body script, body style').remove();
   // HTML Element의 body의 text content
@@ -61,6 +66,7 @@ export async function parseLinkTitleAndContent(url: string): Promise<{
     title: title ? title : 'Page Title',
     content,
     thumbnail: sanitizeThumbnail(thumbnail),
+    thumbnailDescription,
   };
 }
 

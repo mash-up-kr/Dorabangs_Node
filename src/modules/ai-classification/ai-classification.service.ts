@@ -34,6 +34,7 @@ export class AiClassificationService {
       const start = process.hrtime();
       const summarizeUrlContent = await this.aiService.summarizeLinkContent(
         payload.postContent,
+        payload.postThumbnailContent,
         Object.keys(folderMapper),
         payload.url,
       );
@@ -100,15 +101,17 @@ export class AiClassificationService {
       await this.metricsRepository.createMetrics(
         summarizeUrlContent.success,
         timeSecond,
-        post.url,
-        post._id.toString(),
+        payload.url,
+        payload.postId,
       );
 
       await this.postRepository.updatePostClassificationForAIClassification(
         postAiStatus,
         postId,
         classificationId,
-        summarizeUrlContent.response.summary,
+        summarizeUrlContent.success === true
+          ? summarizeUrlContent.response.summary
+          : summarizeUrlContent.thumbnailContent,
       );
       return summarizeUrlContent;
     } catch (error: unknown) {
