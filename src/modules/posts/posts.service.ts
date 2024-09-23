@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { FlattenMaps, Types } from 'mongoose';
 import { parseLinkTitleAndContent } from '@src/common';
 import { IS_LOCAL } from '@src/common/constant';
 import { Keyword, Post } from '@src/infrastructure';
@@ -10,6 +9,7 @@ import { FolderType } from '@src/infrastructure/database/types/folder-type.enum'
 import { CreatePostDto } from '@src/modules/posts/dto/create-post.dto';
 import { PostAiStatus } from '@src/modules/posts/posts.constant';
 import { PostsRepository } from '@src/modules/posts/posts.repository';
+import { FlattenMaps, Types } from 'mongoose';
 import { AiClassificationService } from '../ai-classification/ai-classification.service';
 import { FolderRepository } from '../folders/folders.repository';
 import {
