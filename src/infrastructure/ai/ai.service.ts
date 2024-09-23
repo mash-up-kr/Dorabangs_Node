@@ -15,7 +15,6 @@ import { SummarizeURLContent } from './types/types';
 @Injectable()
 export class AiService {
   private openai: OpenAI;
-  private leastTokenThreshold = 300;
 
   constructor(
     private readonly config: ConfigService,
@@ -38,7 +37,7 @@ export class AiService {
       const folderLists = [...userFolderList];
       // Calculate post content
       const tokenCount = promptTokenCalculator(content, folderLists);
-      if (tokenCount <= this.leastTokenThreshold) {
+      if (tokenCount <= 300) {
         return new SummarizeURLContentDto({
           success: false,
           message: 'Too low input token count',
