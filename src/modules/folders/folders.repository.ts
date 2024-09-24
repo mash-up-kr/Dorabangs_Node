@@ -37,9 +37,9 @@ export class FolderRepository {
     return createdFolders;
   }
 
-  async findByUserId(userId: string) {
+  async findByUserId(userId: string, onlyVisible = true) {
     const folders = await this.folderModel
-      .find({ userId, visible: true })
+      .find(onlyVisible ? { userId, visible: true } : { userId })
       .exec();
     return folders;
   }

@@ -81,7 +81,10 @@ export class PostsService {
     // NOTE : URL에서 얻은 정보 가져옴
     const { title, content, thumbnail, thumbnailDescription } =
       await parseLinkTitleAndContent(createPostDto.url);
-    const userFolderList = await this.folderRepository.findByUserId(userId);
+    const userFolderList = await this.folderRepository.findByUserId(
+      userId,
+      false,
+    );
     const folderList = userFolderList.map((folder) => {
       return {
         id: folder._id.toString(),
