@@ -26,12 +26,21 @@ export class FolderRepository {
   async createMany(
     folders: { userId: string; name: string; type: FolderType }[],
   ) {
-    const createdFolders = await this.folderModel.insertMany(folders);
+    const createdFolders = await this.folderModel.insertMany(
+      folders.map((folder) => {
+        return {
+          ...folder,
+          visible: true,
+        };
+      }),
+    );
     return createdFolders;
   }
 
   async findByUserId(userId: string) {
-    const folders = await this.folderModel.find({ userId }).exec();
+    const folders = await this.folderModel
+      .find({ userId, visible: true })
+      .exec();
     return folders;
   }
 
@@ -40,6 +49,7 @@ export class FolderRepository {
       .findOne({
         userId: userId,
         name: name,
+        visible: true,
       })
       .exec();
     return checkFolder ? true : false;

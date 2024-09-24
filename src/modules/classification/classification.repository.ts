@@ -133,6 +133,7 @@ export class ClassficiationRepository {
             folderName: { $first: '$folder.name' },
             postCount: { $sum: 1 },
             folderCreatedAt: { $first: '$folder.createdAt' },
+            folderVisible: { $first: '$folder.visible' },
           },
         },
         {
@@ -147,6 +148,13 @@ export class ClassficiationRepository {
             folderId: { $toString: '$_id' },
             folderName: 1,
             postCount: 1,
+            isAIGenerated: {
+              $cond: {
+                if: { $eq: ['$folderVisible', true] },
+                then: false,
+                else: true,
+              },
+            },
           },
         },
       ])
@@ -194,5 +202,15 @@ export class ClassficiationRepository {
       classification._id.toString(),
     );
     return classificationIds;
+  }
+
+  async makeFoldersVisible(folderId: string) {
+    await this.folderModel
+      .findByIdAndUpdate(
+        folderId,
+        { $set: { visible: true } },
+        { new: true, runValidators: true },
+      )
+      .exec();
   }
 }

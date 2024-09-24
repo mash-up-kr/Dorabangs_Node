@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
@@ -14,6 +15,7 @@ import { PostsRepository } from '../posts/posts.repository';
 export class AiClassificationService {
   constructor(
     private readonly aiService: AiService,
+    private readonly config: ConfigService,
     private readonly classificationRepository: ClassficiationRepository,
     private readonly folderRepository: FolderRepository,
     private readonly postRepository: PostsRepository,
@@ -33,6 +35,39 @@ export class AiClassificationService {
 
       // NOTE: AI 요약 요청
       const start = process.hrtime();
+      if (payload.postContent.length < 800) {
+        try {
+          const puppeteerURL = this.config.get<string>('PUPPETEER_POOL_URL');
+          const response = await fetch(`http://${puppeteerURL}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              url: payload.url,
+            }), // JSON 데이터를 문자열로 변환
+          });
+          if (response.ok) {
+            const responseData = await response.json();
+            const content = responseData['result']['body'];
+            payload.postContent = content;
+            const title = responseData['result']['title'];
+            await this.postRepository.updatePost(
+              payload.userId,
+              payload.postId,
+              {
+                title: title,
+              },
+            );
+          } else {
+            console.log('Fail to request puppeteer pool');
+            throw new Error();
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
       const summarizeUrlContent = await this.aiService.summarizeLinkContent(
         payload.postContent,
         payload.postThumbnailContent,
@@ -42,12 +77,14 @@ export class AiClassificationService {
 
       // If summarize result is success and is not user category, create new foler
       if (summarizeUrlContent.success && !summarizeUrlContent.isUserCategory) {
-        await this.folderRepository.create(
+        const newFolder = await this.folderRepository.create(
           payload.userId,
           summarizeUrlContent.response.category,
           FolderType.CUSTOM,
           false,
         );
+        folderMapper[summarizeUrlContent.response.category] =
+          newFolder._id.toString();
       }
 
       const end = process.hrtime(start);
