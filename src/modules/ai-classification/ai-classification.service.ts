@@ -52,11 +52,13 @@ export class AiClassificationService {
             const content = responseData['result']['body'];
             payload.postContent = content;
             const title = responseData['result']['title'];
+            const ogImage = response['result']['ogImage'];
             await this.postRepository.updatePost(
               payload.userId,
               payload.postId,
               {
                 title: title,
+                thumbnailImgUrl: ogImage,
               },
             );
           } else {
