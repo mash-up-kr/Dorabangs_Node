@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI, { OpenAIError, RateLimitError } from 'openai';
+import { TOKEN_LEAST_LIMIT } from '@src/common/constant';
 import { promptTokenCalculator } from '@src/common/utils/tokenizer';
 import { onBoardCategoryList } from '@src/modules/onboard/onboard.const';
 import { DiscordAIWebhookProvider } from '../discord/discord-ai-webhook.provider';
@@ -42,7 +43,7 @@ export class AiService {
 
       // Calculate post content
       const tokenCount = promptTokenCalculator(content, folderLists);
-      if (tokenCount <= 500) {
+      if (tokenCount <= TOKEN_LEAST_LIMIT) {
         return new SummarizeURLContentDto({
           success: false,
           message: 'Too low input token count',

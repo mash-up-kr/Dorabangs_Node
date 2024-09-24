@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { PaginationQuery, sum } from '@src/common';
+import { FolderRepository } from '../folders/folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { ClassficiationRepository } from './classification.repository';
 import { ClassificationFolderWithCount } from './dto/classification.dto';
@@ -11,6 +12,7 @@ export class ClassificationService {
   constructor(
     private readonly classficationRepository: ClassficiationRepository,
     private readonly postRepository: PostsRepository,
+    private readonly folderRepository: FolderRepository,
   ) {}
 
   async countClassifiedPost(userId: string) {
@@ -103,7 +105,7 @@ export class ClassificationService {
     userId: string,
     suggestedFolderId: string,
   ) {
-    await this.classficationRepository.makeFoldersVisible(suggestedFolderId);
+    await this.folderRepository.makeFoldersVisible(suggestedFolderId);
     const targetClassificationIds =
       await this.classficationRepository.getClassificationBySuggestedFolderId(
         suggestedFolderId,
@@ -129,7 +131,7 @@ export class ClassificationService {
     postId: string,
     suggestedFolderId: string,
   ) {
-    await this.classficationRepository.makeFoldersVisible(suggestedFolderId);
+    await this.folderRepository.makeFoldersVisible(suggestedFolderId);
     const post = await this.postRepository.findAndupdateFolderId(
       userId,
       postId,

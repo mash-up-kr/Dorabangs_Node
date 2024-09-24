@@ -87,4 +87,14 @@ export class FolderRepository {
     });
     return folders;
   }
+
+  async makeFoldersVisible(folderId: string) {
+    await this.folderModel
+      .findByIdAndUpdate(
+        folderId,
+        { $set: { visible: true } },
+        { new: true, runValidators: true },
+      )
+      .exec();
+  }
 }

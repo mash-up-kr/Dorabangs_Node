@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { CONTENT_LEAST_LIMIT } from '@src/common/constant';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
@@ -35,7 +36,7 @@ export class AiClassificationService {
 
       // NOTE: AI 요약 요청
       const start = process.hrtime();
-      if (payload.postContent.length < 800) {
+      if (payload.postContent.length < CONTENT_LEAST_LIMIT) {
         try {
           const puppeteerURL = this.config.get<string>('PUPPETEER_POOL_URL');
           const response = await fetch(`http://${puppeteerURL}`, {

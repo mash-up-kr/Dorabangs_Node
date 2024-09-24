@@ -8,6 +8,7 @@ import {
   Post,
   PostSchema,
 } from '@src/infrastructure/database/schema';
+import { FolderRepository } from '../folders/folders.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { ClassificationController } from './classification.controller';
 import { ClassficiationRepository } from './classification.repository';
@@ -22,7 +23,12 @@ import { ClassificationService } from './classification.service';
     ]),
   ],
   controllers: [ClassificationController],
-  providers: [ClassificationService, ClassficiationRepository, PostsRepository],
+  providers: [
+    ClassificationService,
+    ClassficiationRepository,
+    PostsRepository,
+    FolderRepository,
+  ],
   exports: [ClassificationService],
 })
 export class ClassificationModule {}
