@@ -17,6 +17,7 @@ import {
   PostKeyword,
   PostKeywordSchema,
 } from '@src/infrastructure/database/schema/postKeyword.schema';
+import { PuppeteerPoolModule } from '@src/infrastructure/puppeteer-pool/puppeteer-pool.module';
 import { ClassficiationRepository } from '../classification/classification.repository';
 import { FolderRepository } from '../folders/folders.repository';
 import { KeywordsRepository } from '../keywords/keyword.repository';
@@ -36,6 +37,7 @@ import { AiClassificationService } from './ai-classification.service';
       { name: Metrics.name, schema: MetricsSchema },
     ]),
     AiModule,
+    PuppeteerPoolModule,
   ],
   providers: [
     AiClassificationService,

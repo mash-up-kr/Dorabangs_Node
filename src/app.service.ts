@@ -1,28 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PuppeteerPoolService } from './infrastructure/puppeteer-pool/puppeteer-pool.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly puppeteer: PuppeteerPoolService,
+  ) {}
 
   getHello(): string {
     return 'Hello Dorabangs!';
   }
+
   async poolMetrics() {
-    try {
-      const puppeteerURL = this.config.get<string>('PUPPETEER_POOL_URL');
-      const response = await fetch(`http://${puppeteerURL}/health/metrics`, {
-        method: 'GET',
-      });
-
-      if (!response.ok) {
-        throw new Error();
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      return 'Fail to retrieve pool metrics';
-    }
+    return await this.puppeteer.getPoolMetrics();
   }
 }

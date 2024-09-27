@@ -88,7 +88,7 @@ export class FolderRepository {
     return folders;
   }
 
-  async makeFoldersVisible(folderId: string) {
+  async makeFolderVisible(folderId: string) {
     await this.folderModel
       .findByIdAndUpdate(
         folderId,

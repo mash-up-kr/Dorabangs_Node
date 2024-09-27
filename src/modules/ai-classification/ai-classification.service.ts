@@ -4,6 +4,7 @@ import { CONTENT_LEAST_LIMIT } from '@src/common/constant';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
 import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { PuppeteerPoolService } from '@src/infrastructure/puppeteer-pool/puppeteer-pool.service';
 import { ClassficiationRepository } from '../classification/classification.repository';
 import { FolderRepository } from '../folders/folders.repository';
 import { KeywordsRepository } from '../keywords/keyword.repository';
@@ -23,6 +24,7 @@ export class AiClassificationService {
     private readonly keywordsRepository: KeywordsRepository,
     private readonly postKeywordsRepository: PostKeywordsRepository,
     private readonly metricsRepository: MetricsRepository,
+    private readonly puppeteer: PuppeteerPoolService,
   ) {}
 
   async execute(payload: AiClassificationPayload) {
@@ -37,37 +39,18 @@ export class AiClassificationService {
       // NOTE: AI 요약 요청
       const start = process.hrtime();
       if (payload.postContent.length < CONTENT_LEAST_LIMIT) {
-        try {
-          const puppeteerURL = this.config.get<string>('PUPPETEER_POOL_URL');
-          const response = await fetch(`http://${puppeteerURL}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              url: payload.url,
-            }), // JSON 데이터를 문자열로 변환
+        const { ok, body } = await this.puppeteer.invokeRemoteSessionParser(
+          payload.url,
+        );
+        if (ok) {
+          const content = body['result']['body'];
+          payload.postContent = content;
+          const title = body['result']['title'];
+          const ogImage = body['result']['ogImage'];
+          await this.postRepository.updatePost(payload.userId, payload.postId, {
+            title: title,
+            thumbnailImgUrl: ogImage,
           });
-          if (response.ok) {
-            const responseData = await response.json();
-            const content = responseData['result']['body'];
-            payload.postContent = content;
-            const title = responseData['result']['title'];
-            const ogImage = responseData['result']['ogImage'];
-            await this.postRepository.updatePost(
-              payload.userId,
-              payload.postId,
-              {
-                title: title,
-                thumbnailImgUrl: ogImage,
-              },
-            );
-          } else {
-            console.log('Fail to request puppeteer pool');
-            throw new Error();
-          }
-        } catch (err) {
-          console.log(err);
         }
       }
 

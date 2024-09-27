@@ -105,7 +105,7 @@ export class ClassificationService {
     userId: string,
     suggestedFolderId: string,
   ) {
-    await this.folderRepository.makeFoldersVisible(suggestedFolderId);
+    await this.folderRepository.makeFolderVisible(suggestedFolderId);
     const targetClassificationIds =
       await this.classficationRepository.getClassificationBySuggestedFolderId(
         suggestedFolderId,
@@ -131,7 +131,7 @@ export class ClassificationService {
     postId: string,
     suggestedFolderId: string,
   ) {
-    await this.folderRepository.makeFoldersVisible(suggestedFolderId);
+    await this.folderRepository.makeFolderVisible(suggestedFolderId);
     const post = await this.postRepository.findAndupdateFolderId(
       userId,
       postId,
