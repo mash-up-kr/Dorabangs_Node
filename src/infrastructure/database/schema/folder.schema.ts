@@ -13,6 +13,9 @@ export class Folder extends BaseDocument {
 
   @Prop({ required: true, enum: FolderType, type: String })
   type: FolderType;
+
+  @Prop({ required: true, default: true })
+  visible: boolean;
 }
 
 export type FolderDocument = HydratedDocument<Folder>;

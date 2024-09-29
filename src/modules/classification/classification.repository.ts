@@ -133,6 +133,7 @@ export class ClassficiationRepository {
             folderName: { $first: '$folder.name' },
             postCount: { $sum: 1 },
             folderCreatedAt: { $first: '$folder.createdAt' },
+            folderVisible: { $first: '$folder.visible' },
           },
         },
         {
@@ -147,6 +148,13 @@ export class ClassficiationRepository {
             folderId: { $toString: '$_id' },
             folderName: 1,
             postCount: 1,
+            isAIGenerated: {
+              $cond: {
+                if: { $eq: ['$folderVisible', true] },
+                then: false,
+                else: true,
+              },
+            },
           },
         },
       ])

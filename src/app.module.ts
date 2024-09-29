@@ -9,6 +9,7 @@ import { LoggerMiddleware } from './common/middlewares';
 import { AiModule } from './infrastructure/ai/ai.module';
 import { AwsLambdaModule } from './infrastructure/aws-lambda/aws-lambda.module';
 import { DiscordModule } from './infrastructure/discord/discord.module';
+import { PuppeteerPoolModule } from './infrastructure/puppeteer-pool/puppeteer-pool.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ClassificationModule } from './modules/classification/classification.module';
 import { FoldersModule } from './modules/folders/folders.module';
@@ -39,6 +40,7 @@ import { UsersModule } from './modules/users/users.module';
     OnboardModule,
     MetricsModule,
     LaunchingEventsModule,
+    PuppeteerPoolModule,
     // PrismaModule,
   ],
   controllers: [AppController],

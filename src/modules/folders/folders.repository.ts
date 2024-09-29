@@ -12,11 +12,12 @@ export class FolderRepository {
     private readonly folderModel: Model<Folder>,
   ) {}
 
-  async create(userId: string, name: string, type: FolderType) {
+  async create(userId: string, name: string, type: FolderType, visible = true) {
     const folder = await this.folderModel.create({
       userId,
       name,
       type,
+      visible,
     });
 
     return folder;
@@ -25,12 +26,21 @@ export class FolderRepository {
   async createMany(
     folders: { userId: string; name: string; type: FolderType }[],
   ) {
-    const createdFolders = await this.folderModel.insertMany(folders);
+    const createdFolders = await this.folderModel.insertMany(
+      folders.map((folder) => {
+        return {
+          ...folder,
+          visible: true,
+        };
+      }),
+    );
     return createdFolders;
   }
 
-  async findByUserId(userId: string) {
-    const folders = await this.folderModel.find({ userId }).exec();
+  async findByUserId(userId: string, onlyVisible = true) {
+    const folders = await this.folderModel
+      .find(onlyVisible ? { userId, visible: true } : { userId })
+      .exec();
     return folders;
   }
 
@@ -39,6 +49,7 @@ export class FolderRepository {
       .findOne({
         userId: userId,
         name: name,
+        visible: true,
       })
       .exec();
     return checkFolder ? true : false;
@@ -75,5 +86,15 @@ export class FolderRepository {
       type: FolderType.DEFAULT,
     });
     return folders;
+  }
+
+  async makeFolderVisible(folderId: string) {
+    await this.folderModel
+      .findByIdAndUpdate(
+        folderId,
+        { $set: { visible: true } },
+        { new: true, runValidators: true },
+      )
+      .exec();
   }
 }

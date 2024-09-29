@@ -3,12 +3,11 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class LinksService {
   async validateLink(link: string): Promise<boolean> {
-    const res = await fetch(link);
-
-    if (res.status !== 200) {
+    try {
+      new URL(link);
+      return true;
+    } catch (err) {
       return false;
     }
-
-    return true;
   }
 }

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { CONTENT_LEAST_LIMIT } from '@src/common/constant';
 import { AiService } from '@src/infrastructure/ai/ai.service';
 import { AiClassificationPayload } from '@src/infrastructure/aws-lambda/type';
+import { FolderType } from '@src/infrastructure/database/types/folder-type.enum';
+import { PuppeteerPoolService } from '@src/infrastructure/puppeteer-pool/puppeteer-pool.service';
 import { ClassficiationRepository } from '../classification/classification.repository';
 import { FolderRepository } from '../folders/folders.repository';
 import { KeywordsRepository } from '../keywords/keyword.repository';
@@ -13,12 +17,14 @@ import { PostsRepository } from '../posts/posts.repository';
 export class AiClassificationService {
   constructor(
     private readonly aiService: AiService,
+    private readonly config: ConfigService,
     private readonly classificationRepository: ClassficiationRepository,
     private readonly folderRepository: FolderRepository,
     private readonly postRepository: PostsRepository,
     private readonly keywordsRepository: KeywordsRepository,
     private readonly postKeywordsRepository: PostKeywordsRepository,
     private readonly metricsRepository: MetricsRepository,
+    private readonly puppeteer: PuppeteerPoolService,
   ) {}
 
   async execute(payload: AiClassificationPayload) {
@@ -32,12 +38,40 @@ export class AiClassificationService {
 
       // NOTE: AI 요약 요청
       const start = process.hrtime();
+      if (payload.postContent.length < CONTENT_LEAST_LIMIT) {
+        const { ok, body } = await this.puppeteer.invokeRemoteSessionParser(
+          payload.url,
+        );
+        if (ok) {
+          const content = body['result']['body'];
+          payload.postContent = content;
+          const title = body['result']['title'];
+          const ogImage = body['result']['ogImage'];
+          await this.postRepository.updatePost(payload.userId, payload.postId, {
+            title: title,
+            thumbnailImgUrl: ogImage,
+          });
+        }
+      }
+
       const summarizeUrlContent = await this.aiService.summarizeLinkContent(
         payload.postContent,
         payload.postThumbnailContent,
         Object.keys(folderMapper),
         payload.url,
       );
+
+      // If summarize result is success and is not user category, create new foler
+      if (summarizeUrlContent.success && !summarizeUrlContent.isUserCategory) {
+        const newFolder = await this.folderRepository.create(
+          payload.userId,
+          summarizeUrlContent.response.category,
+          FolderType.CUSTOM,
+          false,
+        );
+        folderMapper[summarizeUrlContent.response.category] =
+          newFolder._id.toString();
+      }
 
       const end = process.hrtime(start);
       const timeSecond = end[0] + end[1] / 1e9;
