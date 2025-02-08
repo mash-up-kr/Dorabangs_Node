@@ -9,7 +9,7 @@ export class OnBoardRepository extends Repository<OnboardCategory> {
     super(OnboardCategory, dataSource.createEntityManager());
   }
 
-  addOnboardList() {
+  private addOnboardList() {
     const newCategory = this.create({ categoryList: onBoardCategoryList });
     this.save(newCategory);
     return newCategory.categoryList;
