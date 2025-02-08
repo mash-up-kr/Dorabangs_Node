@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
 import { OnBoardQuery } from './dto';
-import { onBoardCategoryList } from './onboard.const';
+import { OnBoardRepository } from './onboard.pg.repository';
 
 @Injectable()
 export class OnboardService {
-  listOnBoardKeywords(query: OnBoardQuery) {
+  constructor(private onBoardRepository: OnBoardRepository) {}
+
+  async listOnBoardKeywords(query: OnBoardQuery) {
+    const categoryList = await this.onBoardRepository.getOnboardCategoryList();
     return query.limit
-      ? this.getLimitedOnBoardKeywords(onBoardCategoryList, query.limit)
-      : onBoardCategoryList;
+      ? this.getLimitedOnBoardKeywords(categoryList, query.limit)
+      : categoryList;
   }
 
   private getLimitedOnBoardKeywords(keywords: string[], limit: number) {
