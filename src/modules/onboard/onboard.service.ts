@@ -19,6 +19,6 @@ export class OnboardService {
     keywords: OnboardCategory[],
     limit: number,
   ) {
-    return _.shuffle(keywords).slice(0, limit);
+    return _.sampleSize(keywords, limit);
   }
 }
