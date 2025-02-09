@@ -5,7 +5,7 @@ import { OnBoardRepository } from './onboard.pg.repository';
 
 @Injectable()
 export class OnboardService {
-  constructor(private onBoardRepository: OnBoardRepository) {}
+  constructor(private readonly onBoardRepository: OnBoardRepository) {}
 
   async listOnBoardKeywords(query: OnBoardQuery) {
     const categoryList = await this.onBoardRepository.getOnboardCategoryList();
