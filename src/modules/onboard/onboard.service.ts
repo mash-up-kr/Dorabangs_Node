@@ -15,6 +15,6 @@ export class OnboardService {
   }
 
   private getLimitedOnBoardKeywords(keywords: string[], limit: number) {
-    return _.shuffle(keywords).splice(0, limit);
+    return _.shuffle(keywords).slice(0, limit);
   }
 }
