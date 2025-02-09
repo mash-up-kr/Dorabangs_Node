@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
+import { OnboardCategory } from '@src/infrastructure/database/entities/onboard-category.entity';
 import { OnBoardQuery } from './dto';
 import { OnBoardRepository } from './onboard.pg.repository';
 
@@ -14,7 +15,10 @@ export class OnboardService {
       : categoryList;
   }
 
-  private getLimitedOnBoardKeywords(keywords: string[], limit: number) {
+  private getLimitedOnBoardKeywords(
+    keywords: OnboardCategory[],
+    limit: number,
+  ) {
     return _.shuffle(keywords).slice(0, limit);
   }
 }

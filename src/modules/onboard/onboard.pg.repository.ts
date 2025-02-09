@@ -10,16 +10,19 @@ export class OnBoardRepository extends Repository<OnboardCategory> {
   }
 
   private addOnboardList() {
-    const newCategory = this.create({ categoryList: onBoardCategoryList });
-    this.save(newCategory);
-    return newCategory.categoryList;
+    const newList = onBoardCategoryList.map((category) => category);
+    return newList.map((category: string) => {
+      const newCategory = this.create({ category });
+      this.save(newCategory);
+      return newCategory;
+    });
   }
 
   async getOnboardCategoryList() {
-    const category = await this.findOne({});
-    if (!category) {
+    const categories = await this.find();
+    if (!categories) {
       return this.addOnboardList();
     }
-    return category.categoryList;
+    return categories;
   }
 }
