@@ -23,7 +23,7 @@ export class OnBoardRepository extends Repository<OnboardCategory> {
 
   async getOnboardCategoryList() {
     const categories = await this.find();
-    console.log(`categories is ${categories}, ${categories.length}`);
+
     if (categories.length === 0) {
       return this.addOnboardList();
     }
