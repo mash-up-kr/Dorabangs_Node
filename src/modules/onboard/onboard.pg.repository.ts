@@ -9,18 +9,22 @@ export class OnBoardRepository extends Repository<OnboardCategory> {
     super(OnboardCategory, dataSource.createEntityManager());
   }
 
-  private addOnboardList() {
-    const newList = onBoardCategoryList.map((category) => category);
-    return newList.map((category: string) => {
-      const newCategory = this.create({ category });
-      this.save(newCategory);
-      return newCategory;
-    });
+  private async addOnboardList() {
+    const newList = onBoardCategoryList.map((category) => ({ category }));
+
+    await this.createQueryBuilder()
+      .insert()
+      .into('onboards')
+      .values(newList)
+      .execute();
+
+    return this.find();
   }
 
   async getOnboardCategoryList() {
     const categories = await this.find();
-    if (!categories) {
+    console.log(`categories is ${categories}, ${categories.length}`);
+    if (categories.length === 0) {
       return this.addOnboardList();
     }
     return categories;
