@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppDataSource } from 'data-source';
 
 @Module({
   imports: [
@@ -15,23 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       },
     }),
 
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (config: ConfigService) => {
-        return {
-          type: 'postgres',
-          host: config.get<string>('DB_HOST', 'localhost'),
-          port: config.get<number>('DB_PORT', 5432),
-          username: config.get<string>('DB_USERNAME', 'postgres'),
-          password: config.get<string>('DB_PASSWORD', 'linkit1234!'),
-          database: config.get<string>('DB_NAME', 'linkit'),
-          entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
-          synchronize: config.get<boolean>('DB_SYNC', false),
-          logging: config.get<boolean>('DB_LOGGING', true),
-        };
-      },
-    }),
+    TypeOrmModule.forRoot(AppDataSource.options),
   ],
 })
 export class DatabaseModule {}
