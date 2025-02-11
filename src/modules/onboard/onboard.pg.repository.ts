@@ -9,7 +9,7 @@ export class OnBoardRepository extends Repository<OnboardCategory> {
     super(OnboardCategory, dataSource.createEntityManager());
   }
 
-  private async addOnboardList() {
+  private async addOnboardList(): Promise<OnboardCategory[]> {
     const newList = onBoardCategoryList.map((category) => ({ category }));
 
     await this.createQueryBuilder()
@@ -21,7 +21,7 @@ export class OnBoardRepository extends Repository<OnboardCategory> {
     return this.find();
   }
 
-  async getOnboardCategoryList() {
+  async getOnboardCategoryList(): Promise<OnboardCategory[]> {
     const categories = await this.find();
 
     if (categories.length === 0) {
