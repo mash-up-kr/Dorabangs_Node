@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('onboards')
+@Entity('onboard_categories')
 export class OnboardCategory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
