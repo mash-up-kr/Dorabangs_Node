@@ -1,8 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 
-@Injectable()
 class DataSourceConfig {
   private configService: ConfigService;
 
