@@ -13,7 +13,7 @@ export const dbConfig: any = {
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: process.env.DB_SYNC,
   logging: process.env.DB_LOGGING,
-  migrations: ['migrations/*.js'],
+  migrations: ['**/migrations/*.ts'],
 };
 
 export const AppDataSource = new DataSource(dbConfig);
