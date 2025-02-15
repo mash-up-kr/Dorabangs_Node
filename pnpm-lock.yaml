@@ -62,6 +62,9 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
       express:
         specifier: ^4.19.2
         version: 4.19.2
@@ -2769,8 +2772,8 @@ packages:
     resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
     engines: {node: '>=12'}
 
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
   eastasianwidth@0.2.0:
@@ -7715,7 +7718,7 @@ snapshots:
       '@babel/core': 7.24.7
       '@sentry/babel-plugin-component-annotate': 2.20.1
       '@sentry/cli': 2.32.1
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       find-up: 5.0.0
       glob: 9.3.5
       magic-string: 0.30.8
@@ -9584,7 +9587,7 @@ snapshots:
 
   dotenv-expand@10.0.0: {}
 
-  dotenv@16.4.5: {}
+  dotenv@16.4.7: {}
 
   eastasianwidth@0.2.0: {}
 
@@ -11678,7 +11681,7 @@ snapshots:
   serverless-dotenv-plugin@6.0.0(serverless@4.1.6):
     dependencies:
       chalk: 4.1.2
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       dotenv-expand: 10.0.0
       serverless: 4.1.6
 
@@ -12126,7 +12129,7 @@ snapshots:
       cli-highlight: 2.1.11
       dayjs: 1.11.13
       debug: 4.3.5
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       glob: 10.3.10
       mkdirp: 2.1.6
       reflect-metadata: 0.2.2
